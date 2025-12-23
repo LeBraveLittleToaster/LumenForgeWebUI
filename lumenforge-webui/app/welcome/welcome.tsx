@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import axios from "axios";
 import { useAuthStore } from "~/auth/authStore";
 
 export function Welcome() {
@@ -9,6 +10,37 @@ export function Welcome() {
 
   const loginTriggered = useRef(false);
 
+  const testSpringFunction = () => {
+    console.log("Spring test function triggered");
+    const api = axios.create({
+      baseURL: "http://localhost:1324"
+    });
+
+    api.interceptors.request.use(async (config) => {
+      const { refreshToken } = useAuthStore.getState();
+      await refreshToken(30).catch(() => false);
+
+      const { token } = useAuthStore.getState();
+      config.headers = config.headers ?? {};
+      config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    });
+    api.get("/common/hello")
+      .then((response) => {
+        console.log("Spring test response:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error calling spring test function:", error);
+      });
+    api.get("/api/v1/admin/users")
+      .then((response) => {
+        console.log("Spring test response:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error calling spring test function:", error);
+      });
+  }
+
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
       <div className="text-center">
@@ -18,9 +50,13 @@ export function Welcome() {
         </p>
         <p>You are currently {status === "authenticated" ? "logged in" : "not logged in"}.</p>
         {status !== "authenticated" ? (
+
           <button onClick={() => login()}>Login</button>
         ) : (
-          <button onClick={() => logout()}>Logout</button>
+          <div>
+            <button onClick={() => logout()}>Logout</button>
+            <button onClick={() => testSpringFunction()}>Spring Test</button>
+          </div>
         )}
       </div>
     </main>
