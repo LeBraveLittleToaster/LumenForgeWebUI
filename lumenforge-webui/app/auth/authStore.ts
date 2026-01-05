@@ -32,6 +32,7 @@ export const useAuthStore = create<AuthState>((set:any, get:any) => ({
       return get().isAuthenticated;
     }
 
+    console.log(get());
     set({ status: "initializing", error: undefined });
 
     try {
@@ -76,7 +77,7 @@ export const useAuthStore = create<AuthState>((set:any, get:any) => ({
         }
       };
 
-      keycloak.onAuthError = (err) => set({ status: "error", error: err });
+      keycloak.onAuthError = (err:any) => set({ status: "error", error: err });
 
       return authenticated;
     } catch (err) {
@@ -90,6 +91,10 @@ export const useAuthStore = create<AuthState>((set:any, get:any) => ({
   },
 
   logout: async () => {await get().keycloak.logout({ redirectUri: window.location.origin });await get().keycloak.logout({ redirectUri: window.location.origin });
+  },
+
+  userData: async () => {
+    return await get().keycloak.loadUserInfo();
   },
 
   refreshToken: async (minValidity = 30) => {
