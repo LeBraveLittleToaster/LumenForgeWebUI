@@ -26,11 +26,9 @@ export const getStompAuthenticated = (accessToken: string) : Client => {
         connectHeaders: {
             Authorization: `Bearer ${accessToken}`
         },
-        /*
         debug: (str) => {
             console.log(str);
         },
-        */
         onConnect: () => {
             console.log("STOMP connected");
         },

@@ -9,7 +9,13 @@ export default function ConsoleSlider({ id }: { id: number }) {
 
   return (
     <>
-      <Box sx={{ mb: 2 }}>
+      <Box height={500} sx={{
+        mb: 2,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}>
         <Typography gutterBottom>
           Channel {id}
         </Typography>
@@ -20,7 +26,7 @@ export default function ConsoleSlider({ id }: { id: number }) {
           shiftStep={30}
           step={10}
           marks
-
+          orientation="vertical"
           onChange={(_, newValue) => {
             publishSlider(id, newValue as number);
           }}

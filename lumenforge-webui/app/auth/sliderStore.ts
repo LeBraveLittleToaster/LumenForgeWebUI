@@ -2,6 +2,8 @@ import { create } from "zustand";
 import type { Client, StompSubscription } from "@stomp/stompjs";
 import { getStompAuthenticated } from "~/api/axios";
 
+export const senderId = crypto.randomUUID();
+
 type SliderId = number;
 
 type SliderStore = {
@@ -41,7 +43,9 @@ function subscribeRange(storeGet: () => SliderStore, storeSet: any) {
   const { sliderCount, setSlider } = storeGet();
   for (let id = 0; id < sliderCount; id++) {
     const sub = client.subscribe(topicFor(id), (msg) => {
-      const newValue = Number(msg.body);
+      const parsed = JSON.parse(msg.body);
+      if( parsed.clientId === senderId) return; // ignore own messages
+      const newValue = Number(parsed.value);
       if (!Number.isNaN(newValue)) setSlider(id, newValue);
     });
     subs.set(id, sub);
@@ -124,7 +128,10 @@ export const useSliderStore = create<SliderStore>((set, get) => ({
 
     client.publish({
       destination: publishDest + `/${id}`,
-      body: clamp(value).toString(),
+      body: JSON.stringify({
+        "value": clamp(value).toString(),
+        "clientId": senderId,
+      }),
     });
   },
 }));
