@@ -1,7 +1,9 @@
 import axios from "axios";
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client/dist/sockjs';
 import { useAuthStore } from "~/auth/authStore";
 
-export const getAxiosWithAuthInterceptor = (baseUrl:string) => {
+export const getAxiosWithAuthInterceptor = (baseUrl: string) => {
     const authenticatedAxios = axios.create({
         baseURL: baseUrl
     });
@@ -16,4 +18,24 @@ export const getAxiosWithAuthInterceptor = (baseUrl:string) => {
         return config;
     });
     return authenticatedAxios;
+};
+
+export const getStompAuthenticated = (accessToken: string) : Client => {
+    const client = new Client({
+        webSocketFactory: () => new SockJS('http://localhost:1324/ws'),
+        connectHeaders: {
+            Authorization: `Bearer ${accessToken}`
+        },
+        /*
+        debug: (str) => {
+            console.log(str);
+        },
+        */
+        onConnect: () => {
+            console.log("STOMP connected");
+        },
+
+    });
+    client.activate();
+    return client;
 };
