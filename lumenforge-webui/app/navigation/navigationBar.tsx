@@ -7,8 +7,16 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useAuthStore } from '~/auth/authStore';
 import { useEffect, useMemo, useState } from 'react';
+import MenuItem from '@mui/material/MenuItem';
+import { useNavigate } from 'react-router';
 
-export default function NavigationBar({ title }: { title: string }) {
+type RouteOptions = {
+    title: string,
+    redirectTo: string
+}
+
+export default function NavigationBar({ routes , title}: { routes: RouteOptions[], title: string }) {
+    const navigate = useNavigate();
     const login = useAuthStore((s: any) => s.login);
     const status = useAuthStore((s: any) => s.status);
     const logout = useAuthStore((s: any) => s.logout);
@@ -60,6 +68,12 @@ export default function NavigationBar({ title }: { title: string }) {
                         {title}
                     </Typography>
 
+                    {routes.map((route) => (
+                        <MenuItem key={route.title} onClick={() => navigate(route.redirectTo)}>
+                            <Typography color='black' sx={{ textAlign: 'center' }}>{route.title}</Typography>
+                        </MenuItem>
+                    ))}
+
                     <Typography
                         variant="h6"
                         component="div"
@@ -73,6 +87,7 @@ export default function NavigationBar({ title }: { title: string }) {
                     >
                         {displayName}
                     </Typography>
+
 
                     {status !== "authenticated" ? (
                         <Button color="inherit" onClick={() => login()}>

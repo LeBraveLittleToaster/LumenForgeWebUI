@@ -21,6 +21,12 @@ const Item = styled(Paper)(({ theme }) => ({
   }),
 }));
 
+const routes = [
+  { title: "FaderBar", redirectTo: "/" },
+  { title: "Editor", redirectTo: "/stage/editor" },
+  { title: "Settings", redirectTo: "/settings" },
+];
+
 
 export function Console({ amountOfSliders }: { amountOfSliders: number }) {
   const status = useAuthStore((s: any) => s.status);
@@ -42,7 +48,7 @@ export function Console({ amountOfSliders }: { amountOfSliders: number }) {
   return (
     <>
       <CssBaseline />
-      <NavigationBar title="Dashboard" />
+      <NavigationBar routes={routes} title="LumenForge" />
       <Box maxWidth="sm" height={100} />
 
       <Box
