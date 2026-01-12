@@ -5,6 +5,7 @@ import { useLightsStore, type LightInfo } from "./lightInfoStore";
 import Button from "@mui/material/Button";
 import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 import { useNavigate } from "react-router";
+import Lightanimation from "./lightAnimation";
 
 const initialLights: LightInfo[] = [
     { id: "a", x: 120, y: 200, name: "Light 1" },
@@ -22,6 +23,30 @@ const StageEditor = () => {
     const handleDelete = (id: string) => {
         setLights(lights.filter((light) => light.id !== id));
         setPopupId(undefined);
+    };
+    const handleWheel = (e: any) => {
+        e.evt.preventDefault();
+        const stage = e.target.getStage();
+        if (!stage) return;
+        
+        const oldScale = stage.scaleX();
+        const pointer = stage.getPointerPosition();
+        if (!pointer) return;
+        const scaleBy = 1.05;
+        const mousePointTo = {
+            x: (pointer.x - stage.x()) / oldScale,
+            y: (pointer.y - stage.y()) / oldScale,
+        };
+        
+        const newScale =
+            e.evt.deltaY > 0 ? oldScale / scaleBy : oldScale * scaleBy;
+        stage.scale({ x: newScale, y: newScale });
+        const newPos = {
+            x: pointer.x - mousePointTo.x * newScale,
+            y: pointer.y - mousePointTo.y * newScale,
+        };
+        stage.position(newPos);
+        stage.batchDraw();
     };
 
     useEffect(() => {
@@ -55,7 +80,7 @@ const StageEditor = () => {
                 onNo={() => setPopupId(undefined)}
                 onYes={(id) => handleDelete(id)}
             />
-            <Stage draggable width={window.innerWidth} height={window.innerHeight}>
+            <Stage draggable width={window.innerWidth} height={window.innerHeight} onWheel={handleWheel}>
                 <KonvaGrid
                     width={window.innerWidth}
                     height={window.innerHeight}
@@ -68,7 +93,7 @@ const StageEditor = () => {
                             key={light.id}
                             x={light.x}
                             y={light.y}
-                            radius={100}
+                            radius={30}
                             fill="green"
                             draggable
                             onClick={() => setPopupId(light.id)}
@@ -79,6 +104,7 @@ const StageEditor = () => {
                         />
                     ))}
                 </Layer>
+                {/*<Lightanimation isMovingAlongX={true} xStart={-300} xEnd={300} isMovingAlongY={false} yStart={0} yEnd={100} speed={120} />*/}
             </Stage>
         </>
     );
