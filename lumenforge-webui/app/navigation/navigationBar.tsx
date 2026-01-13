@@ -5,10 +5,10 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useAuthStore } from '~/auth/authStore';
 import { useEffect, useMemo, useState } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router';
+import { useAuthStore } from '~/stores/authStore';
 
 type RouteOptions = {
     title: string,

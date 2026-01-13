@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { keycloak } from "../auth/keycloak";
+import { keycloak } from "./keycloak";
 
 type AuthStatus = "idle" | "initializing" | "authenticated" | "unauthenticated" | "error";
 

@@ -1,4 +1,3 @@
-import Keycloak from "keycloak-js";
 import {
   isRouteErrorResponse,
   Links,
@@ -10,8 +9,9 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { useEffect, useRef } from "react";
-import { useAuthStore } from "./auth/authStore";
+import { useEffect } from "react";
+import { useAuthStore } from "./stores/authStore";
+
 
 
 

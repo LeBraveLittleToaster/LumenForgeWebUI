@@ -1,7 +1,6 @@
 import Konva from "konva";
-import type { LineConfig } from "konva/lib/shapes/Line";
-import { use, useEffect, useRef } from "react";
-import { Line, Layer, Circle } from "react-konva";
+import { useEffect, useRef } from "react";
+import { Line, Layer } from "react-konva";
 
 const Lightanimation = ({ isMovingAlongX, xStart, xEnd, isMovingAlongY, yStart, yEnd, speed }: { isMovingAlongX: boolean, isMovingAlongY: boolean, xStart: number, xEnd: number, yStart: number, yEnd: number, speed: number }) => {
 

@@ -1,14 +1,14 @@
 import { useEffect } from "react";
-import { useAuthStore } from "~/auth/authStore";
 import NavigationBar from "~/navigation/navigationBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import useSliderStore from "~/auth/sliderStore";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import ConsoleSlider from "~/slider/consoleSlider";
 import Divider from "@mui/material/Divider";
+import { useAuthStore } from "~/stores/authStore";
+import useSliderStore from "~/stores/sliderStore";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',

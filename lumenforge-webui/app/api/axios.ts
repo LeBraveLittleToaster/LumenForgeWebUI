@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client/dist/sockjs';
-import { useAuthStore } from "~/auth/authStore";
+import { useAuthStore } from "~/stores/authStore";
 
 export const getAxiosWithAuthInterceptor = (baseUrl: string) => {
     const authenticatedAxios = axios.create({

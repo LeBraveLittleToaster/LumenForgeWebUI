@@ -10,7 +10,6 @@ export type LightInfo = {
 type LightsState = {
   lights: LightInfo[];
 
-  // setters / actions
   setLights: (lights: LightInfo[]) => void;
   upsertLight: (light: LightInfo) => void;
   updateLightPos: (id: string, x: number, y: number) => void;
