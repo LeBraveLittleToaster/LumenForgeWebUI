@@ -1,5 +1,5 @@
-import React, { Fragment, useEffect } from "react";
-import { Stage, Layer, Rect, Circle, Text } from "react-konva";
+import React, { useEffect } from "react";
+import { Stage, Layer, Circle } from "react-konva";
 import KonvaGrid from "./konvaGrid";
 import { useLightsStore, type LightInfo } from "./lightInfoStore";
 import Button from "@mui/material/Button";
@@ -104,7 +104,7 @@ const StageEditor = () => {
                         />
                     ))}
                 </Layer>
-                {/*<Lightanimation isMovingAlongX={true} xStart={-300} xEnd={300} isMovingAlongY={false} yStart={0} yEnd={100} speed={120} />*/}
+                <Lightanimation isMovingAlongX={true} xStart={-300} xEnd={300} isMovingAlongY={false} yStart={0} yEnd={100} speed={120} />
             </Stage>
         </>
     );

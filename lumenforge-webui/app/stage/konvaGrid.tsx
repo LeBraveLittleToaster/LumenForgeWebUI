@@ -1,6 +1,4 @@
-import React from 'react';
-import { Stage, Layer, Rect, Circle, Text, Line } from 'react-konva';
-import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
+import { Layer, Line } from 'react-konva';
 
 const KonvaGrid = ({ width, height, pixelPerTick }: { width: number, height: number, pixelPerTick: number }) => {
 
