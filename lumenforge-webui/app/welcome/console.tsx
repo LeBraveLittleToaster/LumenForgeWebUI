@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "~/auth/authStore";
 import NavigationBar from "~/navigation/navigationBar";
 import Box from "@mui/material/Box";
@@ -9,6 +9,8 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import ConsoleSlider from "~/slider/consoleSlider";
 import Divider from "@mui/material/Divider";
+import { Button, Typography } from "@mui/material";
+import { DevicesApi } from "~/api/device/deviceApi";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -36,6 +38,10 @@ export function Console({ amountOfSliders }: { amountOfSliders: number }) {
   const connect = useSliderStore((s) => s.connect);
   const disconnect = useSliderStore((s) => s.disconnect);
 
+  const [message, setMessage] = useState<string>("Testing Device API...");
+
+
+
   useEffect(() => {
     initSliders(amountOfSliders);
   }, [amountOfSliders, initSliders]);
@@ -59,13 +65,36 @@ export function Console({ amountOfSliders }: { amountOfSliders: number }) {
         }}
       >
         <Stack
-          direction="row"
+          direction="column"
           spacing={2}
           divider={<Divider orientation="vertical" flexItem />}
         >
+          <Button variant="contained" color="primary">
+            Test create Device
+          </Button>
+          <Button variant="contained" color="primary">
+            Test update Device
+          </Button>
+          <Button variant="contained" color="secondary">
+            Test remove Device
+          </Button>
+          <Button variant="contained" onClick={() => { 
+            new DevicesApi({ baseUrl: "http://localhost:1324/api/v1/user", basePath: "/devices" })
+            .getAll()
+            .then((devices) => setMessage(`Retrieved ${devices.length} devices.`)) }}
+            color="secondary">
+            Test get Devices
+          </Button>
+          <Typography variant="h6" component="div">
+            {message}
+          </Typography>
+
+          {/*}
+        
           {Array.from({ length: amountOfSliders }, (_, id) => (
             <ConsoleSlider key={id} id={id} />
-          ))}
+          ))
+        */}
         </Stack>
       </Box>
     </>
