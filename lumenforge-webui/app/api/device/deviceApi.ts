@@ -1,7 +1,7 @@
 // src/api/devices/devicesApi.ts
 import type { AxiosInstance } from "axios";
 
-import type { Device, DeviceRequestDTO, Page, UUID } from "../types/device";
+import type { DeviceDTO, DeviceRequestDTO, Page, UUID } from "../types/device";
 import { getAxiosWithAuthInterceptor } from "../axios";
 
 export interface GetDevicesPageParams {
@@ -10,31 +10,17 @@ export interface GetDevicesPageParams {
   sort?: string | string[]; // e.g. "name,asc" or ["name,asc","id,desc"]
 }
 
-/**
- * Devices API client.
- *
- * Assumed endpoints (typical Spring REST controller):
- * - GET    /devices                -> Page<Device>
- * - GET    /devices/all            -> Device[]
- * - GET    /devices/{id}           -> Device
- * - GET    /devices/uuid/{uuid}    -> Device
- * - POST   /devices                -> Device
- * - PUT    /devices/{id}           -> Device
- * - DELETE /devices/{id}           -> void
- *
- * If your controller differs (e.g. /api/devices), adjust `basePath`.
- */
 export class DevicesApi {
   private readonly http: AxiosInstance;
   private readonly basePath: string;
 
   constructor(opts: { baseUrl: string; basePath?: string }) {
     this.http = getAxiosWithAuthInterceptor(opts.baseUrl);
-    this.basePath = opts.basePath ?? "/devices";
+    this.basePath = opts.basePath ?? "/api/v1/user/devices";
   }
 
-  async getPage(params: GetDevicesPageParams = {}): Promise<Page<Device>> {
-    const { data } = await this.http.get<Page<Device>>(this.basePath, {
+  async getPage(params: GetDevicesPageParams = {}): Promise<Page<DeviceDTO>> {
+    const { data } = await this.http.get<Page<DeviceDTO>>(this.basePath, {
       params,
       paramsSerializer: {
         // Handles sort as repeated query params: sort=a&sort=b
@@ -52,28 +38,28 @@ export class DevicesApi {
     return data;
   }
 
-  async getAll(): Promise<Device[]> {
-    const { data } = await this.http.get<Device[]>(`${this.basePath}`);
+  async getAll(): Promise<DeviceDTO[]> {
+    const { data } = await this.http.get<DeviceDTO[]>(`${this.basePath}`);
     return data;
   }
 
-  async getById(id: number): Promise<Device> {
-    const { data } = await this.http.get<Device>(`${this.basePath}/${id}`);
+  async getById(id: number): Promise<DeviceDTO> {
+    const { data } = await this.http.get<DeviceDTO>(`${this.basePath}/${id}`);
     return data;
   }
 
-  async getByUuid(uuid: UUID): Promise<Device> {
-    const { data } = await this.http.get<Device>(`${this.basePath}/uuid/${uuid}`);
+  async getByUuid(uuid: UUID): Promise<DeviceDTO> {
+    const { data } = await this.http.get<DeviceDTO>(`${this.basePath}/uuid/${uuid}`);
     return data;
   }
 
-  async create(payload: DeviceRequestDTO): Promise<Device> {
-    const { data } = await this.http.post<Device>(this.basePath, payload);
+  async create(payload: DeviceRequestDTO): Promise<DeviceDTO> {
+    const { data } = await this.http.post<DeviceDTO>(this.basePath, payload);
     return data;
   }
 
-  async update(id: number, payload: DeviceRequestDTO): Promise<Device> {
-    const { data } = await this.http.put<Device>(`${this.basePath}/${id}`, payload);
+  async update(id: number, payload: DeviceRequestDTO): Promise<DeviceDTO> {
+    const { data } = await this.http.put<DeviceDTO>(`${this.basePath}/${id}`, payload);
     return data;
   }
 

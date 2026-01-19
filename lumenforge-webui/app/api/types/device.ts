@@ -1,7 +1,7 @@
 // src/api/types/device.ts
 export type UUID = string;
 
-export interface Device {
+export interface DeviceDTO {
   id: number;
   uuid: UUID;
   serialNumber: string | null;
@@ -10,10 +10,9 @@ export interface Device {
   photoUrl: string | null;
   purchasePrice: number | null;
   purchaseDate: string | null; // ISO date (yyyy-mm-dd)
-  vendor: Vendor;
-  maintenanceStatus: MaintenanceStatus;
-  categories: Category[];
-  // add additional fields if your backend returns them
+  vendor: VendorDTO;
+  maintenanceStatus: MaintenanceStatusDTO;
+  categories: CategoryDTO[];
 }
 
 export interface DeviceRequestDTO {
@@ -28,24 +27,23 @@ export interface DeviceRequestDTO {
   categoryIds: number[] | null;
 }
 
-export interface Vendor {
+export interface VendorDTO {
   id: number;
   name: string;
 }
 
-export interface MaintenanceStatus {
+export interface MaintenanceStatusDTO {
   id: number;
   name: string; // or enum-ish string depending on your backend
 }
 
-export interface Category {
+export interface CategoryDTO {
   id: number;
   name: string;
 }
 
 /**
- * Spring Data Page<T> common shape.
- * If your backend uses a different paging wrapper, adjust this.
+ * Spring Data Page<T>
  */
 export interface Page<T> {
   content: T[];

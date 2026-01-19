@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useAuthStore } from "~/auth/authStore";
 import NavigationBar from "~/navigation/navigationBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -10,6 +9,8 @@ import ConsoleSlider from "~/slider/consoleSlider";
 import Divider from "@mui/material/Divider";
 import { Button, Typography } from "@mui/material";
 import { DevicesApi } from "~/api/device/deviceApi";
+import { useAuthStore } from "~/stores/authStore";
+import useSliderStore from "~/stores/sliderStore";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -38,8 +39,7 @@ export function Console({ amountOfSliders }: { amountOfSliders: number }) {
   const disconnect = useSliderStore((s) => s.disconnect);
 
   const [message, setMessage] = useState<string>("Testing Device API...");
-
-
+     
 
   useEffect(() => {
     initSliders(amountOfSliders);
@@ -80,7 +80,9 @@ export function Console({ amountOfSliders }: { amountOfSliders: number }) {
           <Button variant="contained" onClick={() => { 
             new DevicesApi({ baseUrl: "http://localhost:1324/api/v1/user", basePath: "/devices" })
             .getAll()
-            .then((devices) => setMessage(`Retrieved ${devices.length} devices.`)) }}
+            .then((devices) => {
+              console.log("Devices:", devices);
+              setMessage(`Retrieved ${devices.length === undefined ? 0 : devices.length} devices.`); }) }}
             color="secondary">
             Test get Devices
           </Button>
