@@ -68,11 +68,11 @@ export default function NavigationBar({ routes , title}: { routes: RouteOptions[
                         {title}
                     </Typography>
 
-                    {routes.map((route) => (
+                    {status === "authenticated" ? ( routes.map((route) => (
                         <MenuItem key={route.title} onClick={() => navigate(route.redirectTo)}>
                             <Typography color='black' sx={{ textAlign: 'center' }}>{route.title}</Typography>
                         </MenuItem>
-                    ))}
+                    ))) : null}
 
                     <Typography
                         variant="h6"

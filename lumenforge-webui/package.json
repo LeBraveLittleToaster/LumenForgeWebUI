@@ -12,30 +12,30 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.6",
-    "@mui/material": "^7.3.6",
-    "@react-router/node": "7.10.1",
-    "@react-router/serve": "7.10.1",
+    "@mui/material": "^7.3.7",
+    "@react-router/node": "7.12.0",
+    "@react-router/serve": "7.12.0",
     "@stomp/stompjs": "^7.2.1",
     "@types/keycloak-js": "^2.5.4",
     "axios": "^1.13.2",
     "isbot": "^5.1.31",
     "keycloak-js": "^26.2.2",
-    "konva": "^10.0.12",
+    "konva": "^10.2.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-konva": "^19.2.1",
-    "react-router": "7.10.1",
-    "react-window": "^2.2.4",
+    "react-router": "7.12.0",
+    "react-window": "^2.2.5",
     "sockjs-client": "^1.6.1",
-    "zustand": "^5.0.9"
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
-    "@react-router/dev": "7.10.1",
-    "@types/node": "^22",
-    "@types/react": "^19.2.7",
+    "@react-router/dev": "7.12.0",
+    "@types/node": "^25.0.9",
+    "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
     "typescript": "^5.9.2",
-    "vite": "^7.1.7",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite": "^7.3.1",
+    "vite-tsconfig-paths": "^6.0.4"
   }
 }
