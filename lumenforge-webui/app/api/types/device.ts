@@ -10,6 +10,9 @@ export interface DeviceDTO {
   photoUrl: string | null;
   purchasePrice: number | null;
   purchaseDate: string | null; // ISO date (yyyy-mm-dd)
+  totalQuantity: number | null;
+  availableQuantity: number | null;
+  availabilityStatus: AvailabilityStatus;
   vendor: VendorDTO;
   maintenanceStatus: MaintenanceStatusDTO;
   categories: CategoryDTO[];
@@ -22,6 +25,9 @@ export interface DeviceRequestDTO {
   photoUrl: string | null;
   purchasePrice: number | null;
   purchaseDate: string | null; // ISO date
+  totalQuantity: number | null;
+  availableQuantity: number | null;
+  availabilityStatus: AvailabilityStatus;
   vendorId: number;
   maintenanceStatusId: number;
   categoryIds: number[] | null;
@@ -35,6 +41,14 @@ export interface VendorDTO {
 export interface MaintenanceStatusDTO {
   id: number;
   name: string; // or enum-ish string depending on your backend
+}
+
+export enum AvailabilityStatus {
+  Available = "AVAILABLE",
+  LowStock = "LOW_STOCK",
+  OutOfStock = "OUT_OF_STOCK",
+  Maintenance = "MAINTENANCE",
+  Unavailable = "UNAVAILABLE",
 }
 
 export interface CategoryDTO {
