@@ -1,8 +1,7 @@
-import { Typography } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 import type { Route } from "./+types/categories";
-import { DashboardLayout } from "~/components/dashboard/dashboardLayout";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
     { name: "description", content: "Welcome to React Router!" },
@@ -10,5 +9,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Categories() {
-  return (<Typography>Categories</Typography>)
+  return (<Box sx={{ p: 2 }}>
+    <TextField id="outlined-basic" label="Outlined" variant="outlined" />
+  </Box>);
 }

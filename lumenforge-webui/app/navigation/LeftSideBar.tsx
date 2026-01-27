@@ -66,7 +66,6 @@ export function LeftSidebar() {
 
   const [mini, setMini] = React.useState(false);
 
-  // Expand “Devices” group if we are on /devices or any of its sub routes
   const devicesActive =
     isPathActive(pathname, "/devices") ||
     isPathActive(pathname, "/categories") ||
@@ -75,7 +74,6 @@ export function LeftSidebar() {
 
   const [devicesOpen, setDevicesOpen] = React.useState(devicesActive);
 
-  // Keep it open when navigating inside the group (unless mini mode hides children)
   React.useEffect(() => {
     if (!mini) setDevicesOpen(devicesActive);
   }, [devicesActive, mini]);
@@ -156,15 +154,11 @@ export function LeftSidebar() {
             <ListItemButton
               onClick={() => {
                 if (mini) {
-                  // In mini mode we treat it like a normal nav item
-                  // You can change this behavior if you prefer a popover instead.
-                  // For now, navigate via the link below:
                 } else {
                   setDevicesOpen((v) => !v);
                 }
               }}
               component={mini ? NavLink : "button"}
-              // When mini: click navigates to /devices
               {...(mini ? ({ to: "/devices" } as any) : {})}
               sx={{
                 borderRadius: 2,

@@ -11,6 +11,8 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { useEffect } from "react";
 import { useAuthStore } from "./stores/authStore";
+import Box from "@mui/material/Box";
+import { CircularProgress } from "@mui/material";
 
 
 
@@ -55,13 +57,11 @@ export default function App() {
   useEffect(() => {
     void init();
   }, [init]);
-  
+
   if (status === "idle" || status === "initializing") {
-    return <div>Loading…</div>;
+    return <Box margin={0} width={"100dvw"} height={"100dvh"} sx={{ display: 'flex', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}><span className="loader"></span></Box>
   }
   console.log("Auth status:", status);
-
-
 
   return <Outlet />;
 }

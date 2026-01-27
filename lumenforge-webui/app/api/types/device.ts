@@ -34,7 +34,7 @@ export interface VendorDTO {
 
 export interface MaintenanceStatusDTO {
   id: number;
-  name: string; // or enum-ish string depending on your backend
+  name: string;
 }
 
 export interface CategoryDTO {

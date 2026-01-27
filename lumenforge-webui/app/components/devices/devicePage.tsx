@@ -1,6 +1,6 @@
 // Example usage (page) - ProductsPage.tsx
 import * as React from "react";
-import { Box, Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 
 import { DeviceTable, type DeviceRow } from "./deviceTable";
 import { useDeviceStore } from "~/stores/devicestore";
@@ -10,7 +10,6 @@ import { DeviceTablePagination } from "./deviceTablePagination";
 const ALL_ROWS: DeviceRow[] = [
   { id: "1", name: "Apple iPhone 15", category: "Phone", brand: "Apple", color: "Black", stock: 13, price: 829.99 },
   { id: "2", name: "Apple iPhone 14", category: "Phone", brand: "Apple", color: "Black", stock: 15, price: 396 },
-  // ...pretend you have 300 total on server
 ];
 
 export function DevicePage() {
@@ -39,8 +38,14 @@ export function DevicePage() {
     return filtered.slice(start, start + pageSize);
   }, [filtered, page, pageSize]);
 
+  const runOnClick = () => {
+    console.log("Button clicked!");
+        
+  }
+
   return (
     <Stack spacing={2}>
+    <Button onClick={() => runOnClick()}>TestButton</Button>
       <DeviceTable
         rows={paged}
         search={search}
