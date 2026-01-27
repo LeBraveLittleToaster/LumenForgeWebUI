@@ -9,13 +9,9 @@ import { useEffect, useMemo, useState } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '~/stores/authStore';
+import type { NavigationRoute } from './routes';
 
-type RouteOptions = {
-    title: string,
-    redirectTo: string
-}
-
-export default function NavigationBar({ routes , title}: { routes: RouteOptions[], title: string }) {
+export default function NavigationBar({ routes , title}: { routes: NavigationRoute[], title: string }) {
     const navigate = useNavigate();
     const login = useAuthStore((s: any) => s.login);
     const status = useAuthStore((s: any) => s.status);

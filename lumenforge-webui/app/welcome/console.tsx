@@ -11,6 +11,7 @@ import { Button, Typography } from "@mui/material";
 import { DevicesApi } from "~/api/device/deviceApi";
 import { useAuthStore } from "~/stores/authStore";
 import useSliderStore from "~/stores/sliderStore";
+import { navigationRoutes } from "~/navigation/routes";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -22,13 +23,6 @@ const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: '#1A2027',
   }),
 }));
-
-const routes = [
-  { title: "FaderBar", redirectTo: "/" },
-  { title: "Editor", redirectTo: "/stage/editor" },
-  { title: "Settings", redirectTo: "/settings" },
-];
-
 
 export function Console({ amountOfSliders }: { amountOfSliders: number }) {
   const status = useAuthStore((s: any) => s.status);
@@ -53,7 +47,7 @@ export function Console({ amountOfSliders }: { amountOfSliders: number }) {
   return (
     <>
       <CssBaseline />
-      <NavigationBar routes={routes} title="LumenForge" />
+      <NavigationBar routes={navigationRoutes} title="LumenForge" />
       <Box maxWidth="sm" height={100} />
 
       <Box
