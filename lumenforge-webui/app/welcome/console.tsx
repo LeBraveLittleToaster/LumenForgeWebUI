@@ -26,7 +26,6 @@ const Item = styled(Paper)(({ theme }) => ({
 const routes = [
   { title: "FaderBar", redirectTo: "/" },
   { title: "Editor", redirectTo: "/stage/editor" },
-  { title: "Events", redirectTo: "/events" },
   { title: "Settings", redirectTo: "/settings" },
 ];
 
