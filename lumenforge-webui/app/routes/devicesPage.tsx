@@ -1,5 +1,5 @@
 import { DevicePage } from "~/components/devices/devicePage";
-import type { Route } from "./+types/settings";
+import type { Route } from "./+types/devices";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,7 +8,6 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-// app/routes/_app.stage.editor.tsx
-export default function Route() {
+export default function DevicesPage() {
   return <DevicePage />;
 }

@@ -1,5 +1,5 @@
 import { Box, TextField, Typography } from "@mui/material";
-import type { Route } from "./+types/categories";
+import type { Route } from "./+types/categoriesPage";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -8,7 +8,7 @@ export function meta({ }: Route.MetaArgs) {
   ];
 }
 
-export default function Categories() {
+export default function CategoriesPage() {
   return (<Box sx={{ p: 2 }}>
     <TextField id="outlined-basic" label="Outlined" variant="outlined" />
   </Box>);

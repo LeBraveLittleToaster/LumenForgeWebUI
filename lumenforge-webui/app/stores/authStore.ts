@@ -40,6 +40,7 @@ export const useAuthStore = create<AuthState>((set:any, get:any) => ({
         onLoad: "check-sso",
         pkceMethod: "S256",
         checkLoginIframe: false,
+    
       });
 
       set({

@@ -1,7 +1,7 @@
 // src/api/devices/devicesApi.ts
 import type { AxiosInstance } from "axios";
 
-import type { DeviceDTO, DeviceRequestDTO, Page, UUID } from "../types/device";
+import type { DeviceDTO, DeviceRequestDTO, SpringPage, UUID } from "../types/device";
 import { getAxiosWithAuthInterceptor } from "../axios";
 
 export interface GetDevicesPageParams {
@@ -19,8 +19,8 @@ export class DevicesApi {
     this.basePath = opts.basePath ?? "/api/v1/user/devices";
   }
 
-  async getPage(params: GetDevicesPageParams = {}): Promise<Page<DeviceDTO>> {
-    const { data } = await this.http.get<Page<DeviceDTO>>(this.basePath, {
+  async getPage(params: GetDevicesPageParams = {}): Promise<SpringPage<DeviceDTO>> {
+    const { data } = await this.http.get<SpringPage<DeviceDTO>>(this.basePath, {
       params,
       paramsSerializer: {
         // Handles sort as repeated query params: sort=a&sort=b

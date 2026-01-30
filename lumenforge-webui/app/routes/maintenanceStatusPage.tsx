@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import type { Route } from "./+types/vendors";
+import type { Route } from "./+types/maintenanceStatusPage";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,6 +8,6 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Vendors() {
-  return (<Typography>Vendors</Typography>)
+export default function MaintenanceStatusPage() {
+  return (<Typography>Maintenance Status</Typography>)
 }

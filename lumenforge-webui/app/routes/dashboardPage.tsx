@@ -1,4 +1,4 @@
-import type { Route } from "./+types/dashboard";
+import type { Route } from "./+types/dashboardPage";
 import { DashboardLayout } from "~/components/dashboard/dashboardLayout";
 
 export function meta({}: Route.MetaArgs) {
@@ -8,6 +8,6 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Dashboard() {
+export default function DashboardPage() {
   return (<DashboardLayout/>)
 }

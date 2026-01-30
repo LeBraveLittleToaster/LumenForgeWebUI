@@ -1,4 +1,4 @@
-import type { Route } from "./+types/login";
+import type { Route } from "./+types/loginPage";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -7,6 +7,6 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Login() {
+export default function LoginPage() {
   return <a>Login</a>
 }

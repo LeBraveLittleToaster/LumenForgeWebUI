@@ -42,10 +42,7 @@ export interface CategoryDTO {
   name: string;
 }
 
-/**
- * Spring Data Page<T>
- */
-export interface Page<T> {
+export interface SpringPage<T> {
   content: T[];
   pageable?: unknown;
   totalElements: number;

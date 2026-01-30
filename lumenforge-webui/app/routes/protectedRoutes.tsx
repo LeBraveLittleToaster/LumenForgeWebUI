@@ -4,15 +4,17 @@ import { Outlet, Navigate } from "react-router";
 import { useAuthStore } from "~/stores/authStore";
 
 const ProtectedRoutes = () => {
-    
+    console.log("ProtectedRoutes component rendered");
     const status = useAuthStore((s: any) => s.status);
-
+    console.log("Current auth status:", status);
     if (status === "idle" || status === "initializing") {
         return <Box margin={0} width={"100dvw"} height={"100dvh"} sx={{ display: 'flex', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}><span className="loader"></span></Box>
     }
+    /*
     if (status !== "authenticated") {
         return <Navigate to="/" replace />;
     }
+    */
     console.log("Auth status:", status);
     return <Outlet />;
 };

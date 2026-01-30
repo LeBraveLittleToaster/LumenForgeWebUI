@@ -27,33 +27,11 @@ import ChevronLeftOutlinedIcon from "@mui/icons-material/ChevronLeftOutlined";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useAuthStore } from "~/stores/authStore";
+import { log } from "console";
 
 const DRAWER_WIDTH = 260;
 const MINI_WIDTH = 72;
-
-type NavItem = {
-  label: string;
-  to?: string; // optional if it’s a group
-  icon: React.ReactNode;
-  children?: Array<{ label: string; to: string; icon?: React.ReactNode }>;
-};
-
-const navItems: NavItem[] = [
-  { label: "Dashboard", to: "/", icon: <DashboardOutlinedIcon /> },
-
-  {
-    label: "Devices",
-    to: "/devices",
-    icon: <Inventory2OutlinedIcon />,
-    children: [
-      { label: "Categories", to: "/categories", icon: <CategoryOutlinedIcon /> },
-      { label: "Maintenance Status", to: "/maintenanceStatus", icon: <BuildOutlinedIcon /> },
-      { label: "Vendors", to: "/vendors", icon: <StoreOutlinedIcon /> },
-    ],
-  },
-
-  { label: "Settings", to: "/settings", icon: <SettingsOutlinedIcon /> },
-];
 
 function isPathActive(pathname: string, to: string) {
   if (to === "/") return pathname === "/";
@@ -67,10 +45,10 @@ export function LeftSidebar() {
   const [mini, setMini] = React.useState(false);
 
   const devicesActive =
-    isPathActive(pathname, "/devices") ||
-    isPathActive(pathname, "/categories") ||
-    isPathActive(pathname, "/maintenanceStatus") ||
-    isPathActive(pathname, "/vendors");
+    isPathActive(pathname, "/app/devices") ||
+    isPathActive(pathname, "/app/categories") ||
+    isPathActive(pathname, "/app/maintenanceStatus") ||
+    isPathActive(pathname, "/app/vendors");
 
   const [devicesOpen, setDevicesOpen] = React.useState(devicesActive);
 
@@ -189,7 +167,7 @@ export function LeftSidebar() {
               {/* Devices main route */}
               <ListItemButton
                 component={NavLink}
-                to="/devices"
+                to="/app/devices"
                 sx={{
                   borderRadius: 2,
                   mb: 0.5,
@@ -205,7 +183,7 @@ export function LeftSidebar() {
 
               <ListItemButton
                 component={NavLink}
-                to="/categories"
+                to="/app/categories"
                 sx={{
                   borderRadius: 2,
                   mb: 0.5,
@@ -224,7 +202,7 @@ export function LeftSidebar() {
 
               <ListItemButton
                 component={NavLink}
-                to="/maintenanceStatus"
+                to="/app/maintenanceStatus"
                 sx={{
                   borderRadius: 2,
                   mb: 0.5,
@@ -243,7 +221,7 @@ export function LeftSidebar() {
 
               <ListItemButton
                 component={NavLink}
-                to="/vendors"
+                to="/app/vendors"
                 sx={{
                   borderRadius: 2,
                   mb: 0.5,
@@ -266,7 +244,7 @@ export function LeftSidebar() {
           <Tooltip title={mini ? "Settings" : ""} placement="right" disableHoverListener={!mini}>
             <ListItemButton
               component={NavLink}
-              to="/settings"
+              to="/app/settings"
               sx={{
                 borderRadius: 2,
                 justifyContent: mini ? "center" : "flex-start",
@@ -295,7 +273,7 @@ export function LeftSidebar() {
           <Tooltip title={mini ? "Log Out" : ""} placement="right" disableHoverListener={!mini}>
             <ListItemButton
               onClick={() => {
-                console.log("logout");
+console.log("Logging out");
               }}
               sx={{
                 borderRadius: 2,
