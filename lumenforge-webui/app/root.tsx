@@ -51,18 +51,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const init = useAuthStore((s: any) => s.init);
-  const status = useAuthStore((s: any) => s.status);
-
-
   useEffect(() => {
     void init();
   }, [init]);
-
-  if (status === "idle" || status === "initializing") {
-    return <Box margin={0} width={"100dvw"} height={"100dvh"} sx={{ display: 'flex', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}><span className="loader"></span></Box>
-  }
-  console.log("Auth status:", status);
-
   return <Outlet />;
 }
 
