@@ -1,0 +1,49 @@
+.layout {
+  height: 100vh;
+  background: #f5f7fb;
+}
+
+.sidenav {
+  width: 260px;
+  border-right: 1px solid #e0e0e0;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidenav.mini {
+  width: 72px;
+}
+
+.sidenav-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.logo {
+  font-weight: 700;
+}
+
+.nav-section {
+  padding: 8px;
+  flex: 1;
+}
+
+.nav-expansion ::ng-deep .mat-expansion-panel-body {
+  padding: 0 0 8px 0;
+}
+
+.active-link {
+  background: rgba(63, 81, 181, 0.12);
+  border-radius: 12px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.content {
+  padding: 24px;
+}
