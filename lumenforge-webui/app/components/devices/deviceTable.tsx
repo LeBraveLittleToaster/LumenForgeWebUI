@@ -51,7 +51,6 @@ type DeviceTableProps = {
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 
-  // optional: selection support
   selectedIds?: string[];
   onToggleSelect?: (id: string) => void;
 };

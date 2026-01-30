@@ -1,7 +1,12 @@
 import { create } from "zustand";
 import { keycloak } from "./keycloak";
 
-type AuthStatus = "idle" | "initializing" | "authenticated" | "unauthenticated" | "error";
+type AuthStatus =
+  | "idle"
+  | "initializing"
+  | "authenticated"
+  | "unauthenticated"
+  | "error";
 
 type AuthState = {
   keycloak: typeof keycloak;
@@ -11,101 +16,123 @@ type AuthState = {
   tokenParsed?: Record<string, any>;
   error?: unknown;
 
+  initPromise?: Promise<boolean>;
+
   init: () => Promise<boolean>;
-  login: () => Promise<void>;
+  ensureInit: () => Promise<boolean>;
+
+  login: (redirectUri?: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshToken: (minValidity?: number) => Promise<boolean>;
+  userData: () => Promise<any>;
 };
 
-export const useAuthStore = create<AuthState>((set:any, get:any) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   keycloak,
   status: "idle",
   isAuthenticated: false,
   token: undefined,
   tokenParsed: undefined,
   error: undefined,
+  initPromise: undefined,
 
   init: async () => {
-    const { keycloak } = get();
-
-    if (get().status === "initializing" || get().status === "authenticated" || get().status === "unauthenticated") {
+    if (get().status === "initializing") return get().initPromise ?? false;
+    if (get().status === "authenticated" || get().status === "unauthenticated") {
       return get().isAuthenticated;
     }
 
-    console.log(get());
     set({ status: "initializing", error: undefined });
 
-    try {
-      const authenticated = await keycloak.init({
-        onLoad: "check-sso",
-        pkceMethod: "S256",
-        checkLoginIframe: false,
-    
-      });
+    const p = (async () => {
+      try {
+        const kc = get().keycloak;
 
-      set({
-        isAuthenticated: authenticated,
-        status: authenticated ? "authenticated" : "unauthenticated",
-        token: keycloak.token,
-        tokenParsed: (keycloak.tokenParsed as any) ?? undefined,
-      });
-
-      keycloak.onAuthSuccess = () =>
-        set({
-          isAuthenticated: true,
-          status: "authenticated",
-          token: keycloak.token,
-          tokenParsed: (keycloak.tokenParsed as any) ?? undefined,
+        const authenticated = await kc.init({
+          onLoad: "check-sso",
+          pkceMethod: "S256",
+          checkLoginIframe: false,
         });
 
-      keycloak.onAuthLogout = () =>
         set({
-          isAuthenticated: false,
-          status: "unauthenticated",
-          token: undefined,
-          tokenParsed: undefined,
+          isAuthenticated: authenticated,
+          status: authenticated ? "authenticated" : "unauthenticated",
+          token: kc.token,
+          tokenParsed: (kc.tokenParsed as any) ?? undefined,
+          initPromise: undefined,
         });
 
-      keycloak.onTokenExpired = async () => {
-        const ok = await get().refreshToken(30).catch(() => false);
-        if (!ok) {
+        kc.onAuthSuccess = () =>
+          set({
+            isAuthenticated: true,
+            status: "authenticated",
+            token: kc.token,
+            tokenParsed: (kc.tokenParsed as any) ?? undefined,
+          });
+
+        kc.onAuthLogout = () =>
           set({
             isAuthenticated: false,
             status: "unauthenticated",
             token: undefined,
             tokenParsed: undefined,
           });
-        }
-      };
 
-      keycloak.onAuthError = (err:any) => set({ status: "error", error: err });
+        kc.onTokenExpired = async () => {
+          const ok = await get().refreshToken(30).catch(() => false);
+          if (!ok) {
+            set({
+              isAuthenticated: false,
+              status: "unauthenticated",
+              token: undefined,
+              tokenParsed: undefined,
+            });
+          }
+        };
 
-      return authenticated;
-    } catch (err) {
-      set({ status: "error", error: err, isAuthenticated: false });
-      return false;
-    }
+        kc.onAuthError = (err: any) => set({ status: "error", error: err });
+
+        return authenticated;
+      } catch (err) {
+        set({ status: "error", error: err, isAuthenticated: false, initPromise: undefined });
+        return false;
+      }
+    })();
+
+    set({ initPromise: p });
+    return p;
   },
 
-  login: async () => {
-    await get().keycloak.login({ redirectUri: window.location.origin });
+  ensureInit: async () => {
+    // "Run init if I haven't done it yet" — but explicit and safe.
+    if (get().status === "idle") return get().init();
+    if (get().status === "initializing") return (await get().initPromise) ?? false;
+    return get().isAuthenticated;
   },
 
-  logout: async () => {await get().keycloak.logout({ redirectUri: window.location.origin });await get().keycloak.logout({ redirectUri: window.location.origin });
+  login: async (redirectUri?: string) => {
+    // Optional: await get().ensureInit(); (not strictly necessary for login)
+    await get().keycloak.login({ redirectUri: redirectUri ?? window.location.origin });
+  },
+
+  logout: async () => {
+    await get().keycloak.logout({ redirectUri: window.location.origin });
   },
 
   userData: async () => {
+    await get().ensureInit();
     return await get().keycloak.loadUserInfo();
   },
 
   refreshToken: async (minValidity = 30) => {
-    const { keycloak } = get();
-    const refreshed = await keycloak.updateToken(minValidity);
+    await get().ensureInit();
+    const kc = get().keycloak;
+    const refreshed = await kc.updateToken(minValidity);
     set({
-      token: keycloak.token,
-      tokenParsed: (keycloak.tokenParsed as any) ?? undefined,
-      isAuthenticated: !!keycloak.authenticated,
-      status: keycloak.authenticated ? "authenticated" : "unauthenticated",
+      token: kc.token,
+      tokenParsed: (kc.tokenParsed as any) ?? undefined,
+      isAuthenticated: !!kc.authenticated,
+      status: kc.authenticated ? "authenticated" : "unauthenticated",
     });
     return refreshed;
   },

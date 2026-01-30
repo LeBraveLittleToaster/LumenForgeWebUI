@@ -1,5 +1,5 @@
 import { DevicePage } from "~/components/devices/devicePage";
-import type { Route } from "./+types/devices";
+import type { Route } from "./+types/devicesPage";
 
 export function meta({}: Route.MetaArgs) {
   return [

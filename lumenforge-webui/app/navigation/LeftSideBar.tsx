@@ -27,8 +27,6 @@ import ChevronLeftOutlinedIcon from "@mui/icons-material/ChevronLeftOutlined";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useAuthStore } from "~/stores/authStore";
-import { log } from "console";
 
 const DRAWER_WIDTH = 260;
 const MINI_WIDTH = 72;

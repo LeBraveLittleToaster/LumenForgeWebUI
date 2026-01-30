@@ -46,15 +46,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 
 export default function App() {
-  const init = useAuthStore((state) => state.init);
-  const status = useAuthStore((s: any) => s.status);
-
-  useEffect(() => {
-    console.log("Auth status 1 in App component:", status);
-    console.log("Initializing auth store");
-    init();
-    console.log("Auth status 2 in App component:", status);
-  }, [init]);
   return <Outlet />;
 }
 

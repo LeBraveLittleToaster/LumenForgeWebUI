@@ -8,6 +8,7 @@ export interface GetDevicesPageParams {
   page?: number; // 0-based
   size?: number;
   sort?: string | string[]; // e.g. "name,asc" or ["name,asc","id,desc"]
+  q?: string;
 }
 
 export class DevicesApi {
