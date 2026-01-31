@@ -9,10 +9,19 @@ export interface DeviceDTO {
   description: string | null;
   photoUrl: string | null;
   purchasePrice: number | null;
-  purchaseDate: string | null; // ISO date (yyyy-mm-dd)
+  purchaseDate: string | null;
   vendor: VendorDTO;
   maintenanceStatus: MaintenanceStatusDTO;
   categories: CategoryDTO[];
+}
+
+export interface DeviceAndStockDTO {
+  uuid: UUID;
+  serialNumber: string | null;
+  name: string;
+  stockCount:number;
+  stockUnitType:string;
+  vendorName: string;
 }
 
 export interface DeviceRequestDTO {

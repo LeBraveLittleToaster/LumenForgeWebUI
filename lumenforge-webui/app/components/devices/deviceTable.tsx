@@ -32,11 +32,9 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 export type DeviceRow = {
   id: string;
   name: string;
-  category: string;
-  brand: string;
-  color: string;
+  vendor: string;
   stock: number;
-  price: number; // number, format in UI
+  stockUnit: string
 };
 
 type DeviceTableProps = {
@@ -152,27 +150,12 @@ export function DeviceTable(props: DeviceTableProps) {
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={700}>
-                  Category
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="subtitle2" fontWeight={700}>
                   Brand
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="subtitle2" fontWeight={700}>
-                  Color
                 </Typography>
               </TableCell>
               <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={700}>
                   Stock
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography variant="subtitle2" fontWeight={700}>
-                  Price
                 </Typography>
               </TableCell>
               <TableCell align="right">
@@ -201,9 +184,7 @@ export function DeviceTable(props: DeviceTableProps) {
                   <Typography fontWeight={600}>{r.name}</Typography>
                 </TableCell>
 
-                <TableCell>{r.category}</TableCell>
-                <TableCell>{r.brand}</TableCell>
-                <TableCell>{r.color}</TableCell>
+                <TableCell>{r.vendor}</TableCell>
 
                 <TableCell align="right">
                   <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={1}>
@@ -226,8 +207,6 @@ export function DeviceTable(props: DeviceTableProps) {
                     />
                   </Stack>
                 </TableCell>
-
-                <TableCell align="right">{formatMoney(r.price)}</TableCell>
 
                 <TableCell align="right">
                   <Tooltip title="View">

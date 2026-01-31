@@ -8,13 +8,15 @@ import { useDeviceStore } from "~/stores/devicestore";
 
 import { mapDeviceToRow } from "./mapDeviceToRow";
 import { DevicesApi } from "~/api/device/deviceApi";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 
 const devicesApi = new DevicesApi({ baseUrl: "http://localhost:1324" });
 
 function useDebounced<T>(value: T, delayMs: number) {
   const [debounced, setDebounced] = React.useState(value);
-  React.useEffect(() => {
+  useEffect(() => {
     const t = window.setTimeout(() => setDebounced(value), delayMs);
     return () => window.clearTimeout(t);
   }, [value, delayMs]);
@@ -22,6 +24,7 @@ function useDebounced<T>(value: T, delayMs: number) {
 }
 
 export function DevicePage() {
+  const navigate = useNavigate();
   const [search, setSearch] = React.useState("");
   const debouncedSearch = useDebounced(search, 250);
 
@@ -39,12 +42,13 @@ export function DevicePage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await devicesApi.getPage({
-        page: Math.max(0, page - 1),          // convert to 0-based
+      const result = await devicesApi.getPageWithStock({
+        page: Math.max(0, page - 1),
         size: pageSize,
         sort: ["name,asc", "id,asc"],
-        q: debouncedSearch.trim() || undefined, // will work once backend supports it
+        q: debouncedSearch.trim() || undefined,
       });
+      console.log("Fetched devices page:", result);
 
       setTotal(result.totalElements);
       setRows(result.content.map(mapDeviceToRow));
@@ -69,11 +73,11 @@ export function DevicePage() {
         search={search}
         onSearchChange={(v) => {
           setSearch(v);
-          setPage(1); // reset pagination when searching
+          setPage(1);
         }}
         onAdd={() => console.log("add")}
         onFilter={() => console.log("filter")}
-        onView={(id) => console.log("view", id)}
+        onView={(uuid) => navigate("/app/device/" + uuid)}
         onEdit={(id) => console.log("edit", id)}
         onDelete={async (id) => {
           await devicesApi.remove(Number(id));

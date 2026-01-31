@@ -1,7 +1,7 @@
 // src/api/devices/devicesApi.ts
 import type { AxiosInstance } from "axios";
 
-import type { DeviceDTO, DeviceRequestDTO, SpringPage, UUID } from "../types/device";
+import type { DeviceAndStockDTO, DeviceDTO, DeviceRequestDTO, SpringPage, UUID } from "../types/device";
 import { getAxiosWithAuthInterceptor } from "../axios";
 
 export interface GetDevicesPageParams {
@@ -24,7 +24,6 @@ export class DevicesApi {
     const { data } = await this.http.get<SpringPage<DeviceDTO>>(this.basePath, {
       params,
       paramsSerializer: {
-        // Handles sort as repeated query params: sort=a&sort=b
         serialize: (p) => {
           const usp = new URLSearchParams();
           for (const [k, v] of Object.entries(p ?? {})) {
@@ -38,6 +37,25 @@ export class DevicesApi {
     });
     return data;
   }
+
+  async getPageWithStock(params: GetDevicesPageParams = {}): Promise<SpringPage<DeviceAndStockDTO>> {
+    const { data } = await this.http.get<SpringPage<DeviceAndStockDTO>>(this.basePath + "/with-stock", {
+      params,
+      paramsSerializer: {
+        serialize: (p) => {
+          const usp = new URLSearchParams();
+          for (const [k, v] of Object.entries(p ?? {})) {
+            if (v === undefined || v === null) continue;
+            if (Array.isArray(v)) v.forEach((vv) => usp.append(k, String(vv)));
+            else usp.append(k, String(v));
+          }
+          return usp.toString();
+        },
+      },
+    });
+    return data;
+  }
+
 
   async getAll(): Promise<DeviceDTO[]> {
     const { data } = await this.http.get<DeviceDTO[]>(`${this.basePath}`);

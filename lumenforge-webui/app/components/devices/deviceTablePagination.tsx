@@ -2,13 +2,12 @@
 import * as React from "react";
 import { Box, Pagination, Stack, Typography } from "@mui/material";
 import { useDeviceStore } from "~/stores/devicestore";
+import { useEffect } from "react";
 
 
 
 type DeviceTablePaginationProps = {
-  // Optional: let parent trigger fetch when page changes
   onPageChange?: (page: number, pageSize: number) => void;
-  // Optional label like "Showing 1-10 of 300"
   showRangeLabel?: boolean;
 };
 
@@ -23,10 +22,7 @@ export function DeviceTablePagination({ onPageChange, showRangeLabel = true }: D
   const start = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const end = Math.min(total, page * pageSize);
 
-  React.useEffect(() => {
-    onPageChange?.(page, pageSize);
-  }, [page, pageSize, onPageChange]);
-
+  console.log("Pages % page %", pages, page)
   return (
     <Stack
       direction="row"
@@ -45,7 +41,10 @@ export function DeviceTablePagination({ onPageChange, showRangeLabel = true }: D
       <Pagination
         count={pages}
         page={page}
-        onChange={(_, next) => setPage(next)}
+        onChange={(_, next) => {
+          console.log("Setting next: " + next)
+          setPage(next);
+        }}
         shape="rounded"
         siblingCount={1}
         boundaryCount={1}

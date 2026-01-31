@@ -6,6 +6,7 @@ export default [
     route("app", "./routes/dashboardPage.tsx", [
       index("./routes/loginPage.tsx"),
       route("devices", "./routes/devicesPage.tsx"),
+      route("device/:uuid", "./components/devices/deviceDetailpage.tsx"),
       route("categories", "./routes/categoriesPage.tsx"),
       route("maintenanceStatus", "./routes/maintenanceStatusPage.tsx"),
       route("vendors", "./routes/vendorsPage.tsx"),
