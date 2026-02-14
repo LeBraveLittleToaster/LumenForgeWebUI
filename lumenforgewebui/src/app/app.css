@@ -1,0 +1,8 @@
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.toolbar {
+    background-color: whitesmoke;
+    border: 1px solid #000000;
+}
