@@ -44,7 +44,7 @@
 }
 
 .router-option {
-    color: var(--mat-sys-on-surface);
+    color: var(--mat-sys-on-primary);
     font-size: 18px;
     margin-right: 20px;
 }

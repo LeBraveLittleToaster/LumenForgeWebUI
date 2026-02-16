@@ -1,19 +1,24 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
+import {MatButtonModule, MatIconButton} from '@angular/material/button';
 import { MatToolbar } from '@angular/material/toolbar';
 import { AuthService } from './core/auth/auth-service';
+import { MatMenu, MatMenuModule } from '@angular/material/menu';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatToolbar, MatIconModule, MatButtonModule, RouterLink],
+  imports: [CommonModule, RouterOutlet, MatToolbar, MatIconButton, MatIconModule, MatButtonModule, RouterLink, MatMenuModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  private readonly auth = inject(AuthService);
+  readonly auth = inject(AuthService);
+  
   readonly isAuthenticated = this.auth.isAuthenticated();
+  readonly isAdmin = this.auth.isAdmin();
+
   protected readonly title = signal('lumenforgewebui');
   
 }
