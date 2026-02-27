@@ -1,12 +1,19 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../../core/auth/auth-service';
+import { AuthService } from '../../core/api/auth/auth-service';
 import { MatIconButton } from '@angular/material/button';
+import { Category } from '../category/category';
+import { Vendor } from '../vendor/vendor';
+import { RouterLink, RouterModule } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { DynamicTableComponent } from '../../shared/dynamic-table-component/dynamic-table-component';
 
 @Component({
   selector: 'app-admin',
-  imports: [MatIconButton],
+  imports: [MatIconButton, 
+    Category, Vendor, RouterLink, RouterModule,
+  MatCardModule, DynamicTableComponent],
   templateUrl: './admin.html',
-  styleUrl: './admin.css',
+  styleUrl: './admin.scss',
 })
 export class Admin {
   private auth = inject(AuthService);

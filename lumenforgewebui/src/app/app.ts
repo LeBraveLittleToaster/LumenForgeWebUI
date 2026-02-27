@@ -3,7 +3,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule, MatIconButton} from '@angular/material/button';
 import { MatToolbar } from '@angular/material/toolbar';
-import { AuthService } from './core/auth/auth-service';
+import { AuthService } from './core/api/auth/auth-service';
 import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 

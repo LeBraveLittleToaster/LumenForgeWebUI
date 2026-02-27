@@ -1,13 +1,15 @@
 import { HttpInterceptorFn, HttpRequest, HttpHandlerFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { from, switchMap } from 'rxjs';
-import { AuthService } from './auth-service';
+import { AuthService } from '../auth/auth-service';
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
   const authService = inject(AuthService);
 
-  const isApiRequest = req.url.startsWith('/api');
+  var pathname = new URL(req.url).pathname;
+  const isApiRequest = pathname.startsWith('/api');
 
+  console.log('Intercepting request:', req.url, 'Is API request:', isApiRequest);
   if (!isApiRequest || !authService.isAuthenticated()) {
     return next(req);
   }

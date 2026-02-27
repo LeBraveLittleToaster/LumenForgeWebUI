@@ -1,5 +1,76 @@
-<div class="container">
-    <h1>Admin Test</h1>
-        
-    <button matIconButton type="button" class="btn btn-success" (click)="logout()">Logout</button>
-</div>
+<section class="admin-grid">
+  <mat-card
+    class="admin-card"
+    appearance="outlined"
+    routerLink="/admin/categories"
+  >
+    <img
+      class="admin-card__media"
+      src="https://picsum.photos/800/450?random=10"
+      alt="Categories"
+      loading="lazy"
+    />
+
+    <mat-card-header>
+      <mat-card-title>Categories</mat-card-title>
+      <mat-card-subtitle>Manage category structure</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
+  <mat-card
+    class="admin-card"
+    appearance="outlined"
+    routerLink="/admin/vendor"
+  >
+    <img
+      class="admin-card__media"
+      src="https://picsum.photos/800/450?random=11"
+      alt="Vendors"
+      loading="lazy"
+    />
+
+    <mat-card-header>
+      <mat-card-title>Vendors</mat-card-title>
+      <mat-card-subtitle>Maintain vendor records</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
+  <!--
+  <mat-card
+    class="admin-card"
+    appearance="outlined"
+    routerLink="/admin/products"
+  >
+    <img
+      class="admin-card__media"
+      src="https://picsum.photos/800/450?random=12"
+      alt="Products"
+      loading="lazy"
+    />
+
+    <mat-card-header>
+      <mat-card-title>Products</mat-card-title>
+      <mat-card-subtitle>Manage catalog and pricing</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
+  <mat-card
+    class="admin-card"
+    appearance="outlined"
+    routerLink="/admin/orders"
+  >
+    <img
+      class="admin-card__media"
+      src="https://picsum.photos/800/450?random=13"
+      alt="Orders"
+      loading="lazy"
+    />
+
+    <mat-card-header>
+      <mat-card-title>Orders</mat-card-title>
+      <mat-card-subtitle>Review and fulfilment</mat-card-subtitle>
+    </mat-card-header>
+    
+  </mat-card>
+  -->
+</section>
