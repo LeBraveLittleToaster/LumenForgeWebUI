@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, signal, computed } from '@angular/core';
 import Keycloak from 'keycloak-js';
 
@@ -16,6 +17,7 @@ export interface UserProfile {
   providedIn: 'root'
 })
 export class AuthService {
+
   private keycloak = new Keycloak({
     url: 'http://localhost:8080',
     realm: 'lumenforge-realm',

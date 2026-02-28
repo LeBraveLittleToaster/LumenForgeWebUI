@@ -1,15 +1,31 @@
+<h1>Admin Dashboard</h1>
+
+<h2>Authorization and Authentication</h2>
 <section class="admin-grid">
-  <mat-card
-    class="admin-card"
-    appearance="outlined"
-    routerLink="/admin/categories"
-  >
-    <img
-      class="admin-card__media"
-      src="https://picsum.photos/800/450?random=10"
-      alt="Categories"
-      loading="lazy"
-    />
+
+  <mat-card class="admin-card" appearance="outlined" routerLink="/admin/users">
+    <img class="admin-card__media" src="https://picsum.photos/800/450?random=12" alt="Users" loading="lazy" />
+
+    <mat-card-header>
+      <mat-card-title>Users</mat-card-title>
+      <mat-card-subtitle>Manage user accounts and permissions</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
+  <mat-card class="admin-card" appearance="outlined" routerLink="/admin/groups">
+    <img class="admin-card__media" src="https://picsum.photos/800/450?random=13" alt="Groups" loading="lazy" />
+
+    <mat-card-header>
+      <mat-card-title>Groups</mat-card-title>
+      <mat-card-subtitle>Manage user groups and permissions</mat-card-subtitle>
+    </mat-card-header>
+
+  </mat-card>
+</section>
+<h2>Manage Content</h2>
+<section class="admin-grid">
+  <mat-card class="admin-card" appearance="outlined" routerLink="/admin/categories">
+    <img class="admin-card__media" src="https://picsum.photos/800/450?random=10" alt="Categories" loading="lazy" />
 
     <mat-card-header>
       <mat-card-title>Categories</mat-card-title>
@@ -17,17 +33,8 @@
     </mat-card-header>
   </mat-card>
 
-  <mat-card
-    class="admin-card"
-    appearance="outlined"
-    routerLink="/admin/vendor"
-  >
-    <img
-      class="admin-card__media"
-      src="https://picsum.photos/800/450?random=11"
-      alt="Vendors"
-      loading="lazy"
-    />
+  <mat-card class="admin-card" appearance="outlined" routerLink="/admin/vendor">
+    <img class="admin-card__media" src="https://picsum.photos/800/450?random=11" alt="Vendors" loading="lazy" />
 
     <mat-card-header>
       <mat-card-title>Vendors</mat-card-title>
@@ -35,42 +42,4 @@
     </mat-card-header>
   </mat-card>
 
-  <!--
-  <mat-card
-    class="admin-card"
-    appearance="outlined"
-    routerLink="/admin/products"
-  >
-    <img
-      class="admin-card__media"
-      src="https://picsum.photos/800/450?random=12"
-      alt="Products"
-      loading="lazy"
-    />
-
-    <mat-card-header>
-      <mat-card-title>Products</mat-card-title>
-      <mat-card-subtitle>Manage catalog and pricing</mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
-
-  <mat-card
-    class="admin-card"
-    appearance="outlined"
-    routerLink="/admin/orders"
-  >
-    <img
-      class="admin-card__media"
-      src="https://picsum.photos/800/450?random=13"
-      alt="Orders"
-      loading="lazy"
-    />
-
-    <mat-card-header>
-      <mat-card-title>Orders</mat-card-title>
-      <mat-card-subtitle>Review and fulfilment</mat-card-subtitle>
-    </mat-card-header>
-    
-  </mat-card>
-  -->
 </section>

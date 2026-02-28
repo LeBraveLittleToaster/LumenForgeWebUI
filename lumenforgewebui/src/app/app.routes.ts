@@ -7,6 +7,7 @@ import { adminGuard, authGuard } from './core/api/auth/auth.guard';
 import { Dashboard } from './features/dashboard/dashboard';
 import { Category } from './features/category/category';
 import { Vendor } from './features/vendor/vendor';
+import { Groups } from './features/groups/groups';
 
 export const routes: Routes = [
     {
@@ -37,5 +38,15 @@ export const routes: Routes = [
         path: "admin/vendor",
         canActivate: [adminGuard],
         component: Vendor,
+    },
+    {
+        path: "admin/groups",
+        canActivate: [adminGuard],
+        component: Groups,
+    },
+    {
+        path: "admin/users",
+        canActivate: [adminGuard],
+        component: User,
     }
 ];

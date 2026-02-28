@@ -9,9 +9,8 @@ import { DynamicTableComponent } from '../../shared/dynamic-table-component/dyna
 
 @Component({
   selector: 'app-admin',
-  imports: [MatIconButton, 
-    Category, Vendor, RouterLink, RouterModule,
-  MatCardModule, DynamicTableComponent],
+  imports: [RouterLink, RouterModule,
+  MatCardModule],
   templateUrl: './admin.html',
   styleUrl: './admin.scss',
 })
@@ -22,4 +21,5 @@ export class Admin {
     console.log('Logging out user');
     this.auth.logout();
   }
+
 }
