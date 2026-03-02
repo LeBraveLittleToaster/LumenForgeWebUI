@@ -100,10 +100,6 @@ export class AuthService {
     return this.keycloak.token;
   }
 
-  /**
-   * Useful for the Interceptor to ensure we have a fresh token 
-   * before making an API call.
-   */
   async getValidToken(): Promise<string | undefined> {
     try {
       await this.keycloak.updateToken(30); // Refresh if token expires in < 30s
@@ -113,4 +109,5 @@ export class AuthService {
       return undefined;
     }
   }
+
 }

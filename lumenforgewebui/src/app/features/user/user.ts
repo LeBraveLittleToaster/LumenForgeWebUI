@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {MatTableModule} from '@angular/material/table';
+import { AuthApiClient } from '../../core/api/auth/auth-api.client';
 
 export interface PeriodicElement {
   name: string;
@@ -21,8 +22,16 @@ const ELEMENT_DATA: PeriodicElement[] = [
   imports: [MatTableModule],
   templateUrl: './user.html',
   styleUrl: './user.css',
+  providers: [AuthApiClient]
 })
 export class User {
-displayedColumns: string[] = ['firstName', 'lastName'];
+
+  constructor(private authApiClient: AuthApiClient) {
+    authApiClient.listUsers().subscribe(users => {
+      console.log(users);
+    });
+  }
+  
+  displayedColumns: string[] = ['firstName', 'lastName'];
   dataSource = ELEMENT_DATA;
 }
