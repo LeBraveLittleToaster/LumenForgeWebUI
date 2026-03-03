@@ -8,6 +8,8 @@ import { Dashboard } from './features/dashboard/dashboard';
 import { Category } from './features/category/category';
 import { Vendor } from './features/vendor/vendor';
 import { Groups } from './features/groups/groups';
+import { UserDetail } from './features/userdetail/userdetail';
+import { Groupdetail } from './features/groupdetail/groupdetail';
 
 export const routes: Routes = [
     {
@@ -45,8 +47,18 @@ export const routes: Routes = [
         component: Groups,
     },
     {
+        path: "admin/users/:groupGuid",
+        canActivate: [adminGuard],
+        component: Groupdetail,
+    },
+    {
         path: "admin/users",
         canActivate: [adminGuard],
         component: User,
+    },
+    {
+        path: "admin/users/:userKcId",
+        canActivate: [adminGuard],
+        component: UserDetail,
     }
 ];

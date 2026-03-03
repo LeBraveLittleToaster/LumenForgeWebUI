@@ -6,10 +6,11 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { tap } from 'rxjs/internal/operators/tap';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-user',
-  imports: [MatTableModule, MatPaginatorModule, MatProgressSpinner, CommonModule],
+  imports: [MatTableModule, MatPaginatorModule, MatProgressSpinner, CommonModule, RouterLink],
   templateUrl: './user.html',
   styleUrl: './user.css',
   providers: [AuthApiClient]

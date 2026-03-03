@@ -81,8 +81,8 @@ export class AuthApiClient {
     return this.http.get<GroupView>(this.url(`/api/v1/auth/groups/${groupGuid}`));
   }
 
-  listGroups(query: ListQueryDto = {}): Observable<GroupView[]> {
-    return this.http.get<GroupView[]>(
+  listGroups(query: ListQueryDto = {}): Observable<ListView<GroupView>> {
+    return this.http.get<ListView<GroupView>>(
       this.url('/api/v1/auth/groups'),
       { params: toHttpParams({ search: query.search ?? undefined, limit: query.limit, offset: query.offset }) }
     );
