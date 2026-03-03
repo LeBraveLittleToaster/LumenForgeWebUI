@@ -88,10 +88,6 @@ export interface GroupRole {
 export interface KcUserReference {
   joinedAt : InstantString,
   userKcId: string;
-  username: string,
-  email: string;
-  firstName: string;
-  lastName: string;
 }
 
 /** From GroupUser.cs */

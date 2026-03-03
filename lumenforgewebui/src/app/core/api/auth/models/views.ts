@@ -8,6 +8,10 @@ export interface UserView {
   joined_at: string;      // Instant
   user_kc_id: string;
   group_users: GroupUser[];
+  username: string,
+  email: string;
+  firstName: string;
+  lastName: string;
 }
 
 /**
@@ -29,4 +33,9 @@ export interface GroupView {
 export interface RoleViewDto {
   name: string;
   value: number;
+}
+
+export interface ListView<T> {
+  list: T[];
+  total: number;
 }

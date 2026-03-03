@@ -7,7 +7,7 @@ import { toHttpParams } from './http-params';
 import { AUTH_API_BASE_URL } from './token';
 import { ListQueryDto } from './models/query';
 import { Guid } from './common/common';
-import { GroupView, UserView } from './models/views';
+import { GroupView, ListView, UserView } from './models/views';
 import { AddGroupDto, AddKcUserDto, AssignGroupRolesDto, AssignUserToGroupDto, Role, UpdateGroupDto, UpdateUserDto } from './models/dtos';
 
 @Injectable({ providedIn: 'root' })
@@ -47,8 +47,8 @@ export class AuthApiClient {
     return this.http.get<UserView>(this.url(`/api/v1/auth/users/${userKcId}`));
   }
 
-  listUsers(query: ListQueryDto = {}): Observable<UserView[]> {
-    return this.http.get<UserView[]>(
+  listUsers(query: ListQueryDto = {}): Observable<ListView<UserView>> {
+    return this.http.get<ListView<UserView>>(
       this.url('/api/v1/auth/users'),
       { params: toHttpParams({ search: query.search ?? undefined, limit: query.limit, offset: query.offset }) }
     );
