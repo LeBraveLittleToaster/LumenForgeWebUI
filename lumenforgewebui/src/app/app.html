@@ -1,0 +1,32 @@
+<mat-toolbar class="toolbar">
+  <img id="logo" src="LumenForgeLogo.webp" alt="LumenForge Logo" class="logo" routerLink="/">
+  <h1 id="toolbar-logo-title" routerLink="/">LumenForge</h1>
+  <span class="toolbar-spacer"></span>
+  @if(isAuthenticated) {
+  <span class="router-option" routerLink="/dashboard">Dashboard</span>
+  <span class="router-option" routerLink="/inventory">Inventory</span>
+  <span class="router-option" routerLink="/maintenance">Maintenance</span>
+  <span class="router-option" routerLink="/rental">Rental</span>
+  <span class="router-option" routerLink="/billing">Billing</span>
+  <span class="router-option" routerLink="/reports">Reports</span>
+  }
+
+  <span class="toolbar-spacer"></span>
+
+  @if(isAuthenticated) {
+  <button matIconButton [matMenuTriggerFor]="menu"><mat-icon>account_box</mat-icon></button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item routerLink="/admin" *ngIf="isAdmin">Go to Admin</button>
+    <button mat-menu-item (click)="auth.logout()">Logout</button>
+  </mat-menu>
+  }@else {
+    <button matIconButton class="example-icon favorite-icon" routerLink="/login">
+      <mat-icon>login</mat-icon>
+    </button>
+  }
+
+
+</mat-toolbar>
+<main class="page">
+  <router-outlet></router-outlet>
+</main>

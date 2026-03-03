@@ -1,0 +1,9 @@
+table {
+  width: 100%;
+}
+
+.user-table-header {
+  font-size: 2.5em;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+}

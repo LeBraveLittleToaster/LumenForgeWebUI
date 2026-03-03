@@ -1,0 +1,124 @@
+<section class="profile-container">
+  <mat-card class="profile-card" appearance="outlined">
+    <mat-card-header>
+      <div class="header">
+        <h1 class="mat-headline-medium title">User profile</h1>
+        <p class="mat-body-large subtitle">Managed by Keycloak</p>
+      </div>
+    </mat-card-header>
+
+    
+
+    <mat-card-content>
+      <mat-divider class="divider"></mat-divider>
+      @if (state$ | async; as state) {
+
+        @if (state.loading) {
+          <div class="state-container">
+            <mat-progress-spinner diameter="48" mode="indeterminate"></mat-progress-spinner>
+            <p class="mat-body-medium">Retrieving profile...</p>
+          </div>
+        }
+
+        @else if (state.error) {
+          <div class="state-container error">
+            <mat-icon aria-hidden="true">error_outline</mat-icon>
+            <p class="mat-body-large">{{ state.error }}</p>
+          </div>
+        }
+
+        @else if (state.user) {
+          <!-- Profile fields -->
+          <div class="info-grid">
+            <div class="info-field">
+              <div class="info-label mat-body-small">Username</div>
+              <div class="info-value mat-body-large">{{ state.user.username || "—" }}</div>
+            </div>
+
+            <div class="info-field">
+              <div class="info-label mat-body-small">Email</div>
+              <div class="info-value mat-body-large">
+                @if (state.user.email) {
+                  <a class="accent-link" [href]="'mailto:' + state.user.email">{{ state.user.email }}</a>
+                } @else {
+                  —
+                }
+              </div>
+            </div>
+
+            <div class="info-field">
+              <div class="info-label mat-body-small">First name</div>
+              <div class="info-value mat-body-large">{{ state.user.firstName || "—" }}</div>
+            </div>
+
+            <div class="info-field">
+              <div class="info-label mat-body-small">Last name</div>
+              <div class="info-value mat-body-large">{{ state.user.lastName || "—" }}</div>
+            </div>
+
+            <div class="info-field full-width">
+              <div class="info-label mat-body-small">Keycloak user ID</div>
+              <div class="info-value mat-body-large monospace-id">{{ state.user.user_kc_id || "—" }}</div>
+            </div>
+
+            <div class="info-field">
+              <div class="info-label mat-body-small">Joined at</div>
+              <div class="info-value mat-body-large">
+                {{ state.user.joined_at ? (state.user.joined_at | date : "medium") : "—" }}
+              </div>
+            </div>
+          </div>
+
+          <mat-divider class="divider"></mat-divider>
+
+          <!-- Groups -->
+          <div class="section-header">
+            <h2 class="mat-title-large section-title">Groups</h2>
+            <p class="mat-body-medium section-subtitle">Memberships recorded for this user.</p>
+          </div>
+
+          @if (!state.user.group_users || state.user.group_users.length === 0) {
+            <p class="mat-body-medium muted">No group memberships recorded.</p>
+          } @else {
+            <div class="table-container">
+              <table mat-table [dataSource]="state.user.group_users" class="m3-table">
+
+                <ng-container matColumnDef="groupId">
+                  <th mat-header-cell *matHeaderCellDef>Group ID</th>
+                  <td mat-cell *matCellDef="let gu" class="monospace-id">{{ gu.groupId }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="userId">
+                  <th mat-header-cell *matHeaderCellDef>User ID</th>
+                  <td mat-cell *matCellDef="let gu" class="monospace-id">{{ gu.userId }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="joinedAt">
+                  <th mat-header-cell *matHeaderCellDef>Joined at</th>
+                  <td mat-cell *matCellDef="let gu">
+                    {{ gu.joinedAt ? (gu.joinedAt | date : "medium") : "—" }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="assignedByKeycloakId">
+                  <th mat-header-cell *matHeaderCellDef>Assigned by</th>
+                  <td mat-cell *matCellDef="let gu" class="monospace-id">{{ gu.assignedByKeycloakId || "—" }}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+              </table>
+            </div>
+          }
+        }
+
+        @else {
+          <div class="state-container">
+            <mat-icon aria-hidden="true">no_accounts</mat-icon>
+            <p class="mat-body-medium">No user data matches this ID.</p>
+          </div>
+        }
+      }
+    </mat-card-content>
+  </mat-card>
+</section>

@@ -1,0 +1,136 @@
+/* user-profile.component.scss */
+.profile-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 900px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background-color: var(--mat-sys-primary-container);
+}
+
+.header {
+  width: 100%;
+  text-align: center;
+  padding-top: 8px;
+}
+
+.title,
+.subtitle,
+.section-title,
+.section-subtitle,
+.muted,
+.state-container p {
+  color: var(--mat-sys-on-primary-container);
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+}
+
+.state-container {
+  display: grid;
+  gap: 12px;
+  place-items: center;
+  padding: 28px 12px;
+}
+
+.state-container mat-icon {
+  color: var(--mat-sys-on-primary-container);
+}
+
+.state-container.error mat-icon {
+  color: #ff6b6b;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.info-field {
+  display: grid;
+  gap: 6px;
+}
+
+.info-label {
+  opacity: 0.9;
+  letter-spacing: 0.3px;
+}
+
+.info-value {
+  font-weight: 600;
+  color: var(--mat-sys-on-primary-container);
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.monospace-id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-weight: 600;
+}
+
+.divider {
+  margin: 20px 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.section-subtitle {
+  margin: 0.25rem 0 0;
+  opacity: 0.9;
+}
+
+.accent-link {
+  color: var(--mat-sys-on-secondary-container);
+  text-decoration: none;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background-color: var(--mat-sys-secondary-container);
+}
+
+.accent-link:hover {
+  background-color: var(--mat-sys-secondary);
+  color: var(--mat-sys-on-secondary);
+}
+
+.table-container {
+  overflow: auto;
+  border-radius: 12px;
+}
+
+.m3-table {
+  width: 100%;
+  background: transparent;
+}
+
+.m3-table th.mat-mdc-header-cell,
+.m3-table td.mat-mdc-cell {
+  color: var(--mat-sys-on-primary-container);
+}
+
+.m3-table th.mat-mdc-header-cell {
+  font-weight: 700;
+}
+
+@media (max-width: 720px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  .profile-card {
+    max-width: 520px;
+  }
+}
