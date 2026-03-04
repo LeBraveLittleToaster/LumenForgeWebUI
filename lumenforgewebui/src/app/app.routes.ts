@@ -47,7 +47,7 @@ export const routes: Routes = [
         component: Groups,
     },
     {
-        path: "admin/users/:groupGuid",
+        path: "admin/groups/:groupGuid",
         canActivate: [adminGuard],
         component: Groupdetail,
     },

@@ -7,3 +7,7 @@ table {
   margin-top: 2em;
   margin-bottom: 0.5em;
 }
+
+.mat-row:hover {
+  background-color: var(--mat-sys-on-primary);
+}

@@ -5,10 +5,12 @@ import { AuthApiClient } from "../../core/api/auth/auth-api.client";
 
 export class UserDataSource implements DataSource<UserDataItem> {
 
-    private usersSubject = new BehaviorSubject<UserDataItem[]>([]) ;
+    private usersSubject = new BehaviorSubject<UserDataItem[]>([]);
+    private totalSubject = new BehaviorSubject<number>(0);
     private loadingSubject = new BehaviorSubject<boolean>(false);
 
-    public loading$ = this.loadingSubject.asObservable();
+    readonly loading$ = this.loadingSubject.asObservable();
+    readonly total$ = this.totalSubject.asObservable();
 
     constructor(private authApiClient: AuthApiClient) {}
 
@@ -36,11 +38,12 @@ export class UserDataSource implements DataSource<UserDataItem> {
         ).subscribe(users => { 
             const userDataItems = users.list.map(user => ({ userView: user }));
             this.usersSubject.next(userDataItems);
+            this.totalSubject.next(users.total)
         });
     }
 
     getLength(): number {
-        return this.usersSubject.value.length;
+        return this.totalSubject.value;
     }
 }
 
