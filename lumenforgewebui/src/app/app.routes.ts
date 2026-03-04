@@ -10,6 +10,7 @@ import { Vendor } from './features/vendor/vendor';
 import { Groups } from './features/groups/groups';
 import { UserDetail } from './features/userdetail/userdetail';
 import { Groupdetail } from './features/groupdetail/groupdetail';
+import { UserCreate } from './features/usercreate/usercreate';
 
 export const routes: Routes = [
     {
@@ -55,6 +56,11 @@ export const routes: Routes = [
         path: "admin/users",
         canActivate: [adminGuard],
         component: User,
+    },
+    {
+        path: "admin/users/create",
+        canActivate: [adminGuard],
+        component: UserCreate,
     },
     {
         path: "admin/users/:userKcId",

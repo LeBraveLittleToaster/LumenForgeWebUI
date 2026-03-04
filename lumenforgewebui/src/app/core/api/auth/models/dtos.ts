@@ -126,8 +126,6 @@ export interface AddKcUserDto {
   email: string;
   firstName: string;
   lastName: string;
-  groups: string[];
-  realmRoles: string[];
 }
 
 /** From UpdateUserDto.cs */

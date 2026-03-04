@@ -1,4 +1,14 @@
+
 <h1 class="user-table-header">User Table</h1>
+<section class="search-section">
+  <form class="example-form">
+  <mat-form-field appearance="outline" class="example-full-width">
+    <mat-label>Search</mat-label>
+    <input matInput placeholder="Search Term">
+  </mat-form-field>
+  </form>
+  <button matButton="outlined" [routerLink]="['/admin/users/create']">Create User</button>
+</section>
 @if (dataSource.loading$ | async) {
     <div class="spinner-container">
         <mat-spinner></mat-spinner>

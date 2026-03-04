@@ -1,0 +1,63 @@
+<mat-stepper orientation="horizontal" [linear]="isLinear" #stepper>
+  <mat-step [stepControl]="firstFormGroup">
+    <form [formGroup]="firstFormGroup">
+      <ng-template matStepLabel>Fill out your name</ng-template>
+      <div>
+        <mat-form-field>
+          <mat-label>First Name</mat-label>
+          <input matInput placeholder="First name" formControlName="firstNameCtrl" required>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Last Name</mat-label>
+          <input matInput placeholder="Last name" formControlName="lastNameCtrl" required>
+        </mat-form-field>
+      </div>
+
+      <div>
+        <button matButton matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="secondFormGroup">
+    <form [formGroup]="secondFormGroup">
+      <ng-template matStepLabel>Fill out your username and e-mail</ng-template>
+      <div>
+        <mat-form-field>
+          <mat-label>Username</mat-label>
+          <input matInput placeholder="Username" formControlName="usernameCtrl" required>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>E-Mail</mat-label>
+          <input matInput formControlName="emailCtrl" placeholder="some@email.com" required>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Password</mat-label>
+          <input matInput type="password" placeholder="Password" formControlName="passwordCtrl" required>
+        </mat-form-field>
+      </div><div>
+        <mat-form-field>
+          <mat-label>Confirm Password</mat-label>
+          <input matInput type="password" placeholder="Password" formControlName="passwordConfirmCtrl" required>
+        </mat-form-field>
+      </div>
+      <div>
+        <button matButton matStepperPrevious>Back</button>
+        <button matButton matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    <p>You are now done.</p>
+    <div>
+      <button matButton matStepperPrevious>Back</button>
+      <button matButton disabled]="(isSending$ | async) === true || firstFormGroup.invalid || secondFormGroup.invalid" (click)="createUser()">Send</button>
+    </div>
+  </mat-step>
+</mat-stepper>

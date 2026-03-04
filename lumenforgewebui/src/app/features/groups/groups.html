@@ -27,7 +27,7 @@
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/admin/groups/', row.groupView.guid]"></tr>
+  <tr mat-row class="mat-row" *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/admin/groups/', row.groupView.guid]"></tr>
 </table>
 <mat-paginator [length]="dataSource.getLength()"
               [pageSize]="10"

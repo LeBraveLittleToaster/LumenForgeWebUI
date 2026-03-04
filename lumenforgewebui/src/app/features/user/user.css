@@ -11,3 +11,20 @@ table {
 .mat-row:hover {
   background-color: var(--mat-sys-on-primary);
 }
+.example-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+
+.example-full-width {
+  width: 100%;
+
+}
+
+.search-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

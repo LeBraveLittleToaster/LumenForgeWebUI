@@ -7,10 +7,15 @@ import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { tap } from 'rxjs/internal/operators/tap';
 import { RouterLink } from '@angular/router';
+import { MatButton } from '@angular/material/button';
+import { MatFormField, MatLabel } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-user',
-  imports: [MatTableModule, MatPaginatorModule, MatProgressSpinner, CommonModule, RouterLink],
+  imports: [MatTableModule, FormsModule, MatFormFieldModule, MatInputModule, MatButton, MatPaginatorModule, MatProgressSpinner, CommonModule, RouterLink],
   templateUrl: './user.html',
   styleUrl: './user.css',
   providers: [AuthApiClient]
