@@ -7,9 +7,11 @@ import { AuthApiClient } from "../../core/api/auth/auth-api.client";
 export class GroupsDataSource implements DataSource<GroupDataItem> {
 
     private groupsSubject = new BehaviorSubject<GroupDataItem[]>([]) ;
+    private totalSubject = new BehaviorSubject<number>(0);
     private loadingSubject = new BehaviorSubject<boolean>(false);
 
-    public loading$ = this.loadingSubject.asObservable();
+    readonly loading$ = this.loadingSubject.asObservable();
+    readonly total$ = this.totalSubject.asObservable();
 
     constructor(private authApiClient: AuthApiClient) {}
 
@@ -37,11 +39,13 @@ export class GroupsDataSource implements DataSource<GroupDataItem> {
         ).subscribe(groups => { 
             const groupDataItems = groups.list.map(group => ({ groupView: group }));
             this.groupsSubject.next(groupDataItems);
+            this.totalSubject.next(groups.total);
+            console.log(groups)
         });
     }
 
     getLength(): number {
-        return this.groupsSubject.value.length;
+        return this.totalSubject.value;
     }
 }
 

@@ -6,33 +6,28 @@
 }
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
-  <ng-container matColumnDef="userKcId">
-    <th mat-header-cell *matHeaderCellDef> User KC ID </th>
-    <td mat-cell *matCellDef="let element"> {{element.userView.user_kc_id}} </td>
+  <ng-container matColumnDef="guid">
+    <th mat-header-cell *matHeaderCellDef> Group Guid </th>
+    <td mat-cell *matCellDef="let element"> {{element.groupView.guid}} </td>
   </ng-container>
 
-  <ng-container matColumnDef="username">
-    <th mat-header-cell *matHeaderCellDef> Username </th>
-    <td mat-cell *matCellDef="let element"> {{element.userView.username}} </td>
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Name </th>
+    <td mat-cell *matCellDef="let element"> {{element.groupView.name}} </td>
   </ng-container>
 
-  <ng-container matColumnDef="email">
-    <th mat-header-cell *matHeaderCellDef> E-Mail </th>
-    <td mat-cell *matCellDef="let element"> {{element.userView.email}} </td>
+  <ng-container matColumnDef="description">
+    <th mat-header-cell *matHeaderCellDef> Description </th>
+    <td mat-cell *matCellDef="let element"> {{element.groupView.description}} </td>
   </ng-container>
 
-<ng-container matColumnDef="firstName">
-    <th mat-header-cell *matHeaderCellDef> First Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.userView.firstName}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="lastName">
-    <th mat-header-cell *matHeaderCellDef> Last Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.userView.lastName}} </td>
+<ng-container matColumnDef="created_at">
+    <th mat-header-cell *matHeaderCellDef> Created at </th>
+    <td mat-cell *matCellDef="let element"> {{parseDate(element.groupView.created_at)}} </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/admin/groups/', row.userView.user_kc_id]"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/admin/groups/', row.groupView.guid]"></tr>
 </table>
 <mat-paginator [length]="dataSource.getLength()"
               [pageSize]="10"

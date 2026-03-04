@@ -16,7 +16,7 @@ import { GroupsDataSource } from './groups.data-source';
 })
 export class Groups implements OnInit {
 
-  displayedColumns: string[] = ["userKcId", "username", "email", 'firstName', 'lastName'];
+  displayedColumns: string[] = ["guid", "name", "description", 'created_at'];
   dataSource!: GroupsDataSource;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -44,5 +44,9 @@ export class Groups implements OnInit {
             'asc',
             this.paginator.pageIndex,
             this.paginator.pageSize);
+    }
+
+    parseDate(dateStr: string) {
+      return new Date(dateStr).toDateString();
     }
 }
