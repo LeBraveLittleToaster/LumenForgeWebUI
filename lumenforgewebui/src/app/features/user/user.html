@@ -1,17 +1,27 @@
 <h1 class="user-table-header">User Table</h1>
 <section class="search-section">
-  <form class="example-form" (ngSubmit)="onSearch()">
-    <mat-form-field appearance="outline" class="example-full-width">
-      <mat-label>Search</mat-label>
-      <input matInput [formControl]="searchCtrl" enterkeyhint="search" placeholder="Search Term">
-      @if (searchCtrl.value) {
-      <button matIconButton="outlined" class="clear-btn" matSuffix aria-label="Clear search" (click)="clearSearch()">
+ <form class="example-form" (ngSubmit)="onSearch()">
+  <mat-form-field appearance="outline" class="example-full-width">
+    <mat-label>Search</mat-label>
+
+    <input matInput
+           [formControl]="searchCtrl"
+           enterkeyhint="search"
+           placeholder="Search Term">
+
+    @if (searchCtrl.value) {
+      <button
+        type="button"
+        matIconButton
+        class="clear-btn"
+        matSuffix
+        aria-label="Clear search"
+        (click)="clearSearch()">
         <mat-icon>close</mat-icon>
       </button>
-      }
-    </mat-form-field>
-    <button type="submit" style="display:none"></button>
-  </form>
+    }
+  </mat-form-field>
+</form>
   <button matButton="outlined" [routerLink]="['/admin/users/create']">Create User</button>
 </section>
 @if (dataSource.loading$ | async) {
