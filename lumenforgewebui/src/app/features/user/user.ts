@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { PageEvent } from '@angular/material/paginator';
 import { DataTableComponent, ColumnDef } from '../../shared/data-table/data-table';
+import { catchError, EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-user',
@@ -58,5 +59,14 @@ export class User implements OnInit {
 
   onPage(event: PageEvent) {
     this.dataSource.loadUsers(this.searchCtrl.value ?? '', 'asc', event.pageIndex, event.pageSize);
+  }
+
+  onDeleteRow(row: UserDataItem) {
+    this.authApiClient.deleteUser(row.userView.user_kc_id).pipe(
+      catchError(() => EMPTY)
+    ).subscribe(() => {
+      this.dataSource.loadUsers(this.searchCtrl.value ?? '', 'asc', 0, 10);
+      this.dataTable?.resetPage();
+    });
   }
 }

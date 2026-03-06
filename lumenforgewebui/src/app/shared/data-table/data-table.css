@@ -1,1 +1,17 @@
 /* Styles for the data-table's table and paginator come from global styles.css */
+
+.delete-cell {
+  width: 48px;
+  padding: 0 4px !important;
+  text-align: right;
+}
+
+.delete-btn {
+  color: var(--mat-sys-error) !important;
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+}

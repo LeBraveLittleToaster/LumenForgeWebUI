@@ -122,6 +122,15 @@ export class Category implements OnInit {
     this.dataSource.loadCategories(this.searchCtrl.value ?? '', 'asc', event.pageIndex, event.pageSize);
   }
 
+  onDeleteRow(row: CategoryDataItem) {
+    this.api.deleteCategory(row.categoryView.guid).pipe(
+      catchError(() => EMPTY)
+    ).subscribe(() => {
+      this.dataSource.loadCategories(this.searchCtrl.value ?? '', 'asc', 0, 10);
+      this.dataTable?.resetPage();
+    });
+  }
+
   openCreateDialog() {
     const dialogRef = this.dialog.open(CategoryCreateDialogComponent);
     dialogRef.afterClosed().subscribe(result => {

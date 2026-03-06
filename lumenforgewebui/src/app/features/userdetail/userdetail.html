@@ -92,8 +92,13 @@
       <!-- Groups section -->
       <div class="content-card section-card">
         <div class="section-header">
-          <h2 class="section-title">Groups</h2>
-          <p class="section-subtitle">Group memberships recorded for this user.</p>
+          <div>
+            <h2 class="section-title">Groups</h2>
+            <p class="section-subtitle">Group memberships recorded for this user.</p>
+          </div>
+          <button mat-flat-button (click)="openAssignDialog(state.user.user_kc_id)">
+            <mat-icon>group_add</mat-icon> Assign to Group
+          </button>
         </div>
 
         @if (!state.user.group_users || state.user.group_users.length === 0) {

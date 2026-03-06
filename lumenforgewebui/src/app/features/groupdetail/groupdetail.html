@@ -77,8 +77,10 @@
       <!-- Members section -->
       <div class="content-card section-card">
         <div class="section-header">
-          <h2 class="section-title">Members</h2>
-          <p class="section-subtitle">Users currently assigned to this group.</p>
+          <div>
+            <h2 class="section-title">Members</h2>
+            <p class="section-subtitle">Users currently assigned to this group.</p>
+          </div>
         </div>
 
         @if (!state.members || state.members.length === 0) {
@@ -111,6 +113,31 @@
             <tr mat-header-row *matHeaderRowDef="memberColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: memberColumns"></tr>
           </table>
+        }
+      </div>
+
+      <!-- Roles section -->
+      <div class="content-card section-card">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Roles</h2>
+            <p class="section-subtitle">Permissions assigned to this group.</p>
+          </div>
+          <button mat-flat-button (click)="openRolesDialog(state.group!.guid, state.roles)">
+            <mat-icon>manage_accounts</mat-icon> Manage Roles
+          </button>
+        </div>
+        @if (!state.roles || state.roles.length === 0) {
+          <div class="empty-state">
+            <mat-icon>no_accounts</mat-icon>
+            <p>No roles assigned to this group.</p>
+          </div>
+        } @else {
+          <div class="roles-grid">
+            @for (role of state.roles; track role) {
+              <span class="badge badge--info">{{ getRoleName(role) }}</span>
+            }
+          </div>
         }
       </div>
     }

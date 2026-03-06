@@ -31,6 +31,8 @@
       [columns]="columns"
       [loading$]="dataSource.loading$"
       [length$]="dataSource.total$"
+      [canDelete]="true"
+      (deleteRow)="onDeleteRow($event)"
       (page)="onPage($event)">
     </app-data-table>
   </div>

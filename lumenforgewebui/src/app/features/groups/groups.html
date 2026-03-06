@@ -32,6 +32,8 @@
       [loading$]="dataSource.loading$"
       [length$]="dataSource.total$"
       [rowRouterLink]="rowLink"
+      [canDelete]="true"
+      (deleteRow)="onDeleteRow($event)"
       (page)="onPage($event)">
     </app-data-table>
   </div>

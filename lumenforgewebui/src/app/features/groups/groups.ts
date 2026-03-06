@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { PageEvent } from '@angular/material/paginator';
+import { catchError, EMPTY } from 'rxjs';
 import { DataTableComponent, ColumnDef } from '../../shared/data-table/data-table';
 
 @Component({
@@ -56,5 +57,14 @@ export class Groups implements OnInit {
 
   onPage(event: PageEvent) {
     this.dataSource.loadGroups(this.searchCtrl.value ?? '', 'asc', event.pageIndex, event.pageSize);
+  }
+
+  onDeleteRow(row: GroupDataItem) {
+    this.authApiClient.deleteGroup(row.groupView.guid).pipe(
+      catchError(() => EMPTY)
+    ).subscribe(() => {
+      this.dataSource.loadGroups(this.searchCtrl.value ?? '', 'asc', 0, 10);
+      this.dataTable?.resetPage();
+    });
   }
 }

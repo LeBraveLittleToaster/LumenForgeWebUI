@@ -99,6 +99,11 @@
   color: var(--mat-sys-on-surface);
 }
 
+.theme-toggle {
+  color: var(--mat-sys-on-surface-variant);
+  margin-right: 4px;
+}
+
 // ── Mobile Navigation Menu ───────────────────────────────────
 .nav-items-mobile {
   display: flex;

@@ -113,6 +113,15 @@ export class Vendor implements OnInit {
     this.dataSource.loadVendors(this.searchCtrl.value ?? '', 'asc', event.pageIndex, event.pageSize);
   }
 
+  onDeleteRow(row: VendorDataItem) {
+    this.api.deleteVendor(row.vendorView.guid).pipe(
+      catchError(() => EMPTY)
+    ).subscribe(() => {
+      this.dataSource.loadVendors(this.searchCtrl.value ?? '', 'asc', 0, 10);
+      this.dataTable?.resetPage();
+    });
+  }
+
   openCreateDialog() {
     const dialogRef = this.dialog.open(VendorCreateDialogComponent);
     dialogRef.afterClosed().subscribe(result => {

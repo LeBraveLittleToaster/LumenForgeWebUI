@@ -9,6 +9,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/api/auth/auth-service';
 import { signal } from '@angular/core';
+import { ThemeService } from '../../core/services/theme.service';
 
 interface NavItem {
   label: string;
@@ -33,6 +34,7 @@ interface NavItem {
 export class Toolbar implements OnInit, OnDestroy {
   private router = inject(Router);
   public auth = inject(AuthService);
+  public theme = inject(ThemeService);
 
   navItems = signal<NavItem[]>([]);
   isMobileMenuOpen = signal(false);
