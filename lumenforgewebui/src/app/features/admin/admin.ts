@@ -5,7 +5,6 @@ import { Category } from '../category/category';
 import { Vendor } from '../vendor/vendor';
 import { RouterLink, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
-import { DynamicTableComponent } from '../../shared/dynamic-table-component/dynamic-table-component';
 
 @Component({
   selector: 'app-admin',

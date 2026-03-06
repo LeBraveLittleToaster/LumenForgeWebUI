@@ -1,0 +1,166 @@
+.toolbar-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  width: 100%;
+}
+
+.toolbar {
+  background-color: var(--mat-sys-primary);
+  width: 100%;
+}
+
+.toolbar-content {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+#logo {
+  height: 50px;
+  width: auto;
+}
+
+#toolbar-logo-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--mat-sys-on-primary);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+/* Desktop Navigation */
+.nav-items-desktop {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+
+  @media (max-width: 959px) {
+    display: none;
+  }
+}
+
+.router-option {
+  color: var(--mat-sys-on-primary);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: 500;
+  }
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+  display: none;
+  color: var(--mat-sys-on-primary);
+
+  @media (max-width: 959px) {
+    display: block;
+  }
+}
+
+.login-btn {
+  color: var(--mat-sys-on-primary);
+}
+
+/* Mobile Navigation Menu */
+.nav-items-mobile {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--mat-sys-primary);
+  border-top: 1px solid var(--mat-sys-primary-container);
+  width: 100%;
+  overflow-y: auto;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-nav-item {
+  display: block;
+  padding: 16px 24px;
+  color: var(--mat-sys-on-primary);
+  text-decoration: none;
+  font-size: 16px;
+  border-bottom: 1px solid var(--mat-sys-primary-container);
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--mat-sys-primary-container);
+  }
+
+  &:active {
+    background-color: var(--mat-sys-on-primary-container);
+  }
+}
+
+/* Main Page Content */
+.page {
+  display: block;
+  margin-top: 64px;
+  padding: 16px;
+  transition: margin-top 0.3s ease;
+
+  @media (max-width: 959px) {
+    margin-top: 56px;
+  }
+
+  @media (max-width: 599px) {
+    padding: 8px;
+  }
+}
+
+.page.menu-open-mobile {
+  @media (max-width: 959px) {
+    margin-top: calc(56px + 320px);
+  }
+}
+
+/* Ensure mat-icon buttons in toolbar are properly styled */
+::ng-deep {
+  .toolbar {
+    button[matIconButton] {
+      color: var(--mat-sys-on-primary);
+      
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+}
