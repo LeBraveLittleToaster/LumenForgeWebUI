@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, EMPTY, filter, finalize, map, Observable, of, startWith, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, EMPTY, filter, finalize, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { AuthApiClient } from '../../core/api/auth/auth-api.client';
 import { UserView, GroupView } from '../../core/api/auth/models/views';
 import { CommonModule } from '@angular/common';
@@ -74,7 +74,8 @@ export class AssignToGroupDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { userKcId: string },
     private dialogRef: MatDialogRef<AssignToGroupDialogComponent>,
-    private authClient: AuthApiClient
+    private authClient: AuthApiClient,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -89,11 +90,13 @@ export class AssignToGroupDialogComponent implements OnInit {
     this.loading = true;
     this.authClient.listGroups({ search }).pipe(
       catchError(() => of({ list: [], total: 0 })),
-      finalize(() => { this.loading = false; })
-    ).subscribe(result => {
-      this.groups = result.list;
-      this.selectedGroup = null;
-    });
+      tap(result => {
+        this.groups = result.list;
+        this.selectedGroup = null;
+        this.loading = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe();
   }
 
   onSelectionChange(event: MatSelectionListChange) {

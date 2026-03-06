@@ -25,7 +25,7 @@ interface GroupState {
 @Component({
   selector: 'app-role-management-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatCheckboxModule, FormsModule],
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatDividerModule, MatCheckboxModule, FormsModule],
   template: `
     <h2 mat-dialog-title>Manage Roles</h2>
     <mat-dialog-content>
@@ -35,7 +35,11 @@ interface GroupState {
       </div>
       <div class="dialog-role-grid">
         @for (role of roleEntries; track role.value) {
+          @if($index % 4 == 0) {
+            <mat-divider class="full-row-item"></mat-divider>
+          }  
           <mat-checkbox [(ngModel)]="roleValues[role.value]">{{ role.name }}</mat-checkbox>
+          
         }
       </div>
     </mat-dialog-content>
@@ -46,7 +50,8 @@ interface GroupState {
   `,
   styles: [`
     .dialog-role-actions { display: flex; gap: 8px; margin-bottom: 12px; }
-    .dialog-role-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 12px; }
+    .dialog-role-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 12px; max-height: 400px; overflow-y: auto; overflow-x: hidden; }
+    .full-row-item { grid-column-start: 1; grid-column-end: 3; margin-top: 8px; margin-bottom: 8px; }
   `]
 })
 export class RoleManagementDialogComponent implements OnInit {
@@ -61,7 +66,7 @@ export class RoleManagementDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { groupGuid: string; currentRoles: Role[] },
     private dialogRef: MatDialogRef<RoleManagementDialogComponent>,
     private authClient: AuthApiClient
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.roleEntries.forEach(r => {
@@ -100,7 +105,7 @@ export class Groupdetail implements OnInit {
     private route: ActivatedRoute,
     private authClient: AuthApiClient,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit() {
     const paramId$ = this.route.paramMap.pipe(
