@@ -11,6 +11,7 @@ import { Groups } from './features/groups/groups';
 import { UserDetail } from './features/userdetail/userdetail';
 import { Groupdetail } from './features/groupdetail/groupdetail';
 import { UserCreate } from './features/usercreate/usercreate';
+import { GroupCreate } from './features/groupcreate/groupcreate';
 
 export const routes: Routes = [
     {
@@ -46,6 +47,11 @@ export const routes: Routes = [
         path: "admin/groups",
         canActivate: [adminGuard],
         component: Groups,
+    },
+    {
+        path: "admin/groups/create",
+        canActivate: [adminGuard],
+        component: GroupCreate,
     },
     {
         path: "admin/groups/:groupGuid",

@@ -1,0 +1,15 @@
+.mat-stepper-vertical {
+    margin-top: 8px;
+}
+
+.mat-mdc-form-field {
+    margin-top: 16px;
+}
+
+.role-checkbox-grid {
+    width: 600px;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 50px 50px repeat(4, 200px);
+    margin-bottom: 2em;
+}   

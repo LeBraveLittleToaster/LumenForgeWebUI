@@ -5,14 +5,14 @@
       <mat-label>Search</mat-label>
       <input matInput [formControl]="searchCtrl" enterkeyhint="search" placeholder="Search Term">
       @if (searchCtrl.value) {
-      <button matIconButton="outlined" class="clear-btn" matSuffix aria-label="Clear search" (click)="clearSearch()">
+      <button type="button" matIconButton="outlined" class="clear-btn" matSuffix aria-label="Clear search"
+        (click)="clearSearch()">
         <mat-icon>close</mat-icon>
       </button>
       }
     </mat-form-field>
-    <button type="submit" style="display:none"></button>
   </form>
-  <button matButton="outlined" [routerLink]="['/admin/users/create']">Create Group</button>
+  <button matButton="outlined" [routerLink]="['/admin/groups/create']">Create Group</button>
 </section>
 @if (dataSource.loading$ | async) {
 <div class="spinner-container">

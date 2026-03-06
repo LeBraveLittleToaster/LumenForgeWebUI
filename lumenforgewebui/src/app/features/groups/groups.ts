@@ -27,7 +27,7 @@ export class Groups implements OnInit {
   dataSource!: GroupsDataSource;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  searchCtrl = new FormControl('', Validators.required)
+  searchCtrl = new FormControl('')
   constructor(private authApiClient: AuthApiClient) {
 
   }
@@ -42,7 +42,8 @@ export class Groups implements OnInit {
     this.dataSource.loadGroups(value, 'asc', 0, 10);
   }
   clearSearch() {
-    //this.searchCtrl.setValue('');
+    this.searchCtrl.setValue('');
+    this.onSearch()
   }
 
   ngAfterViewInit() {

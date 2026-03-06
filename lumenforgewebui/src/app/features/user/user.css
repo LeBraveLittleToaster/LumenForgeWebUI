@@ -28,3 +28,9 @@ table {
   flex-direction: row;
   justify-content: space-between;
 }
+
+
+.clear-btn {
+  border-radius: 30px;
+  margin-right: 0.5em;
+}

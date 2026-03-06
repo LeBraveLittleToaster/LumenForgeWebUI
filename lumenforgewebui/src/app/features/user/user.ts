@@ -30,7 +30,7 @@ export class User implements OnInit {
   dataSource!: UserDataSource;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  searchCtrl = new FormControl('', Validators.required)
+  searchCtrl = new FormControl('')
 
   constructor(private authApiClient: AuthApiClient) {
 
@@ -46,10 +46,10 @@ export class User implements OnInit {
     this.dataSource.loadUsers(value, 'asc', 0, 10);
   }
 
-  clearSearch() {
-    
+  clearSearch() {    
     console.log("Hello")
-    //this.searchCtrl.setValue('');
+    this.searchCtrl.setValue('');
+    this.onSearch()
   }
 
 
