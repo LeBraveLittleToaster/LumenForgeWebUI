@@ -1,33 +1,4 @@
-table {
-  width: 100%;
-}
-
-.user-table-header {
-  font-size: 2.5em;
-  margin-top: 2em;
-  margin-bottom: 0.5em;
-}
-
-.mat-row:hover {
-  background-color: var(--mat-sys-on-primary);
-}
-.example-form {
-  min-width: 150px;
-  max-width: 500px;
-  width: 100%;
-}
-
-
-.example-full-width {
-  width: 100%;
-
-}
-
-.search-section {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
+/* User table page – styles are inherited from global styles.css */
 
 
 .clear-btn {

@@ -7,17 +7,19 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { tap } from 'rxjs/internal/operators/tap';
 import { RouterLink } from '@angular/router';
 import { GroupsDataSource } from './groups.data-source';
-import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-groups',
-  imports: [MatTableModule, MatPaginatorModule, MatIconModule, MatProgressSpinner, CommonModule, RouterLink, ReactiveFormsModule, MatTableModule, FormsModule, MatFormFieldModule,
-    MatInputModule, MatButton, MatPaginatorModule, MatProgressSpinner,
-    CommonModule,],
+  imports: [
+    MatTableModule, MatPaginatorModule, MatIconModule, MatProgressSpinner,
+    CommonModule, RouterLink, ReactiveFormsModule, FormsModule,
+    MatFormFieldModule, MatInputModule, MatButtonModule,
+  ],
   templateUrl: './groups.html',
   styleUrl: './groups.css',
 })

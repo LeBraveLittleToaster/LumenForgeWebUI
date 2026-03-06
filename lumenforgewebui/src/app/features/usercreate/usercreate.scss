@@ -1,7 +1,18 @@
-.mat-stepper-vertical {
-  margin-top: 8px;
+.create-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+.create-card {
+  background: var(--app-table-bg);
+  border-radius: var(--app-card-radius);
+  box-shadow: var(--app-card-shadow);
+  border: 1px solid var(--mat-sys-outline-variant);
+  padding: 32px;
 }
 
 .mat-mdc-form-field {
-  margin-top: 16px;
+  margin-top: 12px;
+  width: 100%;
 }

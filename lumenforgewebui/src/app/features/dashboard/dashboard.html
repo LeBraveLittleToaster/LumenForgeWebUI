@@ -1,1 +1,75 @@
-<p>dashboard works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">Overview of your LumenForge workspace</p>
+    </div>
+  </div>
+
+  <div class="dash-stats-grid">
+    <div class="dash-stat-card">
+      <div class="dash-stat-icon dash-stat-icon--amber">
+        <mat-icon>devices</mat-icon>
+      </div>
+      <div class="dash-stat-body">
+        <span class="dash-stat-value">&mdash;</span>
+        <span class="dash-stat-label">Total Devices</span>
+      </div>
+    </div>
+
+    <div class="dash-stat-card">
+      <div class="dash-stat-icon dash-stat-icon--blue">
+        <mat-icon>category</mat-icon>
+      </div>
+      <div class="dash-stat-body">
+        <span class="dash-stat-value">&mdash;</span>
+        <span class="dash-stat-label">Categories</span>
+      </div>
+    </div>
+
+    <div class="dash-stat-card">
+      <div class="dash-stat-icon dash-stat-icon--teal">
+        <mat-icon>storefront</mat-icon>
+      </div>
+      <div class="dash-stat-body">
+        <span class="dash-stat-value">&mdash;</span>
+        <span class="dash-stat-label">Vendors</span>
+      </div>
+    </div>
+
+    <div class="dash-stat-card">
+      <div class="dash-stat-icon dash-stat-icon--green">
+        <mat-icon>manage_accounts</mat-icon>
+      </div>
+      <div class="dash-stat-body">
+        <span class="dash-stat-value">&mdash;</span>
+        <span class="dash-stat-label">Users</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-quick-links content-card">
+    <div class="dash-quick-links-header">
+      <mat-icon>bolt</mat-icon>
+      <span>Quick Navigation</span>
+    </div>
+    <div class="dash-quick-links-grid">
+      <a class="dash-link" routerLink="/admin/users">
+        <mat-icon>manage_accounts</mat-icon>
+        <span>Users</span>
+      </a>
+      <a class="dash-link" routerLink="/admin/groups">
+        <mat-icon>group</mat-icon>
+        <span>Groups</span>
+      </a>
+      <a class="dash-link" routerLink="/admin/categories">
+        <mat-icon>category</mat-icon>
+        <span>Categories</span>
+      </a>
+      <a class="dash-link" routerLink="/admin/vendor">
+        <mat-icon>storefront</mat-icon>
+        <span>Vendors</span>
+      </a>
+    </div>
+  </div>
+</div>

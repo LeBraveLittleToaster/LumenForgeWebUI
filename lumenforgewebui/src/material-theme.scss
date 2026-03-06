@@ -1,34 +1,159 @@
 @use '@angular/material' as mat;
 
+// ════════════════════════════════════════════════════════════
+//  LIGHT MODE  (LumenForge — Amber / Sky-Blue palette)
+// ════════════════════════════════════════════════════════════
 :root {
   @include mat.theme((
     color: (
-      theme-type: dark,
-
-      primary: mat.$blue-palette,
-      tertiary: mat.$yellow-palette,
+      theme-type: light,
+      primary: mat.$orange-palette,
+      secondary: mat.$blue-palette,
+      tertiary: mat.$cyan-palette,
     ),
     typography: Roboto,
     density: 0,
   ));
 
-  --mat-sys-primary: #FFFFFF;
-  --mat-sys-on-primary: #2F3131;
-  --mat-sys-primary-container: #E2E2E2;
-  --mat-sys-on-primary-container: #636565;
+  // ── Primary: Forge Amber ─────────────────────────────────
+  --mat-sys-primary:                #B45309;
+  --mat-sys-on-primary:             #FFFFFF;
+  --mat-sys-primary-container:      #FEF3C7;
+  --mat-sys-on-primary-container:   #78350F;
 
-  --mat-sys-secondary: #FFB59E;
-  --mat-sys-on-secondary: #5E1700;
-  --mat-sys-secondary-container: #CF3F05;
-  --mat-sys-on-secondary-container: #FFF7F5;
+  // ── Secondary: Sky Blue ──────────────────────────────────
+  --mat-sys-secondary:              #0284C7;
+  --mat-sys-on-secondary:           #FFFFFF;
+  --mat-sys-secondary-container:    #E0F2FE;
+  --mat-sys-on-secondary-container: #075985;
 
-  --mat-sys-tertiary: #C8C5CD;
-  --mat-sys-on-tertiary: #303036;
-  --mat-sys-tertiary-container: #1E1E24;
-  --mat-sys-on-tertiary-container: #87858D;
+  // ── Tertiary: Teal ───────────────────────────────────────
+  --mat-sys-tertiary:               #0891B2;
+  --mat-sys-on-tertiary:            #FFFFFF;
+  --mat-sys-tertiary-container:     #CFFAFE;
+  --mat-sys-on-tertiary-container:  #164E63;
 
-  --mat-sys-surface: #141314;
-  --mat-sys-on-surface: #E5E2E2;
-  --mat-sys-background: #141313;
-  --mat-sys-on-background: #E5E2E1;
+  // ── Surface & Background ─────────────────────────────────
+  --mat-sys-surface:                        #FFFFFF;
+  --mat-sys-on-surface:                     #1E293B;
+  --mat-sys-background:                     #EEF3FB;
+  --mat-sys-on-background:                  #1E293B;
+  --mat-sys-surface-container-lowest:       #FFFFFF;
+  --mat-sys-surface-container-low:          #F7F9FC;
+  --mat-sys-surface-container:              #EEF3FB;
+  --mat-sys-surface-container-high:         #E5EAF5;
+  --mat-sys-surface-container-highest:      #DBE1EE;
+  --mat-sys-surface-variant:                #F0F4FF;
+  --mat-sys-on-surface-variant:             #475569;
+
+  // ── Error ────────────────────────────────────────────────
+  --mat-sys-error:                  #DC2626;
+  --mat-sys-on-error:               #FFFFFF;
+  --mat-sys-error-container:        #FEE2E2;
+  --mat-sys-on-error-container:     #7F1D1D;
+
+  // ── Outline ──────────────────────────────────────────────
+  --mat-sys-outline:                #CBD5E1;
+  --mat-sys-outline-variant:        #E2E8F0;
+
+  // ── Custom Application Design Tokens ─────────────────────
+  --app-card-shadow:            0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+  --app-card-shadow-hover:      0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
+  --app-card-radius:            12px;
+  --app-toolbar-bg:             #FFFFFF;
+  --app-toolbar-border:         #E2E8F0;
+  --app-page-bg:                #EEF3FB;
+  --app-table-bg:               #FFFFFF;
+  --app-table-header-bg:        #F8FAFC;
+  --app-table-row-hover:        #FFFBEB;
+  --app-nav-active-bg:          #FEF3C7;
+  --app-nav-active-fg:          #B45309;
+  --app-badge-success-bg:       #DCFCE7;
+  --app-badge-success-fg:       #166534;
+  --app-badge-warning-bg:       #FEF9C3;
+  --app-badge-warning-fg:       #854D0E;
+  --app-badge-error-bg:         #FEE2E2;
+  --app-badge-error-fg:         #991B1B;
+  --app-badge-info-bg:          #E0F2FE;
+  --app-badge-info-fg:          #0369A1;
+}
+
+// ════════════════════════════════════════════════════════════
+//  DARK MODE  (triggered by OS preference)
+// ════════════════════════════════════════════════════════════
+@media (prefers-color-scheme: dark) {
+  :root {
+    @include mat.theme((
+      color: (
+        theme-type: dark,
+        primary: mat.$orange-palette,
+        secondary: mat.$blue-palette,
+        tertiary: mat.$cyan-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    ));
+
+    // ── Primary: Luminous Amber ─────────────────────────
+    --mat-sys-primary:                #FCD34D;
+    --mat-sys-on-primary:             #451A03;
+    --mat-sys-primary-container:      #92400E;
+    --mat-sys-on-primary-container:   #FDE68A;
+
+    // ── Secondary: Cool Blue ────────────────────────────
+    --mat-sys-secondary:              #38BDF8;
+    --mat-sys-on-secondary:           #0C4A6E;
+    --mat-sys-secondary-container:    #0369A1;
+    --mat-sys-on-secondary-container: #BAE6FD;
+
+    // ── Tertiary: Cyan ──────────────────────────────────
+    --mat-sys-tertiary:               #22D3EE;
+    --mat-sys-on-tertiary:            #164E63;
+    --mat-sys-tertiary-container:     #155E75;
+    --mat-sys-on-tertiary-container:  #A5F3FC;
+
+    // ── Surface & Background ────────────────────────────
+    --mat-sys-surface:                        #1E293B;
+    --mat-sys-on-surface:                     #E2E8F0;
+    --mat-sys-background:                     #0F172A;
+    --mat-sys-on-background:                  #E2E8F0;
+    --mat-sys-surface-container-lowest:       #080E1A;
+    --mat-sys-surface-container-low:          #121C2E;
+    --mat-sys-surface-container:              #1E293B;
+    --mat-sys-surface-container-high:         #273548;
+    --mat-sys-surface-container-highest:      #334258;
+    --mat-sys-surface-variant:                #1A2436;
+    --mat-sys-on-surface-variant:             #94A3B8;
+
+    // ── Error ───────────────────────────────────────────
+    --mat-sys-error:                  #F87171;
+    --mat-sys-on-error:               #450A0A;
+    --mat-sys-error-container:        #7F1D1D;
+    --mat-sys-on-error-container:     #FCA5A5;
+
+    // ── Outline ─────────────────────────────────────────
+    --mat-sys-outline:                #3D4F6A;
+    --mat-sys-outline-variant:        #273142;
+
+    // ── Custom Application Design Tokens ────────────────
+    --app-card-shadow:            0 1px 4px rgba(0,0,0,0.4);
+    --app-card-shadow-hover:      0 4px 16px rgba(0,0,0,0.5);
+    --app-card-radius:            12px;
+    --app-toolbar-bg:             #1E293B;
+    --app-toolbar-border:         #273548;
+    --app-page-bg:                #0F172A;
+    --app-table-bg:               #1E293B;
+    --app-table-header-bg:        #121C2E;
+    --app-table-row-hover:        #2A3A50;
+    --app-nav-active-bg:          #2C1C06;
+    --app-nav-active-fg:          #FCD34D;
+    --app-badge-success-bg:       #14532D;
+    --app-badge-success-fg:       #86EFAC;
+    --app-badge-warning-bg:       #713F12;
+    --app-badge-warning-fg:       #FDE68A;
+    --app-badge-error-bg:         #7F1D1D;
+    --app-badge-error-fg:         #FCA5A5;
+    --app-badge-info-bg:          #0C4A6E;
+    --app-badge-info-fg:          #BAE6FD;
+  }
 }

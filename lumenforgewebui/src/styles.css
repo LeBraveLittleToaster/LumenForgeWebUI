@@ -1,11 +1,251 @@
-body {
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    font-family: 'Roboto', sans-serif;
-    background-color: var(--mat-sys-surface);
+/* ═══════════════════════════════════════════════════════════
+   LumenForge – Global Design System
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Base reset & typography ──────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-a, p, h1, h2, h3, h4, h5, h6 {
-color: var(--mat-sys-on-surface);
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--app-page-bg);
+  color: var(--mat-sys-on-surface);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--mat-sys-primary);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  color: var(--mat-sys-on-surface);
+  margin: 0;
+}
+
+/* ── Page layout containers ───────────────────────────────── */
+.page-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--mat-sys-on-surface);
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 0.9rem;
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: 4px;
+}
+
+/* ── Content card ─────────────────────────────────────────── */
+.content-card {
+  background: var(--app-table-bg);
+  border-radius: var(--app-card-radius);
+  box-shadow: var(--app-card-shadow);
+  border: 1px solid var(--mat-sys-outline-variant);
+  overflow: hidden;
+}
+
+.card-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  flex-wrap: wrap;
+}
+
+.card-toolbar .search-form {
+  flex: 1;
+  min-width: 200px;
+  max-width: 480px;
+}
+
+.card-toolbar .search-form mat-form-field {
+  width: 100%;
+}
+
+/* ── Tables ───────────────────────────────────────────────── */
+table.mat-mdc-table {
+  width: 100%;
+  background: var(--app-table-bg) !important;
+}
+
+.mat-mdc-header-row {
+  background: var(--app-table-header-bg) !important;
+}
+
+.mat-mdc-header-cell {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  color: var(--mat-sys-on-surface-variant) !important;
+  border-bottom: 1px solid var(--mat-sys-outline-variant) !important;
+  padding: 12px 16px !important;
+  white-space: nowrap;
+}
+
+.mat-mdc-row {
+  border-bottom: 1px solid var(--mat-sys-outline-variant) !important;
+  transition: background-color 0.15s ease;
+}
+
+.mat-mdc-row:hover {
+  background-color: var(--app-table-row-hover) !important;
+}
+
+.mat-mdc-cell {
+  font-size: 0.875rem !important;
+  color: var(--mat-sys-on-surface) !important;
+  padding: 14px 16px !important;
+  border-bottom: none !important;
+}
+
+.mat-mdc-row:last-child {
+  border-bottom: none !important;
+}
+
+/* Clickable table rows */
+tr.mat-mdc-row.clickable-row {
+  cursor: pointer;
+}
+
+/* ── Spinner overlay ──────────────────────────────────────── */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 0;
+}
+
+/* ── Status badges ────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.badge--success {
+  background: var(--app-badge-success-bg);
+  color: var(--app-badge-success-fg);
+}
+
+.badge--warning {
+  background: var(--app-badge-warning-bg);
+  color: var(--app-badge-warning-fg);
+}
+
+.badge--error {
+  background: var(--app-badge-error-bg);
+  color: var(--app-badge-error-fg);
+}
+
+.badge--info {
+  background: var(--app-badge-info-bg);
+  color: var(--app-badge-info-fg);
+}
+
+/* ── Mat Paginator overrides ──────────────────────────────── */
+.mat-mdc-paginator {
+  background: var(--app-table-bg) !important;
+  border-top: 1px solid var(--mat-sys-outline-variant) !important;
+  font-size: 0.8rem;
+}
+
+/* ── Mat Form Field overrides ─────────────────────────────── */
+.mat-mdc-form-field-subscript-wrapper {
+  margin-bottom: -4px;
+}
+
+/* ── Mat Card overrides ───────────────────────────────────── */
+mat-card.lf-card {
+  border-radius: var(--app-card-radius) !important;
+  box-shadow: var(--app-card-shadow) !important;
+  border: 1px solid var(--mat-sys-outline-variant) !important;
+  background: var(--app-table-bg) !important;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+mat-card.lf-card:hover {
+  box-shadow: var(--app-card-shadow-hover) !important;
+  transform: translateY(-2px);
+}
+
+/* ── Scrollbar styling ────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--mat-sys-outline);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--mat-sys-on-surface-variant);
+}
+
+/* ── Utility classes ─────────────────────────────────────── */
+.text-muted {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.85rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+  margin-bottom: 16px;
+}
+
+.divider-subtle {
+  border: none;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  margin: 20px 0;
+}
+
+/* ── Clear button inside form fields ─────────────────────── */
+.clear-btn {
+  border-radius: 50% !important;
+  width: 28px !important;
+  height: 28px !important;
 }

@@ -1,50 +1,66 @@
-<h1 class="user-table-header">Group Table</h1>
-<section class="search-section">
-  <form class="example-form" (ngSubmit)="onSearch()">
-    <mat-form-field appearance="outline" class="example-full-width">
-      <mat-label>Search</mat-label>
-      <input matInput [formControl]="searchCtrl" enterkeyhint="search" placeholder="Search Term">
-      @if (searchCtrl.value) {
-      <button type="button" matIconButton="outlined" class="clear-btn" matSuffix aria-label="Clear search"
-        (click)="clearSearch()">
-        <mat-icon>close</mat-icon>
-      </button>
-      }
-    </mat-form-field>
-  </form>
-  <button matButton="outlined" [routerLink]="['/admin/groups/create']">Create Group</button>
-</section>
-@if (dataSource.loading$ | async) {
-<div class="spinner-container">
-  <mat-spinner></mat-spinner>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Groups</h1>
+      <p class="page-subtitle">Manage user groups and role assignments</p>
+    </div>
+  </div>
+
+  <div class="content-card">
+    <div class="card-toolbar">
+      <form class="search-form" (ngSubmit)="onSearch()">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Search groups…</mat-label>
+          <input matInput [formControl]="searchCtrl" enterkeyhint="search" placeholder="Group name">
+          @if (searchCtrl.value) {
+            <button type="button" matIconButton class="clear-btn" matSuffix aria-label="Clear" (click)="clearSearch()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+      </form>
+      <div class="page-header-actions">
+        <button mat-flat-button [routerLink]="['/admin/groups/create']">
+          <mat-icon>add</mat-icon> Create Group
+        </button>
+      </div>
+    </div>
+
+    @if (dataSource.loading$ | async) {
+      <div class="spinner-container">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    }
+
+    <table mat-table [dataSource]="dataSource">
+
+      <ng-container matColumnDef="guid">
+        <th mat-header-cell *matHeaderCellDef>Group GUID</th>
+        <td mat-cell *matCellDef="let element">{{element.groupView.guid}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let element">{{element.groupView.name}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Description</th>
+        <td mat-cell *matCellDef="let element">{{element.groupView.description}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="created_at">
+        <th mat-header-cell *matHeaderCellDef>Created At</th>
+        <td mat-cell *matCellDef="let element">{{parseDate(element.groupView.created_at)}}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row class="clickable-row" *matRowDef="let row; columns: displayedColumns;"
+        [routerLink]="['/admin/groups/', row.groupView.guid]"></tr>
+    </table>
+
+    <mat-paginator [length]="dataSource.getLength()" [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page">
+    </mat-paginator>
+  </div>
 </div>
-}
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-
-  <ng-container matColumnDef="guid">
-    <th mat-header-cell *matHeaderCellDef> Group Guid </th>
-    <td mat-cell *matCellDef="let element"> {{element.groupView.guid}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef> Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.groupView.name}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="description">
-    <th mat-header-cell *matHeaderCellDef> Description </th>
-    <td mat-cell *matCellDef="let element"> {{element.groupView.description}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="created_at">
-    <th mat-header-cell *matHeaderCellDef> Created at </th>
-    <td mat-cell *matCellDef="let element"> {{parseDate(element.groupView.created_at)}} </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row class="mat-row" *matRowDef="let row; columns: displayedColumns;"
-    [routerLink]="['/admin/groups/', row.groupView.guid]"></tr>
-</table>
-<mat-paginator [length]="dataSource.getLength()" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"
-  aria-label="Select page">
-</mat-paginator>

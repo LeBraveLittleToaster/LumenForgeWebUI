@@ -1,3 +1,4 @@
+// ── Toolbar wrapper (fixed top bar) ─────────────────────────
 .toolbar-wrapper {
   position: fixed;
   top: 0;
@@ -8,47 +9,53 @@
 }
 
 .toolbar {
-  background-color: var(--mat-sys-primary);
+  background-color: var(--app-toolbar-bg);
+  border-bottom: 1px solid var(--app-toolbar-border);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
   width: 100%;
+  height: 64px !important;
 }
 
 .toolbar-content {
   display: flex;
   align-items: center;
   height: 64px;
-  padding: 0 16px;
+  padding: 0 20px;
   width: 100%;
 }
 
+// ── Logo ─────────────────────────────────────────────────────
 .logo-section {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-shrink: 0;
   cursor: pointer;
+  text-decoration: none;
 }
 
 #logo {
-  height: 50px;
+  height: 36px;
   width: auto;
 }
 
 #toolbar-logo-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--mat-sys-on-primary);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--mat-sys-primary);
   margin: 0;
   white-space: nowrap;
+  letter-spacing: -0.02em;
 }
 
 .toolbar-spacer {
   flex: 1 1 auto;
 }
 
-/* Desktop Navigation */
+// ── Desktop Navigation ───────────────────────────────────────
 .nav-items-desktop {
   display: flex;
-  gap: 20px;
+  gap: 2px;
   align-items: center;
 
   @media (max-width: 959px) {
@@ -57,27 +64,31 @@
 }
 
 .router-option {
-  color: var(--mat-sys-on-primary);
-  font-size: 16px;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--mat-sys-surface-container-high);
+    color: var(--mat-sys-on-surface);
   }
 
   &.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    font-weight: 500;
+    background-color: var(--app-nav-active-bg);
+    color: var(--app-nav-active-fg);
+    font-weight: 600;
   }
 }
 
-/* Mobile Menu Toggle */
+// ── Mobile Menu Toggle ───────────────────────────────────────
 .mobile-menu-toggle {
   display: none;
-  color: var(--mat-sys-on-primary);
+  color: var(--mat-sys-on-surface);
 
   @media (max-width: 959px) {
     display: block;
@@ -85,24 +96,25 @@
 }
 
 .login-btn {
-  color: var(--mat-sys-on-primary);
+  color: var(--mat-sys-on-surface);
 }
 
-/* Mobile Navigation Menu */
+// ── Mobile Navigation Menu ───────────────────────────────────
 .nav-items-mobile {
   display: flex;
   flex-direction: column;
-  background-color: var(--mat-sys-primary);
-  border-top: 1px solid var(--mat-sys-primary-container);
+  background-color: var(--app-toolbar-bg);
+  border-top: 1px solid var(--app-toolbar-border);
   width: 100%;
   overflow-y: auto;
-  animation: slideDown 0.3s ease-out;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  animation: slideDown 0.25s ease-out;
 }
 
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
@@ -112,55 +124,49 @@
 
 .mobile-nav-item {
   display: block;
-  padding: 16px 24px;
-  color: var(--mat-sys-on-primary);
+  padding: 14px 24px;
+  color: var(--mat-sys-on-surface);
   text-decoration: none;
-  font-size: 16px;
-  border-bottom: 1px solid var(--mat-sys-primary-container);
-  transition: background-color 0.2s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--app-toolbar-border);
+  transition: background-color 0.15s ease;
 
   &:hover {
-    background-color: var(--mat-sys-primary-container);
+    background-color: var(--mat-sys-surface-container-high);
   }
 
   &:active {
-    background-color: var(--mat-sys-on-primary-container);
+    background-color: var(--app-nav-active-bg);
+    color: var(--app-nav-active-fg);
   }
 }
 
-/* Main Page Content */
+// ── Main page content ────────────────────────────────────────
 .page {
   display: block;
   margin-top: 64px;
-  padding: 16px;
-  transition: margin-top 0.3s ease;
+  min-height: calc(100vh - 64px);
+  background-color: var(--app-page-bg);
+  transition: margin-top 0.25s ease;
 
   @media (max-width: 959px) {
     margin-top: 56px;
-  }
-
-  @media (max-width: 599px) {
-    padding: 8px;
+    min-height: calc(100vh - 56px);
   }
 }
 
 .page.menu-open-mobile {
   @media (max-width: 959px) {
-    margin-top: calc(56px + 320px);
+    margin-top: calc(56px + 280px);
   }
 }
 
-/* Ensure mat-icon buttons in toolbar are properly styled */
+// ── Icon/action button colors in toolbar ─────────────────────
 ::ng-deep {
   .toolbar {
     button[matIconButton] {
-      color: var(--mat-sys-on-primary);
-      
-      mat-icon {
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
-      }
+      color: var(--mat-sys-on-surface) !important;
     }
   }
 }

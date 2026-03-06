@@ -1,15 +1,28 @@
-.mat-stepper-vertical {
-    margin-top: 8px;
+.create-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+.create-card {
+  background: var(--app-table-bg);
+  border-radius: var(--app-card-radius);
+  box-shadow: var(--app-card-shadow);
+  border: 1px solid var(--mat-sys-outline-variant);
+  padding: 32px;
 }
 
 .mat-mdc-form-field {
-    margin-top: 16px;
+  margin-top: 12px;
+  width: 100%;
 }
 
 .role-checkbox-grid {
-    width: 600px;
-    display: grid;
-    grid-gap: 10px;
-    grid-template-columns: 50px 50px repeat(4, 200px);
-    margin-bottom: 2em;
-}   
+  width: 100%;
+  max-width: 700px;
+  display: grid;
+  gap: 8px 12px;
+  grid-template-columns: 60px 60px repeat(4, 1fr);
+  margin-bottom: 2em;
+  margin-top: 12px;
+}

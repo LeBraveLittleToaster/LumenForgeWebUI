@@ -1,19 +1,8 @@
 .toolbar-spacer {
-    flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
 :host,
 .app-content {
-    display: block;
-}
-
-
-.page {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding: 64px;
-    background-color: var(--mat-sys-surface);
+  display: block;
 }
