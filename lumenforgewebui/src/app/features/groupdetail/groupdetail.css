@@ -1,1 +1,153 @@
-/* Group detail page – base styles from global styles.css */
+/* ── Group detail page ───────────────────────────────────────── */
+
+.detail-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+}
+
+.detail-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--app-nav-active-bg);
+  flex-shrink: 0;
+}
+
+.detail-avatar mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: var(--app-nav-active-fg);
+}
+
+.detail-full-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--mat-sys-on-surface);
+  margin: 0 0 2px;
+}
+
+.detail-username {
+  font-size: 0.78rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 20px 24px;
+}
+
+.info-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  background: var(--app-page-bg);
+  border-radius: 8px;
+  border: 1px solid var(--mat-sys-outline-variant);
+}
+
+.info-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.info-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface);
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.monospace-id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-size: 0.8rem !important;
+  color: var(--mat-sys-on-surface-variant) !important;
+}
+
+.section-card {
+  margin-top: 16px;
+}
+
+.section-header {
+  padding: 20px 24px 12px;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+  margin: 0 0 2px;
+}
+
+.section-subtitle {
+  font-size: 0.82rem;
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+}
+
+.state-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 56px 24px;
+  text-align: center;
+}
+
+.state-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.state-icon--error {
+  color: var(--mat-sys-error);
+}
+
+.state-msg {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 24px;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.875rem;
+}
+
+.empty-state mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+@media (max-width: 600px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  .full-width {
+    grid-column: 1;
+  }
+}

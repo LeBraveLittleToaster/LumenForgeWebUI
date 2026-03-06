@@ -1,39 +1,44 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
 import { AuthApiClient } from '../../core/api/auth/auth-api.client';
-import { UserDataSource } from './user.data-source';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { UserDataSource, UserDataItem } from './user.data-source';
 import { CommonModule } from '@angular/common';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { tap } from 'rxjs/internal/operators/tap';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { PageEvent } from '@angular/material/paginator';
+import { DataTableComponent, ColumnDef } from '../../shared/data-table/data-table';
 
 @Component({
   selector: 'app-user',
   imports: [
-    MatTableModule, FormsModule, MatFormFieldModule,
-    MatInputModule, MatButtonModule, MatIconModule, MatPaginatorModule, MatProgressSpinner,
-    CommonModule, RouterLink, ReactiveFormsModule],
+    CommonModule, RouterLink,
+    MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule,
+    FormsModule, ReactiveFormsModule,
+    DataTableComponent
+  ],
   templateUrl: './user.html',
   styleUrl: './user.css',
   providers: [AuthApiClient]
 })
 export class User implements OnInit {
+  columns: ColumnDef<UserDataItem>[] = [
+    { key: 'userKcId',   header: 'User KC ID',  cell: r => r.userView.user_kc_id },
+    { key: 'username',   header: 'Username',    cell: r => r.userView.username },
+    { key: 'email',      header: 'Email',       cell: r => r.userView.email },
+    { key: 'firstName',  header: 'First Name',  cell: r => r.userView.firstName },
+    { key: 'lastName',   header: 'Last Name',   cell: r => r.userView.lastName },
+  ];
+  rowLink = (row: UserDataItem) => ['/admin/users/', row.userView.user_kc_id];
 
-  displayedColumns: string[] = ["userKcId", "username", "email", 'firstName', 'lastName'];
   dataSource!: UserDataSource;
+  searchCtrl = new FormControl('');
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  searchCtrl = new FormControl('')
+  @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
-  constructor(private authApiClient: AuthApiClient) {
-
-  }
+  constructor(private authApiClient: AuthApiClient) {}
 
   ngOnInit(): void {
     this.dataSource = new UserDataSource(this.authApiClient);
@@ -43,28 +48,15 @@ export class User implements OnInit {
   onSearch() {
     const value = this.searchCtrl.value ?? '';
     this.dataSource.loadUsers(value, 'asc', 0, 10);
+    this.dataTable?.resetPage();
   }
 
-  clearSearch() {    
-    console.log("Hello")
+  clearSearch() {
     this.searchCtrl.setValue('');
-    this.onSearch()
+    this.onSearch();
   }
 
-
-  ngAfterViewInit() {
-    this.paginator.page
-      .pipe(
-        tap(() => this.loadUsersPage())
-      )
-      .subscribe();
-  }
-
-  loadUsersPage() {
-    this.dataSource.loadUsers(
-      this.searchCtrl.value ?? '',
-      'asc',
-      this.paginator.pageIndex,
-      this.paginator.pageSize);
+  onPage(event: PageEvent) {
+    this.dataSource.loadUsers(this.searchCtrl.value ?? '', 'asc', event.pageIndex, event.pageSize);
   }
 }

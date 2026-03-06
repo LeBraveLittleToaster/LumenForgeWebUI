@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { BehaviorSubject, catchError, filter, finalize, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { catchError, filter, map, Observable, of, startWith, switchMap } from 'rxjs';
 import { AuthApiClient } from '../../core/api/auth/auth-api.client';
 import { UserView } from '../../core/api/auth/models/views';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -18,7 +17,7 @@ interface UserState {
 
 @Component({
   selector: 'app-userdetail',
-  imports: [MatCardModule, MatDividerModule, MatIconModule, MatProgressSpinnerModule, MatTableModule, CommonModule],
+  imports: [MatDividerModule, MatIconModule, MatProgressSpinnerModule, MatTableModule, CommonModule],
   templateUrl: './userdetail.html',
   styleUrl: './userdetail.scss',
 })

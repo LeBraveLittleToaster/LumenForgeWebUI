@@ -1,38 +1,42 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
 import { AuthApiClient } from '../../core/api/auth/auth-api.client';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { GroupsDataSource, GroupDataItem } from './groups.data-source';
 import { CommonModule } from '@angular/common';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { tap } from 'rxjs/internal/operators/tap';
 import { RouterLink } from '@angular/router';
-import { GroupsDataSource } from './groups.data-source';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { PageEvent } from '@angular/material/paginator';
+import { DataTableComponent, ColumnDef } from '../../shared/data-table/data-table';
 
 @Component({
   selector: 'app-groups',
   imports: [
-    MatTableModule, MatPaginatorModule, MatIconModule, MatProgressSpinner,
-    CommonModule, RouterLink, ReactiveFormsModule, FormsModule,
-    MatFormFieldModule, MatInputModule, MatButtonModule,
+    CommonModule, RouterLink,
+    MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule,
+    FormsModule, ReactiveFormsModule,
+    DataTableComponent
   ],
   templateUrl: './groups.html',
   styleUrl: './groups.css',
 })
 export class Groups implements OnInit {
+  columns: ColumnDef<GroupDataItem>[] = [
+    { key: 'guid',        header: 'Group GUID',  cell: r => r.groupView.guid },
+    { key: 'name',        header: 'Name',        cell: r => r.groupView.name },
+    { key: 'description', header: 'Description', cell: r => r.groupView.description },
+    { key: 'created_at',  header: 'Created At',  cell: r => new Date(r.groupView.created_at).toDateString() },
+  ];
+  rowLink = (row: GroupDataItem) => ['/admin/groups/', row.groupView.guid];
 
-  displayedColumns: string[] = ["guid", "name", "description", 'created_at'];
   dataSource!: GroupsDataSource;
+  searchCtrl = new FormControl('');
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  searchCtrl = new FormControl('')
-  constructor(private authApiClient: AuthApiClient) {
+  @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
-  }
+  constructor(private authApiClient: AuthApiClient) {}
 
   ngOnInit(): void {
     this.dataSource = new GroupsDataSource(this.authApiClient);
@@ -42,29 +46,15 @@ export class Groups implements OnInit {
   onSearch() {
     const value = this.searchCtrl.value ?? '';
     this.dataSource.loadGroups(value, 'asc', 0, 10);
+    this.dataTable?.resetPage();
   }
+
   clearSearch() {
     this.searchCtrl.setValue('');
-    this.onSearch()
+    this.onSearch();
   }
 
-  ngAfterViewInit() {
-    this.paginator.page
-      .pipe(
-        tap(() => this.loadGroupsPage())
-      )
-      .subscribe();
-  }
-
-  loadGroupsPage() {
-    this.dataSource.loadGroups(
-      this.searchCtrl.value ?? '',
-      'asc',
-      this.paginator.pageIndex,
-      this.paginator.pageSize);
-  }
-
-  parseDate(dateStr: string) {
-    return new Date(dateStr).toDateString();
+  onPage(event: PageEvent) {
+    this.dataSource.loadGroups(this.searchCtrl.value ?? '', 'asc', event.pageIndex, event.pageSize);
   }
 }

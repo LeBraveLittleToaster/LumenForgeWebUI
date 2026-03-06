@@ -1,9 +1,5 @@
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { tap } from 'rxjs/internal/operators/tap';
 import { MatButtonModule } from '@angular/material/button';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,8 +7,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { BehaviorSubject, catchError, EMPTY, finalize } from 'rxjs';
+import { PageEvent } from '@angular/material/paginator';
 import { InventoryApiClient } from '../../core/api/inventory/inventory-api.client';
-import { VendorDataSource } from './vendor.data-source';
+import { VendorDataSource, VendorDataItem } from './vendor.data-source';
+import { DataTableComponent, ColumnDef } from '../../shared/data-table/data-table';
 
 @Component({
   selector: 'app-vendor-create-dialog',
@@ -70,19 +68,25 @@ export class VendorCreateDialogComponent {
 @Component({
   selector: 'app-vendor',
   imports: [
-    MatTableModule, FormsModule, MatFormFieldModule,
-    MatInputModule, MatButtonModule, MatIconModule, MatPaginatorModule, MatProgressSpinner,
-    CommonModule, ReactiveFormsModule],
+    CommonModule, FormsModule, ReactiveFormsModule,
+    MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule,
+    DataTableComponent
+  ],
   templateUrl: './vendor.html',
   styleUrl: './vendor.css',
 })
 export class Vendor implements OnInit {
+  columns: ColumnDef<VendorDataItem>[] = [
+    { key: 'guid',       header: 'GUID',       cell: r => r.vendorView.guid },
+    { key: 'name',       header: 'Name',       cell: r => r.vendorView.name },
+    { key: 'created_at', header: 'Created At', cell: r => new Date(r.vendorView.created_at).toDateString() },
+    { key: 'updated_at', header: 'Updated At', cell: r => new Date(r.vendorView.updated_at).toDateString() },
+  ];
 
-  displayedColumns: string[] = ['guid', 'name', 'created_at', 'updated_at'];
   dataSource!: VendorDataSource;
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
   searchCtrl = new FormControl('');
+
+  @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   constructor(
     private api: InventoryApiClient,
@@ -97,6 +101,7 @@ export class Vendor implements OnInit {
   onSearch() {
     const value = this.searchCtrl.value ?? '';
     this.dataSource.loadVendors(value, 'asc', 0, 10);
+    this.dataTable?.resetPage();
   }
 
   clearSearch() {
@@ -104,18 +109,8 @@ export class Vendor implements OnInit {
     this.onSearch();
   }
 
-  ngAfterViewInit() {
-    this.paginator.page
-      .pipe(tap(() => this.loadVendorsPage()))
-      .subscribe();
-  }
-
-  loadVendorsPage() {
-    this.dataSource.loadVendors(
-      this.searchCtrl.value ?? '',
-      'asc',
-      this.paginator.pageIndex,
-      this.paginator.pageSize);
+  onPage(event: PageEvent) {
+    this.dataSource.loadVendors(this.searchCtrl.value ?? '', 'asc', event.pageIndex, event.pageSize);
   }
 
   openCreateDialog() {
@@ -125,9 +120,5 @@ export class Vendor implements OnInit {
         this.dataSource.loadVendors(this.searchCtrl.value ?? '', 'asc', 0, 10);
       }
     });
-  }
-
-  parseDate(dateStr: string) {
-    return new Date(dateStr).toDateString();
   }
 }

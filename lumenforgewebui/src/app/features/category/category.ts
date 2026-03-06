@@ -1,9 +1,5 @@
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { tap } from 'rxjs/internal/operators/tap';
 import { MatButtonModule } from '@angular/material/button';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,8 +7,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { BehaviorSubject, catchError, EMPTY, finalize } from 'rxjs';
+import { PageEvent } from '@angular/material/paginator';
 import { InventoryApiClient } from '../../core/api/inventory/inventory-api.client';
-import { CategoryDataSource } from './category.data-source';
+import { CategoryDataSource, CategoryDataItem } from './category.data-source';
+import { DataTableComponent, ColumnDef } from '../../shared/data-table/data-table';
 
 @Component({
   selector: 'app-category-create-dialog',
@@ -78,19 +76,26 @@ export class CategoryCreateDialogComponent {
 @Component({
   selector: 'app-category',
   imports: [
-    MatTableModule, FormsModule, MatFormFieldModule,
-    MatInputModule, MatButtonModule, MatIconModule, MatPaginatorModule, MatProgressSpinner,
-    CommonModule, ReactiveFormsModule],
+    CommonModule, FormsModule, ReactiveFormsModule,
+    MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule,
+    DataTableComponent
+  ],
   templateUrl: './category.html',
   styleUrl: './category.css',
 })
 export class Category implements OnInit {
+  columns: ColumnDef<CategoryDataItem>[] = [
+    { key: 'guid',        header: 'GUID',        cell: r => r.categoryView.guid },
+    { key: 'name',        header: 'Name',        cell: r => r.categoryView.name },
+    { key: 'description', header: 'Description', cell: r => r.categoryView.description ?? '—' },
+    { key: 'created_at',  header: 'Created At',  cell: r => new Date(r.categoryView.created_at).toDateString() },
+    { key: 'updated_at',  header: 'Updated At',  cell: r => new Date(r.categoryView.updated_at).toDateString() },
+  ];
 
-  displayedColumns: string[] = ['guid', 'name', 'description', 'created_at', 'updated_at'];
   dataSource!: CategoryDataSource;
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
   searchCtrl = new FormControl('');
+
+  @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   constructor(
     private api: InventoryApiClient,
@@ -105,6 +110,7 @@ export class Category implements OnInit {
   onSearch() {
     const value = this.searchCtrl.value ?? '';
     this.dataSource.loadCategories(value, 'asc', 0, 10);
+    this.dataTable?.resetPage();
   }
 
   clearSearch() {
@@ -112,18 +118,8 @@ export class Category implements OnInit {
     this.onSearch();
   }
 
-  ngAfterViewInit() {
-    this.paginator.page
-      .pipe(tap(() => this.loadCategoriesPage()))
-      .subscribe();
-  }
-
-  loadCategoriesPage() {
-    this.dataSource.loadCategories(
-      this.searchCtrl.value ?? '',
-      'asc',
-      this.paginator.pageIndex,
-      this.paginator.pageSize);
+  onPage(event: PageEvent) {
+    this.dataSource.loadCategories(this.searchCtrl.value ?? '', 'asc', event.pageIndex, event.pageSize);
   }
 
   openCreateDialog() {
@@ -133,9 +129,5 @@ export class Category implements OnInit {
         this.dataSource.loadCategories(this.searchCtrl.value ?? '', 'asc', 0, 10);
       }
     });
-  }
-
-  parseDate(dateStr: string) {
-    return new Date(dateStr).toDateString();
   }
 }
