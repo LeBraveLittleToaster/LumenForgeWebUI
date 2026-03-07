@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, EMPTY, filter, finalize, forkJoin, map, Observable, of, startWith, switchMap } from 'rxjs';
 import { AuthApiClient } from '../../core/api/auth/auth-api.client';
@@ -104,8 +105,11 @@ export class Groupdetail implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private authClient: AuthApiClient,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private location: Location
   ) { }
+
+  goBack() { this.location.back(); }
 
   ngOnInit() {
     const paramId$ = this.route.paramMap.pipe(
