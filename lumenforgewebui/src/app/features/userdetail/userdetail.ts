@@ -15,10 +15,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { UserDetailGroupsDataSource } from './userdetail-groups.data-source';
 
 interface UserState {
   loading: boolean;
   user: UserView | null;
+  groups: GroupView[] | null;
   error: string | null;
 }
 
@@ -77,7 +79,7 @@ export class AssignToGroupDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<AssignToGroupDialogComponent>,
     private authClient: AuthApiClient,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadGroups('');
@@ -113,6 +115,32 @@ export class AssignToGroupDialogComponent implements OnInit {
 }
 
 @Component({
+  selector: 'app-remove-from-group-dialog',
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule],
+  template: `
+    <h2 mat-dialog-title>Remove from Group</h2>
+    <mat-dialog-content>
+      <p>Remove user from group "{{ data.groupName }}"?</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close>No</button>
+      <button mat-flat-button color="warn" (click)="confirm()">Yes, Remove</button>
+    </mat-dialog-actions>
+  `,
+})
+export class RemoveFromGroupDialogComponent {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: { groupName: string },
+    private dialogRef: MatDialogRef<RemoveFromGroupDialogComponent>
+  ) { }
+
+  confirm() {
+    this.dialogRef.close(true);
+  }
+}
+
+@Component({
   selector: 'app-userdetail',
   imports: [
     MatDividerModule, MatIconModule, MatProgressSpinnerModule, MatTableModule,
@@ -122,8 +150,11 @@ export class AssignToGroupDialogComponent implements OnInit {
   styleUrl: './userdetail.scss',
 })
 export class UserDetail implements OnInit {
-  displayedColumns = ['groupId', 'userId', 'joinedAt', 'assignedByKeycloakId'];
+  displayedColumns = ['guid', 'name', 'description', 'created_at', 'actions'];
   state$!: Observable<UserState>;
+  groupsDataSource = new UserDetailGroupsDataSource();
+  groupsCount$ = this.groupsDataSource.total$;
+  removingGroupGuid: string | null = null;
   private refreshTrigger$ = new BehaviorSubject<void>(undefined);
 
   constructor(
@@ -144,14 +175,22 @@ export class UserDetail implements OnInit {
 
     this.state$ = combineLatest([paramId$, this.refreshTrigger$]).pipe(
       switchMap(([id]) =>
-        this.authClient.getUser(id).pipe(
-          map(user => ({ loading: false, user, error: null })),
-          catchError(() => of({
-            loading: false,
-            user: null,
-            error: "Failed to load user profile."
-          })),
-          startWith({ loading: true, user: null, error: null })
+        this.authClient.getUserAndGroups(id).pipe(
+          tap(([, groups]) => this.groupsDataSource.setGroups(groups)),
+          map(([user, groups]) => {
+            console.log("Loaded user and groups:", { user, groups });
+            return ({ loading: false, user, groups, error: null })
+          }),
+          catchError(() => {
+            this.groupsDataSource.setGroups(null);
+            return of({
+              loading: false,
+              user: null,
+              groups: null,
+              error: "Failed to load user profile."
+            });
+          }),
+          startWith({ loading: true, user: null, groups: null, error: null })
         )
       )
     );
@@ -164,6 +203,26 @@ export class UserDetail implements OnInit {
     });
     ref.afterClosed().subscribe(ok => {
       if (ok) this.refreshTrigger$.next();
+    });
+  }
+
+  confirmRemoveFromGroup(group: GroupView, userKcId: string) {
+    const ref = this.dialog.open(RemoveFromGroupDialogComponent, {
+      width: '420px',
+      data: { groupName: group.name }
+    });
+
+    ref.afterClosed().pipe(
+      filter((ok): ok is true => !!ok),
+      tap(() => { queueMicrotask(() => { this.removingGroupGuid = group.guid; }); }),
+      switchMap(() =>
+        this.authClient.removeUserFromGroup(group.guid, userKcId).pipe(
+          catchError(() => EMPTY),
+          finalize(() => { queueMicrotask(() => { this.removingGroupGuid = null; }); })
+        )
+      )
+    ).subscribe(() => {
+      queueMicrotask(() => { this.groupsDataSource.removeGroupByGuid(group.guid); });
     });
   }
 }

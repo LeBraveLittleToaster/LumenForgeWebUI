@@ -1,7 +1,7 @@
 // inventory-api/src/lib/inventory-api.client.ts
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { toHttpParams } from './http-params';
 
 import { AUTH_API_BASE_URL } from './token';
@@ -39,12 +39,23 @@ export class AuthApiClient {
   }
   */
 
+  getUserRoles(userKcId: string): Observable<Role[]> {
+    return this.http.get<Role[]>(this.url(`/api/v1/auth/users/${userKcId}/roles`));
+  }
+
   deleteUser(userKcId: string): Observable<void> {
     return this.http.delete<void>(this.url(`/api/v1/auth/users/${userKcId}`));
   }
 
   getUser(userKcId: string): Observable<UserView> {
     return this.http.get<UserView>(this.url(`/api/v1/auth/users/${userKcId}`));
+  }
+
+  getUserAndGroups(userKcId: string): Observable<[UserView, GroupView[]]> {
+    return combineLatest([
+      this.http.get<UserView>(this.url(`/api/v1/auth/users/${userKcId}`)),
+      this.http.get<GroupView[]>(this.url(`/api/v1/auth/users/${userKcId}/groups`))
+    ]);
   }
 
   listUsers(query: ListQueryDto = {}): Observable<ListView<UserView>> {
