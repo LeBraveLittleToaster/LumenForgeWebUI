@@ -1,77 +1,17 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { BehaviorSubject, catchError, EMPTY, finalize } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { catchError, EMPTY } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { InventoryApiClient } from '../../core/api/inventory/inventory-api.client';
 import { CategoryDataSource, CategoryDataItem } from './category.data-source';
 import { DataTableComponent, ColumnDef } from '../../shared/data-table/data-table';
-
-@Component({
-  selector: 'app-category-create-dialog',
-  standalone: true,
-  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, ReactiveFormsModule, CommonModule],
-  template: `
-    <h2 mat-dialog-title>Create Category</h2>
-    <mat-dialog-content>
-      <form [formGroup]="form" class="dialog-form">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Name</mat-label>
-          <input matInput formControlName="name" placeholder="Category name" required>
-          @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
-            <mat-error>Name is required</mat-error>
-          }
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Description</mat-label>
-          <textarea matInput formControlName="description" placeholder="Category description" rows="3"></textarea>
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-button [disabled]="form.invalid || (isSending$ | async)" (click)="create()">Create</button>
-    </mat-dialog-actions>
-  `,
-  styles: [`
-    .dialog-form { display: flex; flex-direction: column; min-width: 320px; padding-top: 8px; }
-    .full-width { width: 100%; }
-  `]
-})
-export class CategoryCreateDialogComponent {
-  private fb = inject(FormBuilder);
-  private isSendingSubject = new BehaviorSubject<boolean>(false);
-  isSending$ = this.isSendingSubject.asObservable();
-
-  form = this.fb.group({
-    name: ['', Validators.required],
-    description: ['']
-  });
-
-  constructor(
-    private dialogRef: MatDialogRef<CategoryCreateDialogComponent>,
-    private api: InventoryApiClient
-  ) {}
-
-  create() {
-    if (this.form.invalid) return;
-    this.isSendingSubject.next(true);
-    this.api.createCategory({
-      name: this.form.value.name!,
-      description: this.form.value.description || null
-    }).pipe(
-      catchError(() => EMPTY),
-      finalize(() => this.isSendingSubject.next(false))
-    ).subscribe(category => {
-      this.dialogRef.close(category);
-    });
-  }
-}
+import { CategoryCreateDialogComponent } from './category-create-dialog.component';
 
 @Component({
   selector: 'app-category',
