@@ -10,13 +10,10 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/api/auth/auth-service';
 import { signal } from '@angular/core';
 import { ThemeService } from '../../core/services/theme.service';
-import { Permissions } from '../../core/api/auth/models/dtos';
 
 interface NavItem {
   label: string;
   route: string;
-  requiredPermission?: Permissions;
-  requiredAnyPermissions?: Permissions[];
 }
 
 @Component({
@@ -35,7 +32,6 @@ interface NavItem {
   ]
 })
 export class Toolbar implements OnInit, OnDestroy {
-
   private router = inject(Router);
   public auth = inject(AuthService);
   public theme = inject(ThemeService);
@@ -45,16 +41,7 @@ export class Toolbar implements OnInit, OnDestroy {
 
   mainNavItems: NavItem[] = [
     { label: 'Dashboard', route: '/dashboard' },
-    {
-      label: 'Inventory',
-      route: '/inventory',
-      requiredAnyPermissions: [
-        Permissions.DeviceRead,
-        Permissions.DeviceCreate,
-        Permissions.DeviceUpdate,
-        Permissions.DeviceDelete
-      ]
-    },
+    { label: 'Inventory', route: '/inventory' },
     { label: 'Maintenance', route: '/maintenance' },
     { label: 'Rental', route: '/rental' },
     { label: 'Billing', route: '/billing' },
@@ -62,10 +49,10 @@ export class Toolbar implements OnInit, OnDestroy {
   ];
 
   adminNavItems: NavItem[] = [
-    { label: 'Users', route: '/admin/users', requiredPermission: Permissions.UserRead },
-    { label: 'Groups', route: '/admin/groups', requiredPermission: Permissions.GroupRead },
-    { label: 'Categories', route: '/admin/categories', requiredPermission: Permissions.CategoryRead },
-    { label: 'Vendors', route: '/admin/vendor', requiredPermission: Permissions.VendorRead }
+    { label: 'Users', route: '/admin/users' },
+    { label: 'Groups', route: '/admin/groups' },
+    { label: 'Categories', route: '/admin/categories' },
+    { label: 'Vendors', route: '/admin/vendor' }
   ];
 
   ngOnInit() {
@@ -89,21 +76,9 @@ export class Toolbar implements OnInit, OnDestroy {
   private updateNavItems() {
     const currentUrl = this.router.url;
     if (currentUrl.startsWith('/admin')) {
-      this.navItems.set(this.adminNavItems.filter(item =>
-        !item.requiredPermission || this.auth.hasPermission(item.requiredPermission)
-      ));
+      this.navItems.set(this.adminNavItems);
     } else {
-      this.navItems.set(this.mainNavItems.filter(item => {
-        if (item.requiredPermission) {
-          return this.auth.hasPermission(item.requiredPermission);
-        }
-
-        if (item.requiredAnyPermissions?.length) {
-          return this.auth.hasAnyPermission(...item.requiredAnyPermissions);
-        }
-
-        return true;
-      }));
+      this.navItems.set(this.mainNavItems);
     }
   }
 

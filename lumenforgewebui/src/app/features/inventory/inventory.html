@@ -1,0 +1,39 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Inventory</h1>
+      <p class="page-subtitle">Manage devices and inventory</p>
+    </div>
+  </div>
+
+  <div class="content-card">
+    <div class="card-toolbar">
+      <form class="search-form" (ngSubmit)="onSearch()">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Search devices…</mat-label>
+          <input matInput [formControl]="searchCtrl" enterkeyhint="search" placeholder="Serial number, name, vendor">
+          @if (searchCtrl.value) {
+            <button type="button" matIconButton class="clear-btn" matSuffix aria-label="Clear" (click)="clearSearch()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+      </form>
+      <div class="page-header-actions">
+        <button mat-flat-button [routerLink]="['/inventory/create']">
+          <mat-icon>add</mat-icon> Create Device
+        </button>
+      </div>
+    </div>
+
+    <app-data-table
+      [dataSource]="dataSource"
+      [columns]="columns"
+      [loading$]="dataSource.loading$"
+      [length$]="dataSource.total$"
+      [canDelete]="true"
+      (deleteRow)="onDeleteRow($event)"
+      (page)="onPage($event)">
+    </app-data-table>
+  </div>
+</div>

@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, EMPTY, filter, finalize, forkJoin, map, Observable, of, startWith, switchMap } from 'rxjs';
+
 import { AuthApiClient } from '../../core/api/auth/auth-api.client';
 import { GroupView, UserView } from '../../core/api/auth/models/views';
 import { Permissions } from '../../core/api/auth/models/dtos';
@@ -19,7 +20,6 @@ interface GroupState {
   loading: boolean;
   group: GroupView | null;
   members: UserView[];
-  roles: Permissions[];
   error: string | null;
 }
 
@@ -102,6 +102,21 @@ export class Groupdetail implements OnInit {
   state$!: Observable<GroupState>;
   private refreshTrigger$ = new BehaviorSubject<void>(undefined);
 
+  private readonly permissionClusters = new Map<number, string>([
+    [10, 'Device'],
+    [20, 'Vendor'],
+    [30, 'Category'],
+    [40, 'Stock'],
+    [50, 'Backlog'],
+    [60, 'Order'],
+    [70, 'Order Status'],
+    [80, 'Invoice'],
+    [90, 'Invoice Status'],
+    [100, 'Role'],
+    [200, 'Group'],
+    [300, 'User'],
+  ]);
+
   constructor(
     private route: ActivatedRoute,
     private authClient: AuthApiClient,
@@ -121,23 +136,37 @@ export class Groupdetail implements OnInit {
     this.state$ = combineLatest([paramId$, this.refreshTrigger$]).pipe(
       switchMap(([id]) =>
         forkJoin({
-          group: this.authClient.getGroup(id),
+          group: this.authClient.getGroup(id, 'Permissions'),
           members: this.authClient.getGroupUsers(id),
-          roles: this.authClient.getGroupRoles(id)
         }).pipe(
-          map(({ group, members, roles }) => ({ loading: false, group, members, roles, error: null })),
-          catchError(() => of({ loading: false, group: null, members: [], roles: [], error: 'Failed to load group details.' })),
-          startWith({ loading: true, group: null, members: [], roles: [], error: null })
+          map(({ group, members }) => ({ loading: false, group, members: Array.isArray(members) ? members : [], error: null } as GroupState)),
+          catchError(() => of({ loading: false, group: null, members: [], error: 'Failed to load group details.' } as GroupState)),
+          startWith({ loading: true, group: null, members: [], error: null } as GroupState)
         )
       )
     );
   }
 
-  getRoleName(role: Permissions): string {
-    return Permissions[role] ?? String(role);
+  getPermissionsByCluster(permissions: string[]): Map<string, string[]> {
+    const clustered = new Map<string, string[]>();
+    for (const perm of permissions) {
+      const val = (Permissions as any)[perm];
+      if (typeof val === 'number') {
+        const cluster = Math.floor(val / 10) * 10;
+        const clusterName = this.permissionClusters.get(cluster) || `Group ${cluster}`;
+        if (!clustered.has(clusterName)) {
+          clustered.set(clusterName, []);
+        }
+        clustered.get(clusterName)!.push(perm);
+      }
+    }
+    return new Map([...clustered.entries()].sort());
   }
 
-  openRolesDialog(groupGuid: string, currentRoles: Permissions[]) {
+  openRolesDialog(groupGuid: string, currentPermissions: string[]) {
+    const currentRoles = currentPermissions
+      .map(p => (Permissions as any)[p] as number)
+      .filter((v): v is Permissions => typeof v === 'number');
     const ref = this.dialog.open(RoleManagementDialogComponent, {
       width: '600px',
       data: { groupGuid, currentRoles }

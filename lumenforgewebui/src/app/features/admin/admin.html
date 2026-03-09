@@ -42,6 +42,18 @@
     <h2 class="admin-section-title">Inventory Content</h2>
     <div class="admin-grid">
 
+      @if (canViewInventory) {
+      <mat-card class="admin-card" appearance="outlined" routerLink="/inventory">
+        <div class="admin-card__icon-banner">
+          <mat-icon>inventory</mat-icon>
+        </div>
+        <mat-card-header>
+          <mat-card-title>Devices</mat-card-title>
+          <mat-card-subtitle>Manage inventory and devices</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+      }
+
       @if (canViewCategories) {
       <mat-card class="admin-card" appearance="outlined" routerLink="/admin/categories">
         <div class="admin-card__icon-banner">

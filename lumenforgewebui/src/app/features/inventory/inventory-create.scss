@@ -1,0 +1,69 @@
+.page-container {
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--mat-sys-on-background);
+  margin: 0 0 8px;
+}
+
+.page-subtitle {
+  font-size: 0.95rem;
+  color: var(--mat-sys-on-background-variant);
+  margin: 0;
+}
+
+.form-card {
+  background: var(--mat-sys-surface);
+  border-radius: 8px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  padding: 32px;
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.step-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+::ng-deep .mat-mdc-stepper-vertical {
+  background: transparent;
+}
+
+::ng-deep .mat-mdc-stepper-vertical .mat-mdc-step-header {
+  background: transparent;
+}
+
+::ng-deep .mat-mdc-stepper-label-position-end .mat-mdc-step-label {
+  text-align: left;
+}

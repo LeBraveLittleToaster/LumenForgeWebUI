@@ -79,8 +79,9 @@ export class AuthApiClient {
     return this.http.delete<void>(this.url(`/api/v1/auth/groups/${groupGuid}`));
   }
 
-  getGroup(groupGuid: string): Observable<GroupView> {
-    return this.http.get<GroupView>(this.url(`/api/v1/auth/groups/${groupGuid}`));
+  getGroup(groupGuid: string, include?: string): Observable<GroupView> {
+    const query = include ? `?include=${encodeURIComponent(include)}` : '';
+    return this.http.get<GroupView>(this.url(`/api/v1/auth/groups/${groupGuid}${query}`));
   }
 
   listGroups(query: ListQueryDto = {}): Observable<ListView<GroupView>> {
@@ -103,9 +104,5 @@ export class AuthApiClient {
   
   assignGroupRoles(groupGuid: string, dto: AssignGroupRolesDto): Observable<GroupView> {
     return this.http.put<GroupView>(this.url(`/api/v1/auth/groups/${groupGuid}/roles`), dto);
-  }
-
-  getGroupRoles(groupGuid: string): Observable<Permissions[]> {
-    return this.http.get<Permissions[]>(this.url(`/api/v1/auth/groups/${groupGuid}/roles`));
   }
 }

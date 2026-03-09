@@ -90,11 +90,42 @@
   padding: 20px 24px 12px;
 }
 
-.roles-grid {
+.permission-clusters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 0 24px 24px;
+}
+
+.permission-cluster {
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 10px;
+  padding: 14px;
+  background: var(--app-page-bg);
+}
+
+.cluster-title {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+}
+
+.permission-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 0 24px 20px;
+}
+
+.permission-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  font-size: 0.78rem;
+  font-weight: 500;
 }
 
 .section-title {

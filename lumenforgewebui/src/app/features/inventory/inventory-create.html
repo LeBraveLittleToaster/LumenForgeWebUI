@@ -1,0 +1,122 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Create Device</h1>
+      <p class="page-subtitle">Add a new device to inventory</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <mat-stepper #stepper [linear]="isLinear">
+      <!-- Step 1: Basic Device Information -->
+      <mat-step [stepControl]="firstFormGroup" label="Basic Information">
+        <form [formGroup]="firstFormGroup">
+          <div class="step-content">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Serial Number *</mat-label>
+              <input matInput formControlName="serialNumberCtrl" placeholder="e.g., DEV-2024-001">
+              @if (firstFormGroup.get('serialNumberCtrl')?.hasError('required') && firstFormGroup.get('serialNumberCtrl')?.touched) {
+                <mat-error>Serial number is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Device Name</mat-label>
+              <input matInput formControlName="nameCtrl" placeholder="e.g., Dell Laptop">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="descriptionCtrl" rows="3" placeholder="Device description and notes"></textarea>
+            </mat-form-field>
+          </div>
+
+          <div class="step-actions">
+            <button mat-button matStepperNext>Next</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- Step 2: Vendor and Purchase Information -->
+      <mat-step [stepControl]="secondFormGroup" label="Purchase Details">
+        <form [formGroup]="secondFormGroup">
+          <div class="step-content">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Vendor *</mat-label>
+              <mat-select formControlName="vendorCtrl">
+                <mat-option value="">Select a vendor</mat-option>
+                @for (vendor of vendors; track vendor.guid) {
+                  <mat-option [value]="vendor.guid">{{ vendor.name }}</mat-option>
+                }
+              </mat-select>
+              @if (secondFormGroup.get('vendorCtrl')?.hasError('required') && secondFormGroup.get('vendorCtrl')?.touched) {
+                <mat-error>Vendor is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Purchase Price *</mat-label>
+              <input matInput type="number" formControlName="purchasePriceCtrl" placeholder="0.00" step="0.01">
+              @if (secondFormGroup.get('purchasePriceCtrl')?.hasError('required') && secondFormGroup.get('purchasePriceCtrl')?.touched) {
+                <mat-error>Purchase price is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Purchase Date *</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="purchaseDateCtrl">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              @if (secondFormGroup.get('purchaseDateCtrl')?.hasError('required') && secondFormGroup.get('purchaseDateCtrl')?.touched) {
+                <mat-error>Purchase date is required</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="step-actions">
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-button matStepperNext>Next</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- Step 3: Stock Information -->
+      <mat-step [stepControl]="thirdFormGroup" label="Stock">
+        <form [formGroup]="thirdFormGroup">
+          <div class="step-content">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Stock Unit Type *</mat-label>
+              <mat-select formControlName="stockUnitTypeCtrl">
+                <mat-option value="pcs">Pieces</mat-option>
+                <mat-option value="box">Box</mat-option>
+                <mat-option value="pack">Pack</mat-option>
+                <mat-option value="unit">Unit</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Stock Count *</mat-label>
+              <input matInput type="number" formControlName="stockCountCtrl" placeholder="0" min="0">
+              @if (thirdFormGroup.get('stockCountCtrl')?.hasError('required') && thirdFormGroup.get('stockCountCtrl')?.touched) {
+                <mat-error>Stock count is required</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="step-actions">
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-raised-button color="primary" [disabled]="isSending$ | async" (click)="createDevice()">
+              @if (isSending$ | async) {
+                <mat-icon>hourglass_empty</mat-icon>
+                Creating...
+              } @else {
+                <mat-icon>check</mat-icon>
+                Create Device
+              }
+            </button>
+          </div>
+        </form>
+      </mat-step>
+    </mat-stepper>
+  </div>
+</div>

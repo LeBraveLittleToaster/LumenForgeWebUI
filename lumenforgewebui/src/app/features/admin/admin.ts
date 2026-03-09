@@ -18,9 +18,10 @@ export class Admin {
   get canViewGroups() { return this.auth.hasPermission(Permissions.GroupRead); }
   get canViewCategories() { return this.auth.hasPermission(Permissions.CategoryRead); }
   get canViewVendors() { return this.auth.hasPermission(Permissions.VendorRead); }
+  get canViewInventory() { return this.auth.hasPermission(Permissions.DeviceRead); }
 
   get hasAuthSection() { return this.canViewUsers || this.canViewGroups; }
-  get hasInventorySection() { return this.canViewCategories || this.canViewVendors; }
+  get hasInventorySection() { return this.canViewCategories || this.canViewVendors || this.canViewInventory; }
 
   logout() {
     this.auth.logout();

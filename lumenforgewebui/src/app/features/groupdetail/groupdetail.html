@@ -129,19 +129,26 @@
             <h2 class="section-title">Roles</h2>
             <p class="section-subtitle">Permissions assigned to this group.</p>
           </div>
-          <button mat-flat-button (click)="openRolesDialog(state.group!.guid, state.roles)">
+          <button mat-flat-button (click)="openRolesDialog(state.group!.guid, state.group!.permissions)">
             <mat-icon>manage_accounts</mat-icon> Manage Roles
           </button>
         </div>
-        @if (!state.roles || state.roles.length === 0) {
+        @if (!state.group!.permissions || state.group!.permissions.length === 0) {
           <div class="empty-state">
             <mat-icon>no_accounts</mat-icon>
             <p>No roles assigned to this group.</p>
           </div>
         } @else {
-          <div class="roles-grid">
-            @for (role of state.roles; track role) {
-              <span class="badge badge--info">{{ getRoleName(role) }}</span>
+          <div class="permission-clusters-grid">
+            @for (cluster of getPermissionsByCluster(state.group!.permissions) | keyvalue; track cluster.key) {
+              <div class="permission-cluster">
+                <h3 class="cluster-title">{{ cluster.key }}</h3>
+                <div class="permission-chips">
+                  @for (permission of cluster.value; track permission) {
+                    <span class="permission-chip">{{ permission }}</span>
+                  }
+                </div>
+              </div>
             }
           </div>
         }
