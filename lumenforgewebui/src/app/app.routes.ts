@@ -15,6 +15,7 @@ import { GroupCreate } from './features/groupcreate/groupcreate';
 import { Profile } from './features/profile/profile';
 import { Inventory } from './features/inventory/inventory';
 import { InventoryCreate } from './features/inventory/inventory-create';
+import { Devicedetail } from './features/devicedetail/devicedetail';
 import { Permissions } from './core/api/auth/models/dtos';
 
 export const routes: Routes = [
@@ -51,6 +52,11 @@ export const routes: Routes = [
         path: "inventory/create",
         canActivate: [authGuard, permissionGuard(Permissions.DeviceCreate)],
         component: InventoryCreate,
+    },
+    {
+        path: "inventory/:deviceGuid",
+        canActivate: [authGuard, permissionGuard(Permissions.DeviceRead)],
+        component: Devicedetail,
     },
     {
         path: "admin",

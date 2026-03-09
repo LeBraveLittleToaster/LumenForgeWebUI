@@ -107,11 +107,15 @@
             <button mat-button matStepperPrevious>Back</button>
             <button mat-raised-button color="primary" [disabled]="isSending$ | async" (click)="createDevice()">
               @if (isSending$ | async) {
+                <ng-container>
                 <mat-icon>hourglass_empty</mat-icon>
                 Creating...
+                </ng-container>
               } @else {
+                <ng-container>
                 <mat-icon>check</mat-icon>
                 Create Device
+                </ng-container>
               }
             </button>
           </div>

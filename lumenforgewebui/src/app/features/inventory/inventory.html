@@ -31,6 +31,7 @@
       [columns]="columns"
       [loading$]="dataSource.loading$"
       [length$]="dataSource.total$"
+      [rowRouterLink]="rowRouterLink"
       [canDelete]="true"
       (deleteRow)="onDeleteRow($event)"
       (page)="onPage($event)">

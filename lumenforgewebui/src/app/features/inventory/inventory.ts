@@ -25,6 +25,8 @@ import { catchError, EMPTY } from 'rxjs';
   providers: [InventoryApiClient]
 })
 export class Inventory implements OnInit {
+  readonly rowRouterLink = (row: InventoryDataItem): any[] => ['/inventory', row.deviceView.guid];
+
   columns: ColumnDef<InventoryDataItem>[] = [
     { key: 'guid',           header: 'Device ID',      cell: r => r.deviceView.guid },
     { key: 'serialNumber',   header: 'Serial Number',  cell: r => r.deviceView.serial_number },

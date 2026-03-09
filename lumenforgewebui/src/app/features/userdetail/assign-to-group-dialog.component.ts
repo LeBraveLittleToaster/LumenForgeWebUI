@@ -99,6 +99,6 @@ export class AssignToGroupDialogComponent implements OnInit {
     if (!this.selectedGroup) return;
     this.authClient.assignUserToGroup(this.selectedGroup.guid, { userKcId: this.data.userKcId }).pipe(
       catchError(() => EMPTY)
-    ).subscribe(() => this.dialogRef.close(true));
+    ).subscribe(() => this.dialogRef.close(this.selectedGroup));
   }
 }

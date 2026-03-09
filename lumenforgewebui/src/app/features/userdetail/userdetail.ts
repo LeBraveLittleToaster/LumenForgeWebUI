@@ -142,8 +142,9 @@ export class UserDetail implements OnInit {
       width: '500px',
       data: { userKcId }
     });
-    ref.afterClosed().subscribe(ok => {
-      if (ok) this.refreshTrigger$.next();
+    ref.afterClosed().subscribe((assignedGroup: GroupView | undefined) => {
+      if (!assignedGroup) return;
+      this.groupsDataSource.upsertGroup(assignedGroup);
     });
   }
 
