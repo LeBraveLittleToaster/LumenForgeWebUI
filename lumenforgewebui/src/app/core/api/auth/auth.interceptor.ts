@@ -18,6 +18,7 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
 
   return from(authService.getValidToken()).pipe(
     switchMap((token) => {
+      console.log("Got token from AuthService:", token);
       if (!token) return next(req);
       const authReq = req.clone({
         setHeaders: {

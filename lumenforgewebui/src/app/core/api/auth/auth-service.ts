@@ -1,8 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, signal, computed } from '@angular/core';
 import Keycloak from 'keycloak-js';
-
-export type UserRole = 'REALM_OWNER' | 'REALM_ADMIN' | 'REALM_USER' | 'anonymous';
+import { AuthApiClient } from './auth-api.client';
+import { Permissions } from './models/dtos';
 
 export interface UserProfile {
   id?: string;
@@ -10,13 +9,16 @@ export interface UserProfile {
   email?: string;
   firstName?: string;
   lastName?: string;
-  roles: UserRole[];
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+
+  constructor(private authApiClient: AuthApiClient) {
+
+  }
 
   private keycloak = new Keycloak({
     url: 'http://localhost:8080',
@@ -26,27 +28,32 @@ export class AuthService {
 
   private _isInitialized = signal(false);
   private _profile = signal<UserProfile | null>(null);
+  private _permissions = signal<Set<Permissions>>(new Set());
 
   readonly isInitialized = this._isInitialized.asReadonly();
-  
   readonly isAuthenticated = computed(() => !!this._profile());
-
   readonly user = computed(() => this._profile());
+  readonly permissions = this._permissions.asReadonly();
 
-  readonly isOwner = computed(() => 
-    this.keycloak.hasRealmRole('REALM_OWNER')
+  /** True when the user holds at least one admin-level permission. */
+  readonly isAdmin = computed(() =>
+    this.hasAnyPermission(
+      Permissions.UserRead, Permissions.GroupRead,
+      Permissions.CategoryRead, Permissions.VendorRead
+    )
   );
 
-  readonly isAdmin = computed(() => 
-    this.keycloak.hasRealmRole('REALM_ADMIN') || this.isOwner()
-  );
+  /** Returns true if the user has ALL of the given permissions. */
+  hasPermission(...perms: Permissions[]): boolean {
+    const current = this._permissions();
+    return perms.every(p => current.has(p));
+  }
 
-  readonly role = computed<UserRole>(() => {
-    if (this.isOwner()) return 'REALM_OWNER';
-    if (this.isAdmin()) return 'REALM_ADMIN';
-    if (this.isAuthenticated()) return 'REALM_USER';
-    return 'anonymous';
-  });
+  /** Returns true if the user has ANY of the given permissions. */
+  hasAnyPermission(...perms: Permissions[]): boolean {
+    const current = this._permissions();
+    return perms.some(p => current.has(p));
+  }
 
   async init(): Promise<void> {
     console.log('Initializing Keycloak...');
@@ -59,25 +66,41 @@ export class AuthService {
       });
 
       console.log('Keycloak initialized. Authenticated:', authenticated);
-    
+
 
       if (authenticated) {
-            const token = this.keycloak.tokenParsed as any;
+        const token = this.keycloak.tokenParsed as any;
 
-      this._profile.set({
-        id: token.sub,
-        username: token.preferred_username,
-        email: token.email,
-        firstName: token.given_name,
-        lastName: token.family_name,
-        roles: (this.keycloak.realmAccess?.roles as UserRole[]) || []
-      });
-      
-      console.log('Profile loaded from token:', this._profile());
-    } else {
-      this._profile.set(null);
-    }
-      
+        this._profile.set({
+          id: token.sub,
+          username: token.preferred_username,
+          email: token.email,
+          firstName: token.given_name,
+          lastName: token.family_name,
+        });
+
+        // Load groups & derive permissions
+        try {
+          const user = await this.authApiClient.getUser(token.sub, true).toPromise();
+          const permSet = new Set<Permissions>();
+          for (const group of user?.groups ?? []) {
+            for (const name of group.permissions ?? []) {
+              const val = Permissions[name as keyof typeof Permissions];
+              if (val !== undefined) {
+                permSet.add(val);
+              }
+            }
+          }
+          this._permissions.set(permSet);
+        } catch (e) {
+          console.error('Failed to load user groups/permissions', e);
+        }
+
+      } else {
+        this._profile.set(null);
+        this._permissions.set(new Set());
+      }
+
       this._isInitialized.set(true);
     } catch (error) {
       console.error('Keycloak initialization failed', error);
@@ -87,7 +110,9 @@ export class AuthService {
   }
 
   login(): void {
-    this.keycloak.login();
+    this.keycloak.login({
+      loginHint: 'initial_admin_user'
+    });
   }
 
   logout(): void {
@@ -102,10 +127,10 @@ export class AuthService {
 
   async getValidToken(): Promise<string | undefined> {
     try {
-      await this.keycloak.updateToken(30); // Refresh if token expires in < 30s
+      await this.keycloak.updateToken(30);
       return this.keycloak.token;
     } catch (error) {
-      this.login(); // Force login if refresh fails
+      this.login();
       return undefined;
     }
   }

@@ -10,10 +10,12 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/api/auth/auth-service';
 import { signal } from '@angular/core';
 import { ThemeService } from '../../core/services/theme.service';
+import { Permissions } from '../../core/api/auth/models/dtos';
 
 interface NavItem {
   label: string;
   route: string;
+  requiredPermission?: Permissions;
 }
 
 @Component({
@@ -32,6 +34,7 @@ interface NavItem {
   ]
 })
 export class Toolbar implements OnInit, OnDestroy {
+
   private router = inject(Router);
   public auth = inject(AuthService);
   public theme = inject(ThemeService);
@@ -49,10 +52,10 @@ export class Toolbar implements OnInit, OnDestroy {
   ];
 
   adminNavItems: NavItem[] = [
-    { label: 'Users', route: '/admin/users' },
-    { label: 'Groups', route: '/admin/groups' },
-    { label: 'Categories', route: '/admin/categories' },
-    { label: 'Vendors', route: '/admin/vendor' }
+    { label: 'Users', route: '/admin/users', requiredPermission: Permissions.UserRead },
+    { label: 'Groups', route: '/admin/groups', requiredPermission: Permissions.GroupRead },
+    { label: 'Categories', route: '/admin/categories', requiredPermission: Permissions.CategoryRead },
+    { label: 'Vendors', route: '/admin/vendor', requiredPermission: Permissions.VendorRead }
   ];
 
   ngOnInit() {
@@ -76,7 +79,9 @@ export class Toolbar implements OnInit, OnDestroy {
   private updateNavItems() {
     const currentUrl = this.router.url;
     if (currentUrl.startsWith('/admin')) {
-      this.navItems.set(this.adminNavItems);
+      this.navItems.set(this.adminNavItems.filter(item =>
+        !item.requiredPermission || this.auth.hasPermission(item.requiredPermission)
+      ));
     } else {
       this.navItems.set(this.mainNavItems);
     }

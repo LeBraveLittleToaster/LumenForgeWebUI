@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
 import { Router, RouterLink } from '@angular/router';
 import { AuthApiClient } from '../../core/api/auth/auth-api.client';
-import { AddGroupDto, AddKcUserDto, Role } from '../../core/api/auth/models/dtos';
+import { AddGroupDto, AddKcUserDto, Permissions } from '../../core/api/auth/models/dtos';
 import { validate } from '@angular/forms/signals';
 import { BehaviorSubject, catchError, EMPTY, finalize, Observable } from 'rxjs';
 import { GroupView, UserView } from '../../core/api/auth/models/views';
@@ -35,11 +35,11 @@ export class GroupCreate {
   private isSendingSubject = new BehaviorSubject<boolean>(false);
   isSending$ = this.isSendingSubject.asObservable();
 
-  roleEntries = Object.keys(Role)
+  roleEntries = Object.keys(Permissions)
     .filter(key => isNaN(Number(key)) && key !== 'None')
     .map(key => ({
       name: key,
-      value: Role[key as keyof typeof Role]
+      value: Permissions[key as keyof typeof Permissions]
     }));
 
   selectAllRoles(rowIdx: number | undefined) {
@@ -98,7 +98,7 @@ export class GroupCreate {
       .map(role => role.name);
   }
 
-  getSelectedRoleValues(): Role[] {
+  getSelectedRoleValues(): Permissions[] {
     return this.roleEntries
       .filter(role => this.secondFormGroup.get(`role_${role.value}`)?.value === true)
       .map(role => role.value);

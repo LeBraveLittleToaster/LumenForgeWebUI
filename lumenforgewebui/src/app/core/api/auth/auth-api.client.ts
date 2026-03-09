@@ -8,7 +8,7 @@ import { AUTH_API_BASE_URL } from './token';
 import { ListQueryDto } from './models/query';
 import { Guid } from './common/common';
 import { GroupView, ListView, UserView } from './models/views';
-import { AddGroupDto, AddKcUserDto, AssignGroupRolesDto, AssignUserToGroupDto, Role, UpdateGroupDto, UpdateUserDto } from './models/dtos';
+import { AddGroupDto, AddKcUserDto, AssignGroupRolesDto, AssignUserToGroupDto, Permissions, UpdateGroupDto, UpdateUserDto } from './models/dtos';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApiClient {
@@ -32,30 +32,21 @@ export class AuthApiClient {
     return this.http.put<UserView>(this.url('/api/v1/auth/users'), dto);
   }
 
-  /*
-  TODO: implement remaining endpoints
   updateUser(userKcId: string, dto: UpdateUserDto): Observable<UserView> {
     return this.http.patch<UserView>(this.url(`/api/v1/auth/users/${userKcId}`), dto);
   }
-  */
 
-  getUserRoles(userKcId: string): Observable<Role[]> {
-    return this.http.get<Role[]>(this.url(`/api/v1/auth/users/${userKcId}/roles`));
+  getUserRoles(userKcId: string): Observable<Permissions[]> {
+    return this.http.get<Permissions[]>(this.url(`/api/v1/auth/users/${userKcId}/roles`));
   }
 
   deleteUser(userKcId: string): Observable<void> {
     return this.http.delete<void>(this.url(`/api/v1/auth/users/${userKcId}`));
   }
 
-  getUser(userKcId: string): Observable<UserView> {
-    return this.http.get<UserView>(this.url(`/api/v1/auth/users/${userKcId}`));
-  }
-
-  getUserAndGroups(userKcId: string): Observable<[UserView, GroupView[]]> {
-    return combineLatest([
-      this.http.get<UserView>(this.url(`/api/v1/auth/users/${userKcId}`)),
-      this.http.get<GroupView[]>(this.url(`/api/v1/auth/users/${userKcId}/groups`))
-    ]);
+  getUser(userKcId: string, withGroups: boolean = false): Observable<UserView> {
+    let url  = `/api/v1/auth/users/${userKcId}` + (withGroups ? '?include=groups' : '');
+    return this.http.get<UserView>(this.url(url));
   }
 
   listUsers(query: ListQueryDto = {}): Observable<ListView<UserView>> {
@@ -69,8 +60,8 @@ export class AuthApiClient {
     return this.http.get<GroupView[]>(this.url(`/api/v1/auth/users/${userKcId}/groups`));
   }
 
-  listRoles(userKcId: string): Observable<Role[]> {
-    return this.http.get<Role[]>(this.url(`/api/v1/auth/users/${userKcId}/roles`));
+  listRoles(userKcId: string): Observable<Permissions[]> {
+    return this.http.get<Permissions[]>(this.url(`/api/v1/auth/users/${userKcId}/roles`));
   }
 
   // -------------------------
@@ -114,7 +105,7 @@ export class AuthApiClient {
     return this.http.put<GroupView>(this.url(`/api/v1/auth/groups/${groupGuid}/roles`), dto);
   }
 
-  getGroupRoles(groupGuid: string): Observable<Role[]> {
-    return this.http.get<Role[]>(this.url(`/api/v1/auth/groups/${groupGuid}/roles`));
+  getGroupRoles(groupGuid: string): Observable<Permissions[]> {
+    return this.http.get<Permissions[]>(this.url(`/api/v1/auth/groups/${groupGuid}/roles`));
   }
 }

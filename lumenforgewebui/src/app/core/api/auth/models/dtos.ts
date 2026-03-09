@@ -10,9 +10,7 @@ export type Guid = string;
 export type InstantString = string;
 
 /** From Role.cs */
-export enum Role {
-  None = 0,
-
+export enum Permissions {
   // Inventory
   DeviceCreate = 10,
   DeviceRead = 11,
@@ -81,7 +79,7 @@ export enum Role {
 /** From GroupRole.cs */
 export interface GroupRole {
   groupId: number;
-  roleId: Role;
+  roleId: Permissions;
 }
 
 /**From KcUserReference.cs */
@@ -103,7 +101,7 @@ export interface GroupUser {
 export interface AddGroupDto {
   name: string;
   description: string;
-  roles: Role[];
+  roles: Permissions[];
 }
 
 /** From UpdateGroupDto.cs */
@@ -130,7 +128,9 @@ export interface AddKcUserDto {
 
 /** From UpdateUserDto.cs */
 export interface UpdateUserDto {
-  newUserKcId: string;
+  newUserKcId?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 /** From AssignDtos.cs */
@@ -141,5 +141,5 @@ export interface AssignUserToGroupDto {
 
 /** From AssignGroupRolesDto.cs */
 export interface AssignGroupRolesDto {
-  roles: Role[];
+  roles: Permissions[];
 }

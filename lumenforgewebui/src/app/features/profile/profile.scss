@@ -1,4 +1,4 @@
-/* ── User detail page ─────────────────────────────────────────── */
+/* ── Profile page ─────────────────────────────────────────── */
 
 /* Identity header inside the top content-card */
 .detail-identity {
@@ -24,6 +24,10 @@
   width: 32px;
   height: 32px;
   color: var(--app-nav-active-fg);
+}
+
+.detail-names {
+  flex: 1;
 }
 
 .detail-full-name {
@@ -89,7 +93,7 @@
   text-decoration: underline;
 }
 
-/* Second card (groups section) */
+/* Groups section */
 .section-card {
   margin-top: 16px;
 }
@@ -98,38 +102,44 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px 12px;
+  padding: 20px 24px 16px;
 }
 
 .section-title {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--mat-sys-on-surface);
-  margin: 0 0 2px;
+  margin: 0 0 4px;
 }
 
 .section-subtitle {
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   color: var(--mat-sys-on-surface-variant);
   margin: 0;
 }
 
-/* Empty / state cards */
+/* Loading state */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 64px 24px;
+}
+
+/* Error state */
 .state-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 56px 24px;
-  text-align: center;
+  padding: 48px 24px;
 }
 
 .state-icon {
-  font-size: 40px;
-  width: 40px;
-  height: 40px;
-  color: var(--mat-sys-on-surface-variant);
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
 }
 
 .state-icon--error {
@@ -137,25 +147,10 @@
 }
 
 .state-msg {
+  font-size: 0.95rem;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 0.875rem;
+  text-align: center;
   margin: 0;
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 32px 24px;
-  color: var(--mat-sys-on-surface-variant);
-  font-size: 0.875rem;
-}
-
-.empty-state mat-icon {
-  font-size: 32px;
-  width: 32px;
-  height: 32px;
 }
 
 .permission-clusters-grid {
@@ -225,65 +220,26 @@
   font-weight: 500;
 }
 
-@media (max-width: 600px) {
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .detail-identity {
+    flex-wrap: wrap;
+  }
+
   .info-grid {
     grid-template-columns: 1fr;
   }
-  .full-width {
-    grid-column: 1;
-  }
+
   .permission-clusters-grid {
     grid-template-columns: 1fr;
-  }
-}
-
-.table-container {
-  margin: 0 24px 24px;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid var(--mat-sys-outline-variant);
-}
-
-.accent-link {
-  color: var(--mat-sys-primary);
-  text-decoration: none;
-}
-
-.accent-link:hover {
-  text-decoration: underline;
-  border-radius: 6px;
-  background-color: var(--mat-sys-secondary-container);
-}
-
-.accent-link:hover {
-  background-color: var(--mat-sys-secondary);
-  color: var(--mat-sys-on-secondary);
-}
-
-.table-container {
-  overflow: auto;
-  border-radius: 12px;
-}
-
-.m3-table {
-  width: 100%;
-  background: transparent;
-}
-
-.m3-table th.mat-mdc-header-cell,
-.m3-table td.mat-mdc-cell {
-  color: var(--mat-sys-on-primary-container);
-}
-
-.m3-table th.mat-mdc-header-cell {
-  font-weight: 700;
-}
-
-@media (max-width: 720px) {
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-  .profile-card {
-    max-width: 520px;
   }
 }

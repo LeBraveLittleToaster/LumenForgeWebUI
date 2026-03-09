@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { UserDetailGroupsDataSource } from './userdetail-groups.data-source';
+import { Permissions } from '../../core/api/auth/models/dtos';
 
 interface UserState {
   loading: boolean;
@@ -155,7 +156,23 @@ export class UserDetail implements OnInit {
   groupsDataSource = new UserDetailGroupsDataSource();
   groupsCount$ = this.groupsDataSource.total$;
   removingGroupGuid: string | null = null;
+  selectedPermission: string | null = null;
   private refreshTrigger$ = new BehaviorSubject<void>(undefined);
+
+  private readonly permissionClusters = new Map<number, string>([
+    [10, 'Device'],
+    [20, 'Vendor'],
+    [30, 'Category'],
+    [40, 'Stock'],
+    [50, 'Backlog'],
+    [60, 'Order'],
+    [70, 'Order Status'],
+    [80, 'Invoice'],
+    [90, 'Invoice Status'],
+    [100, 'Role'],
+    [200, 'Group'],
+    [300, 'User'],
+  ]);
 
   constructor(
     private route: ActivatedRoute,
@@ -166,6 +183,48 @@ export class UserDetail implements OnInit {
 
   goBack() { this.location.back(); }
 
+  getAllPermissions(user: UserView): string[] {
+    const permissions = new Set<string>();
+    for (const group of user.groups ?? []) {
+      for (const permission of group.permissions ?? []) {
+        permissions.add(permission);
+      }
+    }
+    return Array.from(permissions).sort();
+  }
+
+  getPermissionsByCluster(user: UserView): Map<string, string[]> {
+    const permissions = this.getAllPermissions(user);
+    const clustered = new Map<string, string[]>();
+
+    for (const perm of permissions) {
+      const val = (Permissions as any)[perm];
+      if (typeof val === 'number') {
+        const cluster = Math.floor(val / 10) * 10;
+        const clusterName = this.permissionClusters.get(cluster) || `Group ${cluster}`;
+        if (!clustered.has(clusterName)) {
+          clustered.set(clusterName, []);
+        }
+        clustered.get(clusterName)!.push(perm);
+      }
+    }
+
+    return new Map([...clustered.entries()].sort());
+  }
+
+  getGroupsProvidingPermission(user: UserView, permission: string): GroupView[] {
+    return (user.groups ?? []).filter(group =>
+      (group.permissions ?? []).includes(permission)
+    );
+  }
+
+  togglePermissionSelection(permission: string): void {
+    this.selectedPermission = this.selectedPermission === permission ? null : permission;
+  }
+
+  isGroupHighlighted(group: GroupView): boolean {
+    return this.selectedPermission !== null && !!group.permissions?.includes(this.selectedPermission);
+  }
   ngOnInit() {
     const paramId$ = this.route.paramMap.pipe(
       map(params => params.get('userKcId')),
@@ -175,11 +234,11 @@ export class UserDetail implements OnInit {
 
     this.state$ = combineLatest([paramId$, this.refreshTrigger$]).pipe(
       switchMap(([id]) =>
-        this.authClient.getUserAndGroups(id).pipe(
-          tap(([, groups]) => this.groupsDataSource.setGroups(groups)),
-          map(([user, groups]) => {
-            console.log("Loaded user and groups:", { user, groups });
-            return ({ loading: false, user, groups, error: null })
+        this.authClient.getUser(id, true).pipe(
+          tap((user) => this.groupsDataSource.setGroups(user.groups)),
+          map((user) => {
+            console.log("Loaded user and groups:", { user, groups: user.groups });
+            return ({ loading: false, user, groups: user.groups, error: null })
           }),
           catchError(() => {
             this.groupsDataSource.setGroups(null);

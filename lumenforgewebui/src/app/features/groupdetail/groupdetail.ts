@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, EMPTY, filter, finalize, forkJoin, map, Observable, of, startWith, switchMap } from 'rxjs';
 import { AuthApiClient } from '../../core/api/auth/auth-api.client';
 import { GroupView, UserView } from '../../core/api/auth/models/views';
-import { Role } from '../../core/api/auth/models/dtos';
+import { Permissions } from '../../core/api/auth/models/dtos';
 import { CommonModule } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +19,7 @@ interface GroupState {
   loading: boolean;
   group: GroupView | null;
   members: UserView[];
-  roles: Role[];
+  roles: Permissions[];
   error: string | null;
 }
 
@@ -56,15 +56,15 @@ interface GroupState {
   `]
 })
 export class RoleManagementDialogComponent implements OnInit {
-  readonly roleEntries = Object.keys(Role)
+  readonly roleEntries = Object.keys(Permissions)
     .filter(key => isNaN(Number(key)) && key !== 'None')
-    .map(key => ({ name: key, value: Role[key as keyof typeof Role] as number }));
+    .map(key => ({ name: key, value: Permissions[key as keyof typeof Permissions] as number }));
 
   roleValues: { [key: number]: boolean } = {};
   saving = false;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { groupGuid: string; currentRoles: Role[] },
+    @Inject(MAT_DIALOG_DATA) public data: { groupGuid: string; currentRoles: Permissions[] },
     private dialogRef: MatDialogRef<RoleManagementDialogComponent>,
     private authClient: AuthApiClient
   ) { }
@@ -75,7 +75,7 @@ export class RoleManagementDialogComponent implements OnInit {
     });
   }
 
-  get selectedRoles(): Role[] {
+  get selectedRoles(): Permissions[] {
     return this.roleEntries.filter(r => this.roleValues[r.value]).map(r => r.value);
   }
 
@@ -133,11 +133,11 @@ export class Groupdetail implements OnInit {
     );
   }
 
-  getRoleName(role: Role): string {
-    return Role[role] ?? String(role);
+  getRoleName(role: Permissions): string {
+    return Permissions[role] ?? String(role);
   }
 
-  openRolesDialog(groupGuid: string, currentRoles: Role[]) {
+  openRolesDialog(groupGuid: string, currentRoles: Permissions[]) {
     const ref = this.dialog.open(RoleManagementDialogComponent, {
       width: '600px',
       data: { groupGuid, currentRoles }

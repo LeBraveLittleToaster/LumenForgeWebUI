@@ -4,10 +4,12 @@
     <p class="page-subtitle">Manage users, groups, content, and system settings</p>
   </div>
 
+  @if (hasAuthSection) {
   <div class="admin-section">
     <h2 class="admin-section-title">Authorization &amp; Authentication</h2>
     <div class="admin-grid">
 
+      @if (canViewUsers) {
       <mat-card class="admin-card" appearance="outlined" routerLink="/admin/users">
         <div class="admin-card__icon-banner">
           <mat-icon>manage_accounts</mat-icon>
@@ -17,7 +19,9 @@
           <mat-card-subtitle>Manage user accounts and permissions</mat-card-subtitle>
         </mat-card-header>
       </mat-card>
+      }
 
+      @if (canViewGroups) {
       <mat-card class="admin-card" appearance="outlined" routerLink="/admin/groups">
         <div class="admin-card__icon-banner">
           <mat-icon>group</mat-icon>
@@ -27,14 +31,18 @@
           <mat-card-subtitle>Manage user groups and roles</mat-card-subtitle>
         </mat-card-header>
       </mat-card>
+      }
 
     </div>
   </div>
+  }
 
+  @if (hasInventorySection) {
   <div class="admin-section">
     <h2 class="admin-section-title">Inventory Content</h2>
     <div class="admin-grid">
 
+      @if (canViewCategories) {
       <mat-card class="admin-card" appearance="outlined" routerLink="/admin/categories">
         <div class="admin-card__icon-banner">
           <mat-icon>category</mat-icon>
@@ -44,7 +52,9 @@
           <mat-card-subtitle>Manage device category structure</mat-card-subtitle>
         </mat-card-header>
       </mat-card>
+      }
 
+      @if (canViewVendors) {
       <mat-card class="admin-card" appearance="outlined" routerLink="/admin/vendor">
         <div class="admin-card__icon-banner">
           <mat-icon>storefront</mat-icon>
@@ -54,7 +64,9 @@
           <mat-card-subtitle>Maintain vendor records</mat-card-subtitle>
         </mat-card-header>
       </mat-card>
+      }
 
     </div>
   </div>
+  }
 </div>

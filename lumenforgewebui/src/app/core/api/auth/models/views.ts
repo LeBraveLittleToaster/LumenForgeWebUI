@@ -12,6 +12,7 @@ export interface UserView {
   email: string;
   firstName: string;
   lastName: string;
+  groups: GroupView[];
 }
 
 /**
@@ -21,6 +22,7 @@ export interface UserView {
 export interface GroupView {
   guid: string;           // Guid
   name: string;
+  permissions: string[];
   description: string;
   created_at: string;     // Instant
   updated_at: string;     // Instant

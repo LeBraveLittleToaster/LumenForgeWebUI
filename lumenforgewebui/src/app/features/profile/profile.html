@@ -9,8 +9,8 @@
     @else if (state.error) {
       <div class="page-header">
         <div>
-          <h1 class="page-title">User profile</h1>
-          <p class="page-subtitle">Managed by Keycloak</p>
+          <h1 class="page-title">My Profile</h1>
+          <p class="page-subtitle">View your personal information</p>
         </div>
         <div class="page-header-actions">
           <button mat-icon-button aria-label="Close" (click)="goBack()"><mat-icon>close</mat-icon></button>
@@ -25,11 +25,11 @@
     @else if (state.user) {
       <div class="page-header">
         <div>
-          <h1 class="page-title">User profile</h1>
-          <p class="page-subtitle">Managed by Keycloak</p>
+          <h1 class="page-title">My Profile</h1>
+          <p class="page-subtitle">View your personal information</p>
         </div>
         <div class="page-header-actions">
-          <button mat-icon-button aria-label="Back" (click)="goBack()"><mat-icon>close</mat-icon></button>
+          <button mat-icon-button aria-label="Close" (click)="goBack()"><mat-icon>close</mat-icon></button>
         </div>
       </div>
 
@@ -53,11 +53,11 @@
 
         <mat-divider></mat-divider>
 
-        <!-- Profile fields -->
+        <!-- Profile fields (read-only) -->
         <div class="info-grid">
           <div class="info-field">
             <div class="info-label">Username</div>
-            <div class="info-value">{{ state.user.username || "\u2014" }}</div>
+            <div class="info-value">{{ state.user.username || "—" }}</div>
           </div>
 
           <div class="info-field">
@@ -66,30 +66,30 @@
               @if (state.user.email) {
                 <a class="accent-link" [href]="'mailto:' + state.user.email">{{ state.user.email }}</a>
               } @else {
-                \u2014
+                —
               }
             </div>
           </div>
 
           <div class="info-field">
             <div class="info-label">First name</div>
-            <div class="info-value">{{ state.user.firstName || "\u2014" }}</div>
+            <div class="info-value">{{ state.user.firstName || "—" }}</div>
           </div>
 
           <div class="info-field">
             <div class="info-label">Last name</div>
-            <div class="info-value">{{ state.user.lastName || "\u2014" }}</div>
+            <div class="info-value">{{ state.user.lastName || "—" }}</div>
           </div>
 
           <div class="info-field full-width">
             <div class="info-label">Keycloak user ID</div>
-            <div class="info-value monospace-id">{{ state.user.user_kc_id || "\u2014" }}</div>
+            <div class="info-value monospace-id">{{ state.user.user_kc_id || "—" }}</div>
           </div>
 
           <div class="info-field">
             <div class="info-label">Joined at</div>
             <div class="info-value">
-              {{ state.user.joined_at ? (state.user.joined_at | date : "medium") : "\u2014" }}
+              {{ state.user.joined_at ? (state.user.joined_at | date : "medium") : "—" }}
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@
         <div class="section-header">
           <div>
             <h2 class="section-title">Permissions Overview</h2>
-            <p class="section-subtitle">Effective permissions collected from all assigned groups, grouped by category.</p>
+            <p class="section-subtitle">Your effective permissions from all assigned groups, grouped by category.</p>
           </div>
         </div>
 
@@ -125,79 +125,41 @@
       </div>
 
       <!-- Groups section -->
-      <div class="content-card section-card">
-        <div class="section-header">
-          <div>
-            <h2 class="section-title">Groups</h2>
-            <p class="section-subtitle">Group memberships recorded for this user.</p>
+      @if (state.user.groups && state.user.groups.length > 0) {
+        <div class="content-card section-card">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Groups</h2>
+              <p class="section-subtitle">Your group memberships</p>
+            </div>
           </div>
-          <button mat-flat-button (click)="openAssignDialog(state.user.user_kc_id)">
-            <mat-icon>group_add</mat-icon> Assign to Group
-          </button>
-        </div>
 
-        @if ((groupsCount$ | async) === 0) {
-          <div class="empty-state">
-            <mat-icon>group_off</mat-icon>
-            <p>No group memberships recorded.</p>
-          </div>
-        } @else {
-          <table mat-table [dataSource]="groupsDataSource">
+          <table mat-table [dataSource]="state.user.groups">
             <ng-container matColumnDef="guid">
               <th mat-header-cell *matHeaderCellDef>Group ID</th>
-              <td mat-cell *matCellDef="let gu" class="monospace-id">{{ gu.guid }}</td>
+              <td mat-cell *matCellDef="let group" class="monospace-id">{{ group.guid }}</td>
             </ng-container>
 
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef>Name</th>
-              <td mat-cell *matCellDef="let gu">{{ gu.name }}</td>
+              <td mat-cell *matCellDef="let group">{{ group.name }}</td>
             </ng-container>
 
             <ng-container matColumnDef="description">
               <th mat-header-cell *matHeaderCellDef>Description</th>
-              <td mat-cell *matCellDef="let gu">{{ gu.description }}</td>
+              <td mat-cell *matCellDef="let group">{{ group.description }}</td>
             </ng-container>
 
             <ng-container matColumnDef="created_at">
               <th mat-header-cell *matHeaderCellDef>Created at</th>
-              <td mat-cell *matCellDef="let gu" class="monospace-id">{{ gu.created_at || "\u2014" }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Actions</th>
-              <td mat-cell *matCellDef="let gu">
-                <button
-                  mat-icon-button
-                  color="warn"
-                  aria-label="Remove user from group"
-                  [disabled]="removingGroupGuid === gu.guid"
-                  (click)="confirmRemoveFromGroup(gu, state.user!.user_kc_id)">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </td>
+              <td mat-cell *matCellDef="let group">{{ group.created_at ? (group.created_at | date : "medium") : "—" }}</td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns" [class.group-highlighted]="isGroupHighlighted(row)"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.group-highlighted]="isGroupHighlighted(row)"></tr>
           </table>
-        }
-      </div>
-    }
-
-    @else {
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">User profile</h1>
-          <p class="page-subtitle">Managed by Keycloak</p>
         </div>
-        <div class="page-header-actions">
-          <button mat-icon-button aria-label="Back" (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-        </div>
-      </div>
-      <div class="content-card state-card">
-        <mat-icon class="state-icon">no_accounts</mat-icon>
-        <p class="state-msg">No user data matches this ID.</p>
-      </div>
+      }
     }
   }
 </div>
