@@ -16,6 +16,8 @@ import { Profile } from './features/profile/profile';
 import { Inventory } from './features/inventory/inventory';
 import { InventoryCreate } from './features/inventory/inventory-create';
 import { Devicedetail } from './features/devicedetail/devicedetail';
+import { Maintenance } from './features/maintenance/maintenance';
+import { MaintenanceBacklogDetail } from './features/maintenance/maintenance-backlog-detail';
 
 export const routes: Routes = [
     {
@@ -56,6 +58,21 @@ export const routes: Routes = [
         path: "inventory/:deviceGuid",
         canActivate: [authGuard, permissionGuard(Permissions.DeviceRead)],
         component: Devicedetail,
+    },
+    {
+        path: 'maintenance',
+        canActivate: [authGuard, permissionGuard(
+            Permissions.BacklogRead,
+            Permissions.BacklogCreate,
+            Permissions.BacklogUpdate,
+            Permissions.BacklogDelete
+        )],
+        component: Maintenance,
+    },
+    {
+        path: 'maintenance/backlogs/:backlogUuid',
+        canActivate: [authGuard, permissionGuard(Permissions.BacklogRead)],
+        component: MaintenanceBacklogDetail,
     },
     {
         path: "admin",

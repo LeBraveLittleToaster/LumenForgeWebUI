@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { AuthService, Permissions } from '@lumenforge/api-client';
 import { signal } from '@angular/core';
@@ -30,6 +31,7 @@ interface NavItem {
     MatIconModule,
     MatMenuModule,
     MatSidenavModule,
+    MatTooltipModule,
     RouterModule
   ]
 })
@@ -54,7 +56,16 @@ export class Toolbar implements OnInit, OnDestroy {
         Permissions.DeviceDelete
       ]
     },
-    { label: 'Maintenance', route: '/maintenance' },
+    {
+      label: 'Maintenance',
+      route: '/maintenance',
+      requiredAnyPermissions: [
+        Permissions.BacklogRead,
+        Permissions.BacklogCreate,
+        Permissions.BacklogUpdate,
+        Permissions.BacklogDelete,
+      ]
+    },
     { label: 'Rental', route: '/rental' },
     { label: 'Billing', route: '/billing' },
     { label: 'Reports', route: '/reports' }
@@ -88,22 +99,55 @@ export class Toolbar implements OnInit, OnDestroy {
   private updateNavItems() {
     const currentUrl = this.router.url;
     if (currentUrl.startsWith('/admin')) {
-      this.navItems.set(this.adminNavItems.filter(item =>
-        !item.requiredPermission || this.auth.hasPermission(item.requiredPermission)
-      ));
+      this.navItems.set(this.adminNavItems);
     } else {
-      this.navItems.set(this.mainNavItems.filter(item => {
-        if (item.requiredPermission) {
-          return this.auth.hasPermission(item.requiredPermission);
-        }
-
-        if (item.requiredAnyPermissions?.length) {
-          return this.auth.hasAnyPermission(...item.requiredAnyPermissions);
-        }
-
-        return true;
-      }));
+      this.navItems.set(this.mainNavItems);
     }
+  }
+
+  canAccess(item: NavItem): boolean {
+    if (item.requiredPermission !== undefined) {
+      return this.auth.hasPermission(item.requiredPermission);
+    }
+
+    if (item.requiredAnyPermissions?.length) {
+      return this.auth.hasAnyPermission(...item.requiredAnyPermissions);
+    }
+
+    return true;
+  }
+
+  getPermissionHint(item: NavItem): string {
+    if (this.canAccess(item)) {
+      return '';
+    }
+
+    if (item.requiredPermission !== undefined) {
+      return `Requires permission: ${this.formatPermissionName(item.requiredPermission)}`;
+    }
+
+    if (item.requiredAnyPermissions?.length) {
+      const names = item.requiredAnyPermissions.map(p => this.formatPermissionName(p)).join(', ');
+      return `Requires one of: ${names}`;
+    }
+
+    return 'Missing required permission.';
+  }
+
+  onNavItemClick(event: Event, item: NavItem): void {
+    if (!this.canAccess(item)) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    this.router.navigateByUrl(item.route);
+    this.closeMobileMenu();
+  }
+
+  private formatPermissionName(permission: Permissions): string {
+    const raw = Permissions[permission] ?? 'UnknownPermission';
+    return raw.replace(/([a-z])([A-Z])/g, '$1 $2');
   }
 
   toggleMobileMenu() {

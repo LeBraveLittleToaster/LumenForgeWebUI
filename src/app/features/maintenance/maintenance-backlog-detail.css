@@ -1,0 +1,141 @@
+.page-container {
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--mat-sys-on-background);
+  margin: 0 0 8px;
+}
+
+.page-subtitle {
+  font-size: 0.95rem;
+  color: var(--mat-sys-on-background-variant);
+  margin: 0;
+}
+
+.page-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.content-card {
+  background: var(--mat-sys-surface);
+  border-radius: 8px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  padding: 24px;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.detail-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.detail-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--mat-sys-primary) 15%, transparent);
+}
+
+.detail-avatar mat-icon {
+  font-size: 30px;
+  width: 30px;
+  height: 30px;
+}
+
+.detail-full-name {
+  margin: 0 0 4px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.detail-username {
+  color: var(--mat-sys-on-background-variant);
+  font-size: 0.85rem;
+}
+
+.info-grid {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.info-field {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--mat-sys-surface) 85%, var(--mat-sys-primary) 5%);
+  border: 1px solid var(--mat-sys-outline-variant);
+}
+
+.info-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.info-label {
+  color: var(--mat-sys-on-background-variant);
+  font-size: 0.78rem;
+  margin-bottom: 6px;
+}
+
+.info-value {
+  color: var(--mat-sys-on-background);
+  font-size: 0.95rem;
+  word-break: break-word;
+}
+
+.monospace-id {
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.state-card {
+  text-align: center;
+}
+
+.state-icon {
+  width: 36px;
+  height: 36px;
+  font-size: 36px;
+}
+
+.state-icon--error {
+  color: var(--mat-sys-error);
+}
+
+@media (max-width: 800px) {
+  .page-container {
+    padding: 16px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}

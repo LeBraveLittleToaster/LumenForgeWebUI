@@ -12,7 +12,15 @@
       <nav class="nav-items-desktop">
         @if(isAuthenticated) {
           @for(item of navItems(); track item.route) {
-            <span class="router-option" [routerLink]="item.route" routerLinkActive="active">
+            <span
+              class="router-option"
+              [class.disabled-nav-item]="!canAccess(item)"
+              [routerLink]="canAccess(item) ? item.route : null"
+              routerLinkActive="active"
+              [matTooltip]="getPermissionHint(item)"
+              [matTooltipDisabled]="canAccess(item)"
+              [attr.aria-disabled]="!canAccess(item)"
+              (click)="onNavItemClick($event, item)">
               {{ item.label }}
             </span>
           }
@@ -53,7 +61,14 @@
   @if(isAuthenticated && isMobileMenuOpen()) {
     <nav class="nav-items-mobile">
       @for(item of navItems(); track item.route) {
-        <a class="mobile-nav-item" [routerLink]="item.route" (click)="closeMobileMenu()">
+        <a
+          class="mobile-nav-item"
+          [class.disabled-nav-item]="!canAccess(item)"
+          [routerLink]="canAccess(item) ? item.route : null"
+          [matTooltip]="getPermissionHint(item)"
+          [matTooltipDisabled]="canAccess(item)"
+          [attr.aria-disabled]="!canAccess(item)"
+          (click)="onNavItemClick($event, item)">
           {{ item.label }}
         </a>
       }

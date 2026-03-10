@@ -3,7 +3,7 @@
  */
 export { type Guid, type IsoDate, type IsoInstant, type StockUnitType } from './core/common';
 export { toHttpParams, type Primitive } from './core/http-params';
-export { AUTH_API_BASE_URL, INVENTORY_API_BASE_URL } from './core/tokens';
+export { AUTH_API_BASE_URL, INVENTORY_API_BASE_URL, MAINTENANCE_API_BASE_URL } from './core/tokens';
 export { type ListQueryDto } from './core/models/query';
 
 /**
@@ -58,3 +58,21 @@ export {
   type DeviceView,
 } from './inventory/models/views';
 export { type ListQueryDto as InventoryListQueryDto } from './inventory/models/query';
+
+/**
+ * Maintenance API exports
+ */
+export { MaintenanceApiClient } from './maintenance/maintenance-api.client';
+// Maintenance models
+export {
+  type CreateMaintenanceStatusDto,
+  type UpdateMaintenanceStatusDto,
+  type CreateMaintenanceBacklogDto,
+  type UpdateMaintenanceBacklogDto,
+} from './maintenance/models/dtos';
+export {
+  type MaintenanceStatusView,
+  type MaintenanceBacklogView,
+  type ListView as MaintenanceListView,
+} from './maintenance/models/views';
+export { type MaintenanceQueryDto } from './maintenance/models/query';

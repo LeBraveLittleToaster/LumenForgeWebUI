@@ -85,6 +85,23 @@
   }
 }
 
+.disabled-nav-item {
+  opacity: 0.45;
+  cursor: not-allowed !important;
+  text-decoration: none;
+
+  &:hover {
+    background-color: transparent !important;
+    color: var(--mat-sys-on-surface-variant) !important;
+  }
+
+  &.active {
+    background-color: transparent !important;
+    color: var(--mat-sys-on-surface-variant) !important;
+    font-weight: 500;
+  }
+}
+
 // ── Mobile Menu Toggle ───────────────────────────────────────
 .mobile-menu-toggle {
   display: none;
