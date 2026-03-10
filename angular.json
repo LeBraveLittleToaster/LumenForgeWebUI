@@ -70,6 +70,32 @@
           "builder": "@angular/build:unit-test"
         }
       }
+    },
+    "api-client": {
+      "projectType": "library",
+      "root": "projects/api-client",
+      "sourceRoot": "projects/api-client/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/api-client/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/api-client/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/api-client/tsconfig.spec.json"
+          }
+        }
+      }
     }
   }
 }

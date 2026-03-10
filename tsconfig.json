@@ -3,6 +3,11 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "api-client": [
+        "./dist/api-client"
+      ]
+    },
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -28,6 +33,12 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/api-client/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/api-client/tsconfig.spec.json"
     }
   ]
 }
