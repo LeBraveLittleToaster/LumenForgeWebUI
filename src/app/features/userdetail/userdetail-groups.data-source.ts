@@ -42,4 +42,8 @@ export class UserDetailGroupsDataSource implements DataSource<GroupView> {
   getLength(): number {
     return this.totalSubject.value;
   }
+
+  getGroups(): GroupView[] {
+    return this.groupsSubject.value;
+  }
 }

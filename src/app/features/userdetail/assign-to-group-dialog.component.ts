@@ -63,7 +63,7 @@ export class AssignToGroupDialogComponent implements OnInit {
   loading = false;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { userKcId: string },
+    @Inject(MAT_DIALOG_DATA) public data: { userKcId: string, assignedGroupGuids: string[] },
     private dialogRef: MatDialogRef<AssignToGroupDialogComponent>,
     @Inject(AuthApiClient) private authClient: AuthApiClient,
     private cdr: ChangeDetectorRef
@@ -82,7 +82,7 @@ export class AssignToGroupDialogComponent implements OnInit {
     this.authClient.listGroups({ search }).pipe(
       catchError(() => of({ list: [], total: 0 })),
       tap(result => {
-        this.groups = result.list;
+        this.groups = result.list.filter(g => !this.data.assignedGroupGuids.includes(g.guid));
         this.selectedGroup = null;
         this.loading = false;
         this.cdr.detectChanges();

@@ -136,9 +136,10 @@ export class UserDetail implements OnInit {
   }
 
   openAssignDialog(userKcId: string) {
+    var groups = this.groupsDataSource.getGroups();
     const ref = this.dialog.open(AssignToGroupDialogComponent, {
       width: '500px',
-      data: { userKcId }
+      data: { userKcId, assignedGroupGuids: groups.map(g => g.guid) }
     });
     ref.afterClosed().subscribe((assignedGroup: GroupView | undefined) => {
       if (!assignedGroup) return;
