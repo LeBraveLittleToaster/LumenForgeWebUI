@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { AuthApiClient } from '../../core/api/auth/auth-api.client';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { AuthApiClient } from '@lumenforge/api-client';
 import { GroupsDataSource, GroupDataItem } from './groups.data-source';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -37,7 +37,7 @@ export class Groups implements OnInit {
 
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
-  constructor(private authApiClient: AuthApiClient) {}
+  constructor(@Inject(AuthApiClient) private authApiClient: AuthApiClient) {}
 
   ngOnInit(): void {
     this.dataSource = new GroupsDataSource(this.authApiClient);

@@ -1,7 +1,6 @@
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
-import { VendorView } from "../../core/api/inventory/models/views";
+import { VendorView, InventoryApiClient } from "@lumenforge/api-client";
 import { BehaviorSubject, catchError, finalize, Observable, of } from "rxjs";
-import { InventoryApiClient } from "../../core/api/inventory/inventory-api.client";
 
 export class VendorDataSource implements DataSource<VendorDataItem> {
 

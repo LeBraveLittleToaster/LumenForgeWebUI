@@ -7,10 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../core/api/auth/auth-service';
+import { AuthService, Permissions } from '@lumenforge/api-client';
 import { signal } from '@angular/core';
 import { ThemeService } from '../../core/services/theme.service';
-import { Permissions } from '../../core/api/auth/models/dtos';
 
 interface NavItem {
   label: string;

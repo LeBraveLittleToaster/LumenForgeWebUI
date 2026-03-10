@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { Devicedetail } from './devicedetail';
-import { InventoryApiClient } from '../../core/api/inventory/inventory-api.client';
+import { InventoryApiClient } from '@lumenforge/api-client';
 
 describe('Devicedetail', () => {
   let component: Devicedetail;

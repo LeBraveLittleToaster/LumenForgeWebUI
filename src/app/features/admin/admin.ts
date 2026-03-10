@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../../core/api/auth/auth-service';
+import { AuthService } from '@lumenforge/api-client';
 import { RouterLink, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { Permissions } from '../../core/api/auth/models/dtos';
+import { Permissions } from '@lumenforge/api-client';
 
 @Component({
   selector: 'app-admin',

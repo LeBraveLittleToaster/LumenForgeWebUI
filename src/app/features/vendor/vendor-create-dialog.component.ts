@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BehaviorSubject, EMPTY, catchError, finalize } from 'rxjs';
@@ -8,7 +8,7 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { InventoryApiClient } from '../../core/api/inventory/inventory-api.client';
+import { InventoryApiClient } from '@lumenforge/api-client';
 
 @Component({
   selector: 'app-vendor-create-dialog',
@@ -48,7 +48,7 @@ export class VendorCreateDialogComponent {
 
   constructor(
     private dialogRef: MatDialogRef<VendorCreateDialogComponent>,
-    private api: InventoryApiClient
+    @Inject(InventoryApiClient) private api: InventoryApiClient
   ) {}
 
   create() {

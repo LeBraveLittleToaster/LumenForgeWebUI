@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { catchError, EMPTY } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
-import { InventoryApiClient } from '../../core/api/inventory/inventory-api.client';
+import { InventoryApiClient } from '@lumenforge/api-client';
 import { VendorDataSource, VendorDataItem } from './vendor.data-source';
 import { DataTableComponent, ColumnDef } from '../../shared/data-table/data-table';
 import { VendorCreateDialogComponent } from './vendor-create-dialog.component';
@@ -37,7 +37,7 @@ export class Vendor implements OnInit {
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   constructor(
-    private api: InventoryApiClient,
+    @Inject(InventoryApiClient) private api: InventoryApiClient,
     private dialog: MatDialog
   ) {}
 

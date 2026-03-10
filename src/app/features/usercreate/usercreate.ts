@@ -1,30 +1,31 @@
-import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, Inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
 import { Router, RouterLink } from '@angular/router';
-import { AuthApiClient } from '../../core/api/auth/auth-api.client';
-import { AddKcUserDto } from '../../core/api/auth/models/dtos';
+import { AuthApiClient, AddKcUserDto, UserView } from '@lumenforge/api-client';
 import { validate } from '@angular/forms/signals';
 import { BehaviorSubject, catchError, EMPTY, finalize, Observable } from 'rxjs';
-import { UserView } from '../../core/api/auth/models/views';
 
 @Component({
   selector: 'app-usercreate',
-  imports: [MatButtonModule,
+  imports: [
+    CommonModule,
+    MatButtonModule,
     MatStepperModule,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatInputModule],
+    MatInputModule
+  ],
   templateUrl: './usercreate.html',
-  styleUrl: './usercreate.scss',
-  providers: [AuthApiClient]
+  styleUrl: './usercreate.scss'
 })
 export class UserCreate {
-  constructor(private apiClient: AuthApiClient, private router: Router) { }
+  constructor(@Inject(AuthApiClient) private apiClient: AuthApiClient, private router: Router) { }
 
   private _formBuilder = inject(FormBuilder);
   private isSendingSubject = new BehaviorSubject<boolean>(false);

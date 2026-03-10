@@ -1,7 +1,6 @@
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
-import { ListView, UserView } from "../../core/api/auth/models/views";
+import { ListView, UserView, AuthApiClient } from "@lumenforge/api-client";
 import { BehaviorSubject, catchError, finalize, Observable, of } from "rxjs";
-import { AuthApiClient } from "../../core/api/auth/auth-api.client";
 
 export class UserDataSource implements DataSource<UserDataItem> {
 

@@ -1,12 +1,12 @@
-// inventory-api/src/lib/inventory-api.client.ts
+// auth-api/src/lib/auth-api.client.ts
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { toHttpParams } from './http-params';
 
-import { AUTH_API_BASE_URL } from './token';
+import { AUTH_API_BASE_URL } from '../core/tokens';
 import { ListQueryDto } from './models/query';
-import { Guid } from './common/common';
+import { Guid } from '../core/common';
 import { GroupView, ListView, UserView } from './models/views';
 import { AddGroupDto, AddKcUserDto, AssignGroupRolesDto, AssignUserToGroupDto, Permissions, UpdateGroupDto, UpdateUserDto } from './models/dtos';
 
@@ -98,11 +98,16 @@ export class AuthApiClient {
   getGroupUsers(groupGuid: string): Observable<UserView[]> {
     return this.http.get<UserView[]>(this.url(`/api/v1/auth/groups/${groupGuid}/users`));
   }
-  removeUserFromGroup(groupGuid: string, userKcId: string): Observable<GroupView> {
-    return this.http.delete<GroupView>(this.url(`/api/v1/auth/groups/${groupGuid}/users/${userKcId}`));
-  }
-  
+
   assignGroupRoles(groupGuid: string, dto: AssignGroupRolesDto): Observable<GroupView> {
     return this.http.put<GroupView>(this.url(`/api/v1/auth/groups/${groupGuid}/roles`), dto);
+  }
+
+  removeUserFromGroup(groupGuid: string, userKcId: string): Observable<void> {
+    return this.http.delete<void>(this.url(`/api/v1/auth/groups/${groupGuid}/users/${userKcId}`));
+  }
+
+  getGroupRoles(groupGuid: string): Observable<Permissions[]> {
+    return this.http.get<Permissions[]>(this.url(`/api/v1/auth/groups/${groupGuid}/roles`));
   }
 }

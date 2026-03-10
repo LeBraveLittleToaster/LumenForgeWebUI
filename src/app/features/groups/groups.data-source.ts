@@ -1,8 +1,7 @@
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
-import { GroupView, ListView, UserView } from "../../core/api/auth/models/views";
+import { GroupView, ListView, UserView, AuthApiClient } from "@lumenforge/api-client";
 
 import { BehaviorSubject, catchError, finalize, Observable, of } from "rxjs";
-import { AuthApiClient } from "../../core/api/auth/auth-api.client";
 
 export class GroupsDataSource implements DataSource<GroupDataItem> {
 

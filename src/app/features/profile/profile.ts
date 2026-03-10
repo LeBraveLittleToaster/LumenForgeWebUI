@@ -1,14 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
-import { AuthService } from '../../core/api/auth/auth-service';
-import { AuthApiClient } from '../../core/api/auth/auth-api.client';
-import { UserView, GroupView } from '../../core/api/auth/models/views';
-import { Permissions } from '../../core/api/auth/models/dtos';
+import { AuthService, AuthApiClient, UserView, GroupView, Permissions } from '@lumenforge/api-client';
 import { catchError, map, Observable, of, startWith } from 'rxjs';
 
 interface ProfileState {
@@ -52,8 +49,8 @@ export class Profile implements OnInit {
   ]);
 
   constructor(
-    public auth: AuthService,
-    private authClient: AuthApiClient,
+    @Inject(AuthService) public auth: AuthService,
+    @Inject(AuthApiClient) private authClient: AuthApiClient,
     private location: Location
   ) {}
 

@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { InventoryApiClient } from '../../core/api/inventory/inventory-api.client';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { InventoryApiClient } from '@lumenforge/api-client';
 import { InventoryDataSource, InventoryDataItem } from './inventory.data-source';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -22,7 +22,6 @@ import { catchError, EMPTY } from 'rxjs';
   ],
   templateUrl: './inventory.html',
   styleUrl: './inventory.css',
-  providers: [InventoryApiClient]
 })
 export class Inventory implements OnInit {
   readonly rowRouterLink = (row: InventoryDataItem): any[] => ['/inventory', row.deviceView.guid];
@@ -41,7 +40,7 @@ export class Inventory implements OnInit {
 
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
-  constructor(private inventoryApiClient: InventoryApiClient) {}
+  constructor(@Inject(InventoryApiClient) private inventoryApiClient: InventoryApiClient) {}
 
   ngOnInit(): void {
     this.dataSource = new InventoryDataSource(this.inventoryApiClient);

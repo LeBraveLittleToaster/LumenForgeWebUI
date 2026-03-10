@@ -1,15 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
 import { Router, RouterLink } from '@angular/router';
-import { AuthApiClient } from '../../core/api/auth/auth-api.client';
-import { AddGroupDto, AddKcUserDto, Permissions } from '../../core/api/auth/models/dtos';
+import { AuthApiClient, AddGroupDto, AddKcUserDto, GroupView, Permissions, UserView } from '@lumenforge/api-client';
 import { validate } from '@angular/forms/signals';
 import { BehaviorSubject, catchError, EMPTY, finalize, Observable } from 'rxjs';
-import { GroupView, UserView } from '../../core/api/auth/models/views';
 import { MatDivider } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -17,19 +15,23 @@ import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-groupcreate',
-  imports: [MatButtonModule,
+  imports: [
+    MatButtonModule,
     MatStepperModule,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatDivider, MatListModule, CommonModule, MatCheckboxModule],
+    MatDivider,
+    MatListModule,
+    CommonModule,
+    MatCheckboxModule
+  ],
   templateUrl: './groupcreate.html',
-  styleUrl: './groupcreate.scss',
-  providers: [AuthApiClient]
+  styleUrl: './groupcreate.scss'
 })
 export class GroupCreate {
-  constructor(private apiClient: AuthApiClient, private router: Router) { }
+  constructor(@Inject(AuthApiClient) private apiClient: AuthApiClient, private router: Router) { }
 
   private _formBuilder = inject(FormBuilder);
   private isSendingSubject = new BehaviorSubject<boolean>(false);

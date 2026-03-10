@@ -8,8 +8,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 
-import { AuthApiClient } from '../../core/api/auth/auth-api.client';
-import { Permissions } from '../../core/api/auth/models/dtos';
+import { AuthApiClient, Permissions } from '@lumenforge/api-client';
 
 @Component({
   selector: 'app-role-management-dialog',
@@ -53,7 +52,7 @@ export class RoleManagementDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { groupGuid: string; currentRoles: Permissions[] },
     private dialogRef: MatDialogRef<RoleManagementDialogComponent>,
-    private authClient: AuthApiClient
+    @Inject(AuthApiClient) private authClient: AuthApiClient
   ) {}
 
   ngOnInit() {

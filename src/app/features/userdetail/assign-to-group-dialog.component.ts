@@ -10,8 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { AuthApiClient } from '../../core/api/auth/auth-api.client';
-import { GroupView } from '../../core/api/auth/models/views';
+import { AuthApiClient, GroupView } from '@lumenforge/api-client';
 
 @Component({
   selector: 'app-assign-to-group-dialog',
@@ -66,7 +65,7 @@ export class AssignToGroupDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { userKcId: string },
     private dialogRef: MatDialogRef<AssignToGroupDialogComponent>,
-    private authClient: AuthApiClient,
+    @Inject(AuthApiClient) private authClient: AuthApiClient,
     private cdr: ChangeDetectorRef
   ) {}
 

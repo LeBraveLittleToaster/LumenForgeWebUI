@@ -1,4 +1,4 @@
-import { Guid, IsoDate, IsoInstant, StockUnitType } from "../common/common";
+import { Guid, IsoDate, IsoInstant, StockUnitType } from "../../core/common";
 
 export interface CategoryView {
   guid: Guid;

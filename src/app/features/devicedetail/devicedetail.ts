@@ -1,5 +1,5 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -8,8 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { catchError, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap } from 'rxjs';
 
-import { InventoryApiClient } from '../../core/api/inventory/inventory-api.client';
-import { DeviceView } from '../../core/api/inventory/models/views';
+import { InventoryApiClient, DeviceView } from '@lumenforge/api-client';
 
 interface DeviceDetailState {
   loading: boolean;
@@ -36,7 +35,7 @@ export class Devicedetail implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private inventoryApiClient: InventoryApiClient,
+    @Inject(InventoryApiClient) private inventoryApiClient: InventoryApiClient,
     private location: Location
   ) {}
 

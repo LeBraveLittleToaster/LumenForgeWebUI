@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { AuthApiClient } from '../../core/api/auth/auth-api.client';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { AuthApiClient } from '@lumenforge/api-client';
 import { UserDataSource, UserDataItem } from './user.data-source';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -22,7 +22,6 @@ import { catchError, EMPTY } from 'rxjs';
   ],
   templateUrl: './user.html',
   styleUrl: './user.css',
-  providers: [AuthApiClient]
 })
 export class User implements OnInit {
   columns: ColumnDef<UserDataItem>[] = [
@@ -39,7 +38,7 @@ export class User implements OnInit {
 
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
-  constructor(private authApiClient: AuthApiClient) {}
+  constructor(@Inject(AuthApiClient) private authApiClient: AuthApiClient) {}
 
   ngOnInit(): void {
     this.dataSource = new UserDataSource(this.authApiClient);

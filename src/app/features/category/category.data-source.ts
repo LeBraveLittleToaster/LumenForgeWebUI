@@ -1,7 +1,6 @@
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
-import { CategoryView } from "../../core/api/inventory/models/views";
+import { CategoryView, InventoryApiClient } from "@lumenforge/api-client";
 import { BehaviorSubject, catchError, finalize, Observable, of } from "rxjs";
-import { InventoryApiClient } from "../../core/api/inventory/inventory-api.client";
 
 export class CategoryDataSource implements DataSource<CategoryDataItem> {
 

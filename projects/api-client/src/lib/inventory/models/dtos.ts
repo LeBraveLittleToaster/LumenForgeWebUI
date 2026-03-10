@@ -1,4 +1,4 @@
-import { Guid, IsoDate, StockUnitType } from './../common/common';
+import { Guid, IsoDate, StockUnitType } from '../../core/common';
 
 export interface CreateDeviceParameterDto {
   key: string;

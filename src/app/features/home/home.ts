@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../../core/api/auth/auth-service';
+import { AuthService } from '@lumenforge/api-client';
 
 @Component({
   selector: 'app-home',

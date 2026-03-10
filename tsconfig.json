@@ -4,8 +4,11 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
+      "@lumenforge/api-client": [
+        "./projects/api-client/src/public-api.ts"
+      ],
       "api-client": [
-        "./dist/api-client"
+        "./projects/api-client/src/public-api.ts"
       ]
     },
     "strict": true,

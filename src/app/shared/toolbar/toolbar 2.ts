@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../core/api/auth/auth-service';
+import { AuthService } from '@lumenforge/api-client';
 import { signal } from '@angular/core';
 import { ThemeService } from '../../core/services/theme.service';
 

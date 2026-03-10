@@ -1,13 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, Inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { InventoryApiClient } from '../../core/api/inventory/inventory-api.client';
-import { CreateDeviceDto } from '../../core/api/inventory/models/dtos';
-import { DeviceView, VendorView } from '../../core/api/inventory/models/views';
+import { InventoryApiClient, CreateDeviceDto, DeviceView, VendorView } from '@lumenforge/api-client';
 import { BehaviorSubject, catchError, EMPTY, finalize, Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
@@ -33,10 +31,9 @@ import { MatIconModule } from '@angular/material/icon';
   ],
   templateUrl: './inventory-create.html',
   styleUrl: './inventory-create.scss',
-  providers: [InventoryApiClient]
 })
 export class InventoryCreate implements OnInit {
-  constructor(private inventoryApiClient: InventoryApiClient, private router: Router) {}
+  constructor(@Inject(InventoryApiClient) private inventoryApiClient: InventoryApiClient, private router: Router) {}
 
   private _formBuilder = inject(FormBuilder);
   private isSendingSubject = new BehaviorSubject<boolean>(false);

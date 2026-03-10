@@ -1,6 +1,6 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { GroupView } from '../../core/api/auth/models/views';
+import { GroupView } from '@lumenforge/api-client';
 
 export class UserDetailGroupsDataSource implements DataSource<GroupView> {
   private readonly groupsSubject = new BehaviorSubject<GroupView[]>([]);

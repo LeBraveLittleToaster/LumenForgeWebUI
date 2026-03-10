@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, EMPTY, filter, finalize, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
-import { AuthApiClient } from '../../core/api/auth/auth-api.client';
-import { UserView, GroupView } from '../../core/api/auth/models/views';
+import { AuthApiClient, UserView, GroupView, Permissions } from '@lumenforge/api-client';
 import { CommonModule } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,7 +11,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UserDetailGroupsDataSource } from './userdetail-groups.data-source';
-import { Permissions } from '../../core/api/auth/models/dtos';
 import { AssignToGroupDialogComponent } from './assign-to-group-dialog.component';
 import { RemoveFromGroupDialogComponent } from './remove-from-group-dialog.component';
 
@@ -58,7 +56,7 @@ export class UserDetail implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private authClient: AuthApiClient,
+    @Inject(AuthApiClient) private authClient: AuthApiClient,
     private dialog: MatDialog,
     private location: Location
   ) { }

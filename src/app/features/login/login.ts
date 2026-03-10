@@ -1,5 +1,5 @@
 import { Component, effect, inject } from '@angular/core';
-import { AuthService } from '../../core/api/auth/auth-service';
+import { AuthService } from '@lumenforge/api-client';
 import { Router } from '@angular/router';
 
 @Component({

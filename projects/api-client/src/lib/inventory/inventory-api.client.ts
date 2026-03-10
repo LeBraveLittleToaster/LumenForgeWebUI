@@ -16,9 +16,9 @@ import {
   UpdateVendorDto,
   UpsertDeviceParameterDto
 } from './models/dtos';
-import { INVENTORY_API_BASE_URL } from './token';
+import { INVENTORY_API_BASE_URL } from '../core/tokens';
 import { ListQueryDto } from './models/query';
-import { Guid } from './common/common';
+import { Guid } from '../core/common';
 
 @Injectable({ providedIn: 'root' })
 export class InventoryApiClient {
