@@ -205,6 +205,19 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+.permission-chip.unassigned {
+  background: var(--mat-sys-surface-variant);
+  color: var(--mat-sys-on-surface-variant);
+  opacity: 0.72;
+  cursor: default;
+}
+
+.permission-chip.unassigned:hover {
+  background: var(--mat-sys-surface-variant);
+  color: var(--mat-sys-on-surface-variant);
+  box-shadow: none;
+}
+
 .permission-empty {
   margin: 0;
   color: var(--mat-sys-on-surface-variant);

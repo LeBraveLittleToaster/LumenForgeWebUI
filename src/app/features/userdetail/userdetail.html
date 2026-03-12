@@ -102,26 +102,12 @@
             <p class="section-subtitle">Effective permissions collected from all assigned groups, grouped by category.</p>
           </div>
         </div>
-
-        @if (getAllPermissions(state.user).length === 0) {
-          <div class="empty-state">
-            <mat-icon>shield</mat-icon>
-            <p>No permissions assigned through groups.</p>
-          </div>
-        } @else {
-          <div class="permission-clusters-grid">
-            @for (cluster of getPermissionsByCluster(state.user) | keyvalue; track cluster.key) {
-              <div class="permission-cluster">
-                <h3 class="cluster-title">{{ cluster.key }}</h3>
-                <div class="permission-chips">
-                  @for (permission of cluster.value; track permission) {
-                    <span class="permission-chip" [class.selected]="selectedPermission === permission" (click)="togglePermissionSelection(permission)">{{ permission }}</span>
-                  }
-                </div>
-              </div>
-            }
-          </div>
-        }
+        <app-permission-overview
+          [assignedPermissions]="getAssignedPermissions(state.user)"
+          [selectedPermission]="selectedPermission"
+          [selectable]="true"
+          (selectedPermissionChange)="onPermissionSelectionChange($event)">
+        </app-permission-overview>
       </div>
 
       <!-- Groups section -->

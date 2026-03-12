@@ -12,6 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RoleManagementDialogComponent } from './groupdetail-role-management-dialog';
+import { PermissionOverviewComponent } from '../../shared/permission-overview/permission-overview';
 
 interface GroupState {
   loading: boolean;
@@ -22,7 +23,7 @@ interface GroupState {
 
 @Component({
   selector: 'app-groupdetail',
-  imports: [CommonModule, MatDividerModule, MatIconModule, MatProgressSpinnerModule, MatTableModule, MatButtonModule],
+  imports: [CommonModule, MatDividerModule, MatIconModule, MatProgressSpinnerModule, MatTableModule, MatButtonModule, PermissionOverviewComponent],
   templateUrl: './groupdetail.html',
   styleUrl: './groupdetail.css',
 })
@@ -30,21 +31,6 @@ export class Groupdetail implements OnInit {
   memberColumns = ['username', 'email', 'firstName', 'lastName'];
   state$!: Observable<GroupState>;
   private refreshTrigger$ = new BehaviorSubject<void>(undefined);
-
-  private readonly permissionClusters = new Map<number, string>([
-    [10, 'Device'],
-    [20, 'Vendor'],
-    [30, 'Category'],
-    [40, 'Stock'],
-    [50, 'Backlog'],
-    [60, 'Order'],
-    [70, 'Order Status'],
-    [80, 'Invoice'],
-    [90, 'Invoice Status'],
-    [100, 'Role'],
-    [200, 'Group'],
-    [300, 'User'],
-  ]);
 
   constructor(
     private route: ActivatedRoute,
@@ -68,7 +54,11 @@ export class Groupdetail implements OnInit {
           group: this.authClient.getGroup(id, 'Permissions'),
           members: this.authClient.getGroupUsers(id),
         }).pipe(
-          map(({ group, members }) => ({ loading: false, group, members: Array.isArray(members) ? members : [], error: null } as GroupState)),
+          map(({ group, members }) => { 
+            console.log('Fetched group details:', { group, members });
+            console.log('Group permissions:', group.permissions);
+            return({ loading: false, group, members: Array.isArray(members) ? members : [], error: null } as GroupState); 
+          }),
           catchError(() => of({ loading: false, group: null, members: [], error: 'Failed to load group details.' } as GroupState)),
           startWith({ loading: true, group: null, members: [], error: null } as GroupState)
         )
@@ -76,20 +66,8 @@ export class Groupdetail implements OnInit {
     );
   }
 
-  getPermissionsByCluster(permissions: string[]): Map<string, string[]> {
-    const clustered = new Map<string, string[]>();
-    for (const perm of permissions) {
-      const val = (Permissions as any)[perm];
-      if (typeof val === 'number') {
-        const cluster = Math.floor(val / 10) * 10;
-        const clusterName = this.permissionClusters.get(cluster) || `Group ${cluster}`;
-        if (!clustered.has(clusterName)) {
-          clustered.set(clusterName, []);
-        }
-        clustered.get(clusterName)!.push(perm);
-      }
-    }
-    return new Map([...clustered.entries()].sort());
+  getAssignedPermissions(group: GroupView): string[] {
+    return Array.from(new Set(group.permissions ?? [])).sort();
   }
 
   openRolesDialog(groupGuid: string, currentPermissions: string[]) {

@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, EMPTY, filter, finalize, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
-import { AuthApiClient, UserView, GroupView, Permissions } from '@lumenforge/api-client';
+import { AuthApiClient, UserView, GroupView } from '@lumenforge/api-client';
 import { CommonModule } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserDetailGroupsDataSource } from './userdetail-groups.data-source';
 import { AssignToGroupDialogComponent } from './assign-to-group-dialog.component';
 import { RemoveFromGroupDialogComponent } from './remove-from-group-dialog.component';
+import { PermissionOverviewComponent } from '../../shared/permission-overview/permission-overview';
 
 interface UserState {
   loading: boolean;
@@ -25,7 +26,7 @@ interface UserState {
   selector: 'app-userdetail',
   imports: [
     MatDividerModule, MatIconModule, MatProgressSpinnerModule, MatTableModule,
-    MatButtonModule, CommonModule
+    MatButtonModule, CommonModule, PermissionOverviewComponent
   ],
   templateUrl: './userdetail.html',
   styleUrl: './userdetail.scss',
@@ -39,21 +40,6 @@ export class UserDetail implements OnInit {
   selectedPermission: string | null = null;
   private refreshTrigger$ = new BehaviorSubject<void>(undefined);
 
-  private readonly permissionClusters = new Map<number, string>([
-    [10, 'Device'],
-    [20, 'Vendor'],
-    [30, 'Category'],
-    [40, 'Stock'],
-    [50, 'Backlog'],
-    [60, 'Order'],
-    [70, 'Order Status'],
-    [80, 'Invoice'],
-    [90, 'Invoice Status'],
-    [100, 'Role'],
-    [200, 'Group'],
-    [300, 'User'],
-  ]);
-
   constructor(
     private route: ActivatedRoute,
     @Inject(AuthApiClient) private authClient: AuthApiClient,
@@ -63,7 +49,7 @@ export class UserDetail implements OnInit {
 
   goBack() { this.location.back(); }
 
-  getAllPermissions(user: UserView): string[] {
+  getAssignedPermissions(user: UserView): string[] {
     const permissions = new Set<string>();
     for (const group of user.groups ?? []) {
       for (const permission of group.permissions ?? []) {
@@ -73,33 +59,8 @@ export class UserDetail implements OnInit {
     return Array.from(permissions).sort();
   }
 
-  getPermissionsByCluster(user: UserView): Map<string, string[]> {
-    const permissions = this.getAllPermissions(user);
-    const clustered = new Map<string, string[]>();
-
-    for (const perm of permissions) {
-      const val = (Permissions as any)[perm];
-      if (typeof val === 'number') {
-        const cluster = Math.floor(val / 10) * 10;
-        const clusterName = this.permissionClusters.get(cluster) || `Group ${cluster}`;
-        if (!clustered.has(clusterName)) {
-          clustered.set(clusterName, []);
-        }
-        clustered.get(clusterName)!.push(perm);
-      }
-    }
-
-    return new Map([...clustered.entries()].sort());
-  }
-
-  getGroupsProvidingPermission(user: UserView, permission: string): GroupView[] {
-    return (user.groups ?? []).filter(group =>
-      (group.permissions ?? []).includes(permission)
-    );
-  }
-
-  togglePermissionSelection(permission: string): void {
-    this.selectedPermission = this.selectedPermission === permission ? null : permission;
+  onPermissionSelectionChange(permission: string | null): void {
+    this.selectedPermission = permission;
   }
 
   isGroupHighlighted(group: GroupView): boolean {

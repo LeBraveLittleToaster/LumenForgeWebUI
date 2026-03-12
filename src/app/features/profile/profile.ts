@@ -93,12 +93,18 @@ export class Profile implements OnInit {
     return Array.from(permissions).sort();
   }
 
+  getAllPossiblePermissions(): string[] {
+    return Object.keys(Permissions)
+      .filter(key => Number.isNaN(Number(key)))
+      .sort((a, b) => Permissions[a as keyof typeof Permissions] - Permissions[b as keyof typeof Permissions]);
+  }
+
   getPermissionsByCluster(user: UserView): Map<string, string[]> {
-    const permissions = this.getAllPermissions(user);
+    const permissions = this.getAllPossiblePermissions();
     const clustered = new Map<string, string[]>();
 
     for (const perm of permissions) {
-      const val = (Permissions as any)[perm];
+      const val = Permissions[perm as keyof typeof Permissions];
       if (typeof val === 'number') {
         const cluster = Math.floor(val / 10) * 10;
         const clusterName = this.permissionClusters.get(cluster) || `Group ${cluster}`;
@@ -112,10 +118,15 @@ export class Profile implements OnInit {
     return new Map([...clustered.entries()].sort());
   }
 
-  getGroupsProvidingPermission(user: UserView, permission: string): GroupView[] {
-    return (user.groups ?? []).filter(group =>
-      (group.permissions ?? []).includes(permission)
-    );
+  isPermissionAssigned(user: UserView, permission: string): boolean {
+    return this.getAllPermissions(user).includes(permission);
+  }
+
+  toggleAssignedPermissionSelection(permission: string, assigned: boolean): void {
+    if (!assigned) {
+      return;
+    }
+    this.togglePermissionSelection(permission);
   }
 
   togglePermissionSelection(permission: string): void {

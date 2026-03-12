@@ -1,0 +1,19 @@
+<div class="permission-clusters-grid">
+  @for (cluster of clusteredPermissions(); track cluster.name) {
+    <div class="permission-cluster">
+      <h3 class="cluster-title">{{ cluster.name }}</h3>
+      <div class="permission-chips">
+        @for (permission of cluster.permissions; track permission) {
+          <span
+            class="permission-chip"
+            [class.selected]="selectedPermission() === permission"
+            [class.unassigned]="!isPermissionAssigned(permission)"
+            [class.clickable]="selectable() && isPermissionAssigned(permission)"
+            (click)="onPermissionClick(permission)">
+            {{ permission }}
+          </span>
+        }
+      </div>
+    </div>
+  }
+</div>
