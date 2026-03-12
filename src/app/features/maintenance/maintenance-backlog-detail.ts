@@ -55,8 +55,8 @@ export class MaintenanceBacklogDetail implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.canUpdate = this.authService.hasPermission(Permissions.BacklogUpdate);
-    this.canDelete = this.authService.hasPermission(Permissions.BacklogDelete);
+    this.canUpdate = this.authService.hasPermission(Permissions.MaintenanceUpdate);
+    this.canDelete = this.authService.hasPermission(Permissions.MaintenanceDelete);
 
     const backlogUuid$ = this.route.paramMap.pipe(
       map(params => params.get('backlogUuid')),

@@ -60,10 +60,10 @@ export class Toolbar implements OnInit, OnDestroy {
       label: 'Maintenance',
       route: '/maintenance',
       requiredAnyPermissions: [
-        Permissions.BacklogRead,
-        Permissions.BacklogCreate,
-        Permissions.BacklogUpdate,
-        Permissions.BacklogDelete,
+        Permissions.MaintenanceRead,
+        Permissions.MaintenanceCreate,
+        Permissions.MaintenanceUpdate,
+        Permissions.MaintenanceDelete,
       ]
     },
     { label: 'Rental', route: '/rental' },

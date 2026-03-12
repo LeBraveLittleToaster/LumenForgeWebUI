@@ -20,7 +20,7 @@
 
 import { Provider, APP_INITIALIZER, EnvironmentProviders } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { AUTH_API_BASE_URL, INVENTORY_API_BASE_URL, MAINTENANCE_API_BASE_URL } from './core/tokens';
+import { AUTH_API_BASE_URL, INVENTORY_API_BASE_URL, MAINTENANCE_API_BASE_URL, RENTAL_API_BASE_URL } from './core/tokens';
 import { authInterceptor } from './auth/auth.interceptor';
 import { AuthService } from './auth/auth-service';
 
@@ -28,6 +28,7 @@ export interface ApiClientConfig {
   authApiBaseUrl?: string;
   inventoryApiBaseUrl?: string;
   maintenanceApiBaseUrl?: string;
+  rentalApiBaseUrl?: string;
 }
 
 /**
@@ -51,6 +52,10 @@ export function provideApiClient(config?: ApiClientConfig): (Provider | Environm
     {
       provide: MAINTENANCE_API_BASE_URL,
       useValue: config?.maintenanceApiBaseUrl || 'https://localhost:7217'
+    },
+    {
+      provide: RENTAL_API_BASE_URL,
+      useValue: config?.rentalApiBaseUrl || 'https://localhost:7217'
     },
     {
       provide: APP_INITIALIZER,

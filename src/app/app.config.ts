@@ -10,7 +10,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideApiClient({
       authApiBaseUrl: 'https://localhost:7217',
-      inventoryApiBaseUrl: 'https://localhost:7217'
+      inventoryApiBaseUrl: 'https://localhost:7217',
+      rentalApiBaseUrl: 'https://localhost:7217'
     })
   ]
 };

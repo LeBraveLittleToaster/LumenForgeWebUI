@@ -3,7 +3,7 @@
  */
 export { type Guid, type IsoDate, type IsoInstant, type StockUnitType } from './core/common';
 export { toHttpParams, type Primitive } from './core/http-params';
-export { AUTH_API_BASE_URL, INVENTORY_API_BASE_URL, MAINTENANCE_API_BASE_URL } from './core/tokens';
+export { AUTH_API_BASE_URL, INVENTORY_API_BASE_URL, MAINTENANCE_API_BASE_URL, RENTAL_API_BASE_URL } from './core/tokens';
 export { type ListQueryDto } from './core/models/query';
 
 /**
@@ -76,3 +76,8 @@ export {
   type ListView as MaintenanceListView,
 } from './maintenance/models/views';
 export { type MaintenanceQueryDto } from './maintenance/models/query';
+
+/**
+ * Rental API exports
+ */
+export { RentalApiClient } from './rental/rental-api.client';

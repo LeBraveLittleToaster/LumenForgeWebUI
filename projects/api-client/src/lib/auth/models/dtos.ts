@@ -33,20 +33,20 @@ export enum Permissions {
   StockDelete = 43,
 
   // Maintenance
-  BacklogCreate = 50,
-  BacklogRead = 51,
-  BacklogUpdate = 52,
-  BacklogDelete = 53,
+  MaintenanceCreate = 50,
+  MaintenanceRead = 51,
+  MaintenanceUpdate = 52,
+  MaintenanceDelete = 53,
 
-  OrderCreate = 60,
-  OrderRead = 61,
-  OrderUpdate = 62,
-  OrderDelete = 63,
+  RentalCreate = 60,
+  RentalRead = 61,
+  RentalUpdate = 62,
+  RentalDelete = 63,
 
-  OrderStatusCreate = 70,
-  OrderStatusRead = 71,
-  OrderStatusUpdate = 72,
-  OrderStatusDelete = 73,
+  RentalStatusCreate = 70,
+  RentalStatusRead = 71,
+  RentalStatusUpdate = 72,
+  RentalStatusDelete = 73,
 
   InvoiceCreate = 80,
   InvoiceRead = 81,

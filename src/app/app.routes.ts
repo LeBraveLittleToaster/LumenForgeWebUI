@@ -18,6 +18,7 @@ import { InventoryCreate } from './features/inventory/inventory-create';
 import { Devicedetail } from './features/devicedetail/devicedetail';
 import { Maintenance } from './features/maintenance/maintenance';
 import { MaintenanceBacklogDetail } from './features/maintenance/maintenance-backlog-detail';
+import { RentalRequest } from './features/rental-request/rental-request';
 
 export const routes: Routes = [
     {
@@ -62,17 +63,22 @@ export const routes: Routes = [
     {
         path: 'maintenance',
         canActivate: [authGuard, permissionGuard(
-            Permissions.BacklogRead,
-            Permissions.BacklogCreate,
-            Permissions.BacklogUpdate,
-            Permissions.BacklogDelete
+            Permissions.MaintenanceRead,
+            Permissions.MaintenanceCreate,
+            Permissions.MaintenanceUpdate,
+            Permissions.MaintenanceDelete
         )],
         component: Maintenance,
     },
     {
         path: 'maintenance/backlogs/:backlogUuid',
-        canActivate: [authGuard, permissionGuard(Permissions.BacklogRead)],
+        canActivate: [authGuard, permissionGuard(Permissions.MaintenanceRead)],
         component: MaintenanceBacklogDetail,
+    },
+    {
+        path: 'rental',
+        canActivate: [authGuard],
+        component: RentalRequest,
     },
     {
         path: "admin",

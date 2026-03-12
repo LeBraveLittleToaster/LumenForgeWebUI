@@ -81,12 +81,12 @@ export class Maintenance implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.canCreateBacklog = this.authService.hasPermission(Permissions.BacklogCreate);
-    this.canDeleteBacklog = this.authService.hasPermission(Permissions.BacklogDelete);
+    this.canCreateBacklog = this.authService.hasPermission(Permissions.MaintenanceCreate);
+    this.canDeleteBacklog = this.authService.hasPermission(Permissions.MaintenanceDelete);
     this.canManageStatuses = this.authService.hasAnyPermission(
-      Permissions.BacklogCreate,
-      Permissions.BacklogUpdate,
-      Permissions.BacklogDelete
+      Permissions.MaintenanceCreate,
+      Permissions.MaintenanceUpdate,
+      Permissions.MaintenanceDelete
     );
 
     this.dataSource = new MaintenanceDataSource(this.maintenanceApiClient);

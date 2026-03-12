@@ -20,6 +20,11 @@ import { INVENTORY_API_BASE_URL } from '../core/tokens';
 import { ListQueryDto } from './models/query';
 import { Guid } from '../core/common';
 
+interface PaginatedList<T> {
+  list: T[];
+  total: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class InventoryApiClient {
   constructor(
@@ -39,6 +44,13 @@ export class InventoryApiClient {
   listDevices(query: ListQueryDto = {}): Observable<DeviceView[]> {
     return this.http.get<DeviceView[]>(
       this.url('/api/v1/inventory/devices'),
+      { params: toHttpParams({ search: query.search ?? undefined, limit: query.limit, offset: query.offset }) }
+    );
+  }
+
+  listPublicDevices(query: ListQueryDto = {}): Observable<PaginatedList<DeviceView>> {
+    return this.http.get<PaginatedList<DeviceView>>(
+      this.url('/api/v1/inventory/devices/public'),
       { params: toHttpParams({ search: query.search ?? undefined, limit: query.limit, offset: query.offset }) }
     );
   }
