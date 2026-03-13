@@ -1,9 +1,9 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
-import { MaintenanceApiClient, MaintenanceBacklogView, MaintenanceQueryDto } from '@lumenforge/api-client';
+import { MaintenanceApiClient, MaintenanceJobView, MaintenanceQueryDto } from '@lumenforge/api-client';
 import { BehaviorSubject, catchError, finalize, Observable, of } from 'rxjs';
 
 export class MaintenanceDataSource implements DataSource<MaintenanceDataItem> {
-  private readonly backlogsSubject = new BehaviorSubject<MaintenanceDataItem[]>([]);
+  private readonly jobsSubject = new BehaviorSubject<MaintenanceDataItem[]>([]);
   private readonly totalSubject = new BehaviorSubject<number>(0);
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
 
@@ -13,23 +13,23 @@ export class MaintenanceDataSource implements DataSource<MaintenanceDataItem> {
   constructor(private readonly maintenanceApiClient: MaintenanceApiClient) {}
 
   connect(_: CollectionViewer): Observable<readonly MaintenanceDataItem[]> {
-    return this.backlogsSubject.asObservable();
+    return this.jobsSubject.asObservable();
   }
 
   disconnect(_: CollectionViewer): void {
-    this.backlogsSubject.complete();
+    this.jobsSubject.complete();
     this.totalSubject.complete();
     this.loadingSubject.complete();
   }
 
-  loadBacklogs(query: MaintenanceQueryDto): void {
+  loadJobs(query: MaintenanceQueryDto): void {
     this.loadingSubject.next(true);
 
-    this.maintenanceApiClient.listBacklogs(query).pipe(
+    this.maintenanceApiClient.listJobs(query).pipe(
       catchError(() => of({ list: [], total: 0 })),
       finalize(() => this.loadingSubject.next(false))
     ).subscribe(result => {
-      this.backlogsSubject.next(result.list.map(backlog => ({ backlog })));
+      this.jobsSubject.next(result.list.map(job => ({ job })));
       this.totalSubject.next(result.total);
     });
   }
@@ -40,5 +40,5 @@ export class MaintenanceDataSource implements DataSource<MaintenanceDataItem> {
 }
 
 export interface MaintenanceDataItem {
-  backlog: MaintenanceBacklogView;
+  job: MaintenanceJobView;
 }

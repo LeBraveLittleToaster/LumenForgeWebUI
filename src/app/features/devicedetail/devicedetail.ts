@@ -1,14 +1,19 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
-import { catchError, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, EMPTY, filter, map, Observable, of, startWith, switchMap } from 'rxjs';
 
-import { InventoryApiClient, DeviceView } from '@lumenforge/api-client';
+import { InventoryApiClient, DeviceParameterView, DeviceView } from '@lumenforge/api-client';
+import { DeviceAddParameterDialogComponent } from './device-add-parameter-dialog.component';
+import { DeviceAssignCategoriesDialogComponent } from './device-assign-categories-dialog.component';
+import { DeviceUpdateParameterDialogComponent } from './device-update-parameter-dialog.component';
+import { DeleteConfirmDialogComponent } from '../../shared/data-table/data-table';
 
 interface DeviceDetailState {
   loading: boolean;
@@ -20,6 +25,7 @@ interface DeviceDetailState {
   selector: 'app-devicedetail',
   imports: [
     CommonModule,
+    MatDialogModule,
     MatButtonModule,
     MatDividerModule,
     MatIconModule,
@@ -30,12 +36,14 @@ interface DeviceDetailState {
   styleUrl: './devicedetail.css',
 })
 export class Devicedetail implements OnInit {
-  readonly parameterColumns = ['key', 'value', 'updated_at'];
+  readonly parameterColumns = ['key', 'value', 'updated_at', 'actions'];
   state$!: Observable<DeviceDetailState>;
+  private readonly refreshTrigger$ = new BehaviorSubject<void>(undefined);
 
   constructor(
     private route: ActivatedRoute,
     @Inject(InventoryApiClient) private inventoryApiClient: InventoryApiClient,
+    private dialog: MatDialog,
     private location: Location
   ) {}
 
@@ -46,8 +54,8 @@ export class Devicedetail implements OnInit {
       distinctUntilChanged()
     );
 
-    this.state$ = deviceGuid$.pipe(
-      switchMap(deviceGuid =>
+    this.state$ = combineLatest([deviceGuid$, this.refreshTrigger$]).pipe(
+      switchMap(([deviceGuid]) =>
         this.inventoryApiClient.getDevice(deviceGuid).pipe(
           map(device => ({ loading: false, device, error: null } as DeviceDetailState)),
           catchError(() => of({ loading: false, device: null, error: 'Failed to load device details.' } as DeviceDetailState)),
@@ -59,6 +67,67 @@ export class Devicedetail implements OnInit {
 
   goBack(): void {
     this.location.back();
+  }
+
+  openAssignCategoriesDialog(device: DeviceView): void {
+    const ref = this.dialog.open(DeviceAssignCategoriesDialogComponent, {
+      width: '520px',
+      data: {
+        deviceGuid: device.guid,
+        assignedCategoryGuids: (device.categories ?? []).map(category => category.guid)
+      }
+    });
+
+    ref.afterClosed().subscribe(result => {
+      if (result === undefined) {
+        return;
+      }
+      this.refreshTrigger$.next();
+    });
+  }
+
+  openAddParameterDialog(device: DeviceView): void {
+    const ref = this.dialog.open(DeviceAddParameterDialogComponent, {
+      width: '460px',
+      data: { deviceGuid: device.guid }
+    });
+
+    ref.afterClosed().subscribe(result => {
+      if (result === undefined) {
+        return;
+      }
+      this.refreshTrigger$.next();
+    });
+  }
+
+  openUpdateParameterDialog(device: DeviceView, parameter: DeviceParameterView): void {
+    const ref = this.dialog.open(DeviceUpdateParameterDialogComponent, {
+      width: '460px',
+      data: {
+        deviceGuid: device.guid,
+        parameter
+      }
+    });
+
+    ref.afterClosed().subscribe(result => {
+      if (result === undefined) {
+        return;
+      }
+      this.refreshTrigger$.next();
+    });
+  }
+
+  removeParameter(device: DeviceView, parameter: DeviceParameterView): void {
+    this.dialog.open(DeleteConfirmDialogComponent).afterClosed().pipe(
+      filter((confirmed): confirmed is true => !!confirmed),
+      switchMap(() =>
+        this.inventoryApiClient.removeDeviceParameter(device.guid, parameter.key).pipe(
+          catchError(() => EMPTY)
+        )
+      )
+    ).subscribe(() => {
+      this.refreshTrigger$.next();
+    });
   }
 
   formatStock(device: DeviceView): string {

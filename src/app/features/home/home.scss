@@ -42,3 +42,34 @@
   color: var(--mat-sys-primary);
   font-weight: 600;
 }
+
+.home-cta-copy {
+  margin: 0;
+  color: var(--mat-sys-on-surface);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.home-cta-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  color: var(--mat-sys-on-primary);
+  background: linear-gradient(135deg, var(--mat-sys-primary) 0%, var(--mat-sys-tertiary) 100%);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.home-cta-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
+  filter: brightness(1.03);
+}
+
+.home-cta-button:active {
+  transform: translateY(0);
+}

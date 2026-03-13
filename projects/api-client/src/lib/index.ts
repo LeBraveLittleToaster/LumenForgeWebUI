@@ -67,11 +67,16 @@ export { MaintenanceApiClient } from './maintenance/maintenance-api.client';
 export {
   type CreateMaintenanceStatusDto,
   type UpdateMaintenanceStatusDto,
+  type CreateMaintenanceTaskDto,
+  type CreateMaintenanceJobDto,
+  type UpdateMaintenanceJobDto,
   type CreateMaintenanceBacklogDto,
   type UpdateMaintenanceBacklogDto,
 } from './maintenance/models/dtos';
 export {
   type MaintenanceStatusView,
+  type MaintenanceTaskView,
+  type MaintenanceJobView,
   type MaintenanceBacklogView,
   type ListView as MaintenanceListView,
 } from './maintenance/models/views';

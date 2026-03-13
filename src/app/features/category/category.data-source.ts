@@ -31,7 +31,8 @@ export class CategoryDataSource implements DataSource<CategoryDataItem> {
         }).pipe(
             catchError(() => of([] as CategoryView[])),
             finalize(() => this.loadingSubject.next(false))
-        ).subscribe(categories => {
+        ).subscribe(result => {
+            const categories = Array.isArray(result) ? result : (result.list ?? []);
             const hasMore = categories.length > pageSize;
             const items = hasMore ? categories.slice(0, pageSize) : categories;
             this.categoriesSubject.next(items.map(c => ({ categoryView: c })));

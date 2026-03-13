@@ -7,12 +7,14 @@ import { Guid } from '../core/common';
 import { toHttpParams } from './http-params';
 import { MaintenanceQueryDto } from './models/query';
 import {
+  CreateMaintenanceJobDto,
   CreateMaintenanceBacklogDto,
   CreateMaintenanceStatusDto,
+  UpdateMaintenanceJobDto,
   UpdateMaintenanceBacklogDto,
   UpdateMaintenanceStatusDto,
 } from './models/dtos';
-import { ListView, MaintenanceBacklogView, MaintenanceStatusView } from './models/views';
+import { ListView, MaintenanceBacklogView, MaintenanceJobView, MaintenanceStatusView, MaintenanceTaskView } from './models/views';
 
 @Injectable({ providedIn: 'root' })
 export class MaintenanceApiClient {
@@ -97,5 +99,52 @@ export class MaintenanceApiClient {
 
   deleteBacklog(uuid: Guid): Observable<void> {
     return this.http.delete<void>(this.url(`/api/v1/maintenance/backlogs/${uuid}`));
+  }
+
+  // -------------------------
+  // Jobs (api/v1/maintenance/jobs)
+  // -------------------------
+  createJob(dto: CreateMaintenanceJobDto): Observable<MaintenanceJobView> {
+    return this.http.put<MaintenanceJobView>(this.url('/api/v1/maintenance/jobs'), dto);
+  }
+
+  getJob(jobGuid: Guid, include?: string): Observable<MaintenanceJobView> {
+    const query = include ? `?include=${encodeURIComponent(include)}` : '';
+    return this.http.get<MaintenanceJobView>(this.url(`/api/v1/maintenance/jobs/${jobGuid}${query}`));
+  }
+
+  listJobs(query: MaintenanceQueryDto = {}): Observable<ListView<MaintenanceJobView>> {
+    return this.http.get<ListView<MaintenanceJobView>>(
+      this.url('/api/v1/maintenance/jobs'),
+      {
+        params: toHttpParams({
+          search: query.search ?? undefined,
+          limit: query.limit,
+          offset: query.offset,
+          status: query.status ?? undefined,
+          unresolvedOnly: query.unresolvedOnly,
+        }),
+      }
+    );
+  }
+
+  updateJob(jobGuid: Guid, dto: UpdateMaintenanceJobDto): Observable<MaintenanceJobView> {
+    return this.http.patch<MaintenanceJobView>(this.url(`/api/v1/maintenance/jobs/${jobGuid}`), dto);
+  }
+
+  deleteJob(jobGuid: Guid): Observable<void> {
+    return this.http.delete<void>(this.url(`/api/v1/maintenance/jobs/${jobGuid}`));
+  }
+
+  listJobTasks(jobGuid: Guid, query: MaintenanceQueryDto = {}): Observable<ListView<MaintenanceTaskView>> {
+    return this.http.get<ListView<MaintenanceTaskView>>(
+      this.url(`/api/v1/maintenance/jobs/${jobGuid}/tasks`),
+      {
+        params: toHttpParams({
+          limit: query.limit,
+          offset: query.offset,
+        }),
+      }
+    );
   }
 }

@@ -17,7 +17,9 @@ import { Inventory } from './features/inventory/inventory';
 import { InventoryCreate } from './features/inventory/inventory-create';
 import { Devicedetail } from './features/devicedetail/devicedetail';
 import { Maintenance } from './features/maintenance/maintenance';
-import { MaintenanceBacklogDetail } from './features/maintenance/maintenance-backlog-detail';
+import { MaintenanceJobCreate } from './features/maintenance/maintenance-job-create';
+import { MaintenanceJobDetail } from './features/maintenance/maintenance-job-detail';
+import { RentalManagement } from './features/rental-management/rental-management';
 import { RentalRequest } from './features/rental-request/rental-request';
 
 export const routes: Routes = [
@@ -71,14 +73,24 @@ export const routes: Routes = [
         component: Maintenance,
     },
     {
-        path: 'maintenance/backlogs/:backlogUuid',
+        path: 'maintenance/jobs/:jobGuid',
         canActivate: [authGuard, permissionGuard(Permissions.MaintenanceRead)],
-        component: MaintenanceBacklogDetail,
+        component: MaintenanceJobDetail,
+    },
+    {
+        path: 'maintenance/create',
+        canActivate: [authGuard, permissionGuard(Permissions.MaintenanceCreate)],
+        component: MaintenanceJobCreate,
     },
     {
         path: 'rental',
         canActivate: [authGuard],
         component: RentalRequest,
+    },
+    {
+        path: 'rental/management',
+        canActivate: [authGuard],
+        component: RentalManagement,
     },
     {
         path: "admin",

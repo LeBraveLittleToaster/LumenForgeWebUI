@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '@lumenforge/api-client';
 
 @Component({
@@ -8,6 +9,17 @@ import { AuthService } from '@lumenforge/api-client';
   styleUrl: './home.scss',
 })
 export class Home {
-  readonly firstName = inject(AuthService).user()?.firstName ?? 'Guest';
-  readonly lastName = inject(AuthService).user()?.lastName ?? '';
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  readonly firstName = this.auth.user()?.firstName ?? 'Guest';
+  readonly lastName = this.auth.user()?.lastName ?? '';
+
+  get isAuthenticated(): boolean {
+    return this.auth.isAuthenticated();
+  }
+
+  createRentalRequest(): void {
+    this.router.navigateByUrl('/rental');
+  }
 }

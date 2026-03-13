@@ -7,6 +7,8 @@ export interface MaintenanceQueryDto {
   offset?: number;
   /** max length 128 */
   search?: string | null;
+  /** optional filter for job queries */
+  status?: number | null;
   /** optional filter for backlog/status queries */
   statusUuid?: Guid | null;
   /** when true, only unresolved backlogs are returned */

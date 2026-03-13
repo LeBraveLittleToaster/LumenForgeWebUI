@@ -27,3 +27,27 @@ export interface MaintenanceBacklogView {
   created_at: IsoInstant;
   updated_at: IsoInstant;
 }
+
+export interface MaintenanceTaskView {
+  guid: Guid;
+  description: string;
+  status: number;
+  assigned_to_user_kc_id?: string | null;
+  affected_device_guids?: Guid[] | null;
+  created_at: IsoInstant;
+  updated_at: IsoInstant;
+}
+
+export interface MaintenanceJobView {
+  guid: Guid;
+  name: string;
+  description: string;
+  status: number;
+  device_guids: Guid[];
+  related_rental_uuid?: Guid | null;
+  related_job_guids?: Guid[] | null;
+  tasks?: MaintenanceTaskView[] | null;
+  resolved_at?: IsoInstant | null;
+  created_at: IsoInstant;
+  updated_at: IsoInstant;
+}

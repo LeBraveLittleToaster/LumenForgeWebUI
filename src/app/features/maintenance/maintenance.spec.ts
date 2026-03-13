@@ -11,14 +11,12 @@ describe('Maintenance', () => {
 
   beforeEach(async () => {
     const maintenanceApiClientStub = {
-      listStatuses: () => of([]),
-      listBacklogs: () => of({ list: [], total: 0 }),
-      deleteBacklog: () => of(void 0),
+      listJobs: () => of({ list: [], total: 0 }),
+      deleteJob: () => of(void 0),
     } as Partial<MaintenanceApiClient>;
 
     const authServiceStub = {
       hasPermission: () => true,
-      hasAnyPermission: () => true,
     } as Partial<AuthService>;
 
     await TestBed.configureTestingModule({

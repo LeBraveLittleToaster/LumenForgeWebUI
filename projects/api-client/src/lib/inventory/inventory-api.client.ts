@@ -25,6 +25,8 @@ interface PaginatedList<T> {
   total: number;
 }
 
+type ListOrPaginatedList<T> = T[] | PaginatedList<T>;
+
 @Injectable({ providedIn: 'root' })
 export class InventoryApiClient {
   constructor(
@@ -91,8 +93,8 @@ export class InventoryApiClient {
   // -------------------------
   // Categories (api/v1/inventory/categories)
   // -------------------------
-  listCategories(query: ListQueryDto = {}): Observable<CategoryView[]> {
-    return this.http.get<CategoryView[]>(
+  listCategories(query: ListQueryDto = {}): Observable<ListOrPaginatedList<CategoryView>> {
+    return this.http.get<ListOrPaginatedList<CategoryView>>(
       this.url('/api/v1/inventory/categories'),
       { params: toHttpParams({ search: query.search ?? undefined, limit: query.limit, offset: query.offset }) }
     );

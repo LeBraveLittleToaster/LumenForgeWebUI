@@ -1,0 +1,153 @@
+<div class="page-container">
+  @if (state$ | async; as state) {
+    @if (state.loading) {
+      <div class="spinner-container">
+        <mat-progress-spinner diameter="48" mode="indeterminate"></mat-progress-spinner>
+      </div>
+    } @else if (state.error) {
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Maintenance Report</h1>
+          <p class="page-subtitle">Report details and task summary</p>
+        </div>
+        <div class="page-header-actions">
+          <button mat-icon-button aria-label="Back" (click)="goBack()"><mat-icon>close</mat-icon></button>
+        </div>
+      </div>
+      <div class="content-card state-card">
+        <mat-icon class="state-icon state-icon--error">error_outline</mat-icon>
+        <p class="state-msg">{{ state.error }}</p>
+      </div>
+    } @else if (state.job) {
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Maintenance Report</h1>
+          <p class="page-subtitle">Report details and task summary</p>
+        </div>
+        <div class="page-header-actions">
+          @if (canDelete) {
+            <button mat-stroked-button (click)="delete(state.job)">
+              <mat-icon>delete_outline</mat-icon>
+              Delete
+            </button>
+          }
+          <button mat-icon-button aria-label="Back" (click)="goBack()"><mat-icon>close</mat-icon></button>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <div class="detail-identity">
+          <div class="detail-avatar">
+            <mat-icon>engineering</mat-icon>
+          </div>
+          <div class="detail-names">
+            <h2 class="detail-full-name">{{ state.job.name }}</h2>
+            <span class="detail-username">{{ state.job.guid }}</span>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="info-grid">
+          <div class="info-field">
+            <div class="info-label">Status</div>
+            <div class="info-value">{{ statusLabel(state.job.status) }}</div>
+          </div>
+
+          <div class="info-field">
+            <div class="info-label">Affected Devices</div>
+            <div class="info-value">{{ state.job.device_guids.length }}</div>
+          </div>
+
+          <div class="info-field full-width">
+            <div class="info-label">Description</div>
+            <div class="info-value">{{ state.job.description }}</div>
+          </div>
+
+          <div class="info-field">
+            <div class="info-label">Created At</div>
+            <div class="info-value">{{ state.job.created_at | date : 'medium' }}</div>
+          </div>
+
+          <div class="info-field">
+            <div class="info-label">Resolved At</div>
+            <div class="info-value">{{ state.job.resolved_at ? (state.job.resolved_at | date : 'medium') : 'Unresolved' }}</div>
+          </div>
+        </div>
+      </div>
+
+      @if (canUpdate) {
+        <div class="content-card edit-card">
+          <h3 class="section-title">Edit Report</h3>
+          <form [formGroup]="editForm" class="edit-form">
+            <mat-form-field appearance="outline">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" maxlength="256" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="4" maxlength="4000"></textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status">
+                @for (status of statusOptions; track status.value) {
+                  <mat-option [value]="status.value">{{ status.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </form>
+
+          <div class="section-actions">
+            <button mat-flat-button [disabled]="editForm.invalid || saving" (click)="save()">
+              {{ saving ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </div>
+      }
+
+      <div class="content-card section-card">
+        <div class="section-header">
+          <h3 class="section-title">Affected Devices</h3>
+        </div>
+
+        @if (state.job.device_guids.length === 0) {
+          <p class="muted">No affected devices listed.</p>
+        } @else {
+          <div class="list-wrap">
+            @for (deviceGuid of state.job.device_guids; track deviceGuid) {
+              <div class="list-item monospace-id">{{ deviceGuid }}</div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="content-card section-card">
+        <div class="section-header">
+          <h3 class="section-title">Tasks</h3>
+        </div>
+
+        @if (!state.job.tasks || state.job.tasks.length === 0) {
+          <p class="muted">No tasks in this report.</p>
+        } @else {
+          <div class="task-wrap">
+            @for (task of state.job.tasks; track task.guid) {
+              <div class="task-item">
+                <div class="task-head">
+                  <span class="monospace-id">{{ task.guid }}</span>
+                  <span class="task-status">{{ statusLabel(task.status) }}</span>
+                </div>
+                <div class="task-description">{{ task.description }}</div>
+                @if (task.affected_device_guids && task.affected_device_guids.length > 0) {
+                  <div class="task-devices muted">{{ task.affected_device_guids.length }} devices assigned</div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

@@ -24,7 +24,10 @@ import { catchError, EMPTY } from 'rxjs';
   styleUrl: './inventory.css',
 })
 export class Inventory implements OnInit {
-  readonly rowRouterLink = (row: InventoryDataItem): any[] => ['/inventory', row.deviceView.guid];
+  readonly rowRouterLink = (row: InventoryDataItem): any[] => {
+    console.log('Row clicked:', row);
+    return ['/inventory', row.deviceView.guid];
+  };
 
   columns: ColumnDef<InventoryDataItem>[] = [
     { key: 'guid',           header: 'Device ID',      cell: r => r.deviceView.guid },

@@ -104,6 +104,12 @@
 						<h2 class="section-title">Categories</h2>
 						<p class="section-subtitle">Assigned categories for this device.</p>
 					</div>
+					<div class="section-actions">
+						<button mat-stroked-button type="button" (click)="openAssignCategoriesDialog(state.device)">
+							<mat-icon>category</mat-icon>
+							Assign Categories
+						</button>
+					</div>
 				</div>
 
 				@if (!state.device.categories || state.device.categories.length === 0) {
@@ -125,6 +131,12 @@
 					<div>
 						<h2 class="section-title">Parameters</h2>
 						<p class="section-subtitle">Key-value metadata for this device.</p>
+					</div>
+					<div class="section-actions">
+						<button mat-flat-button type="button" (click)="openAddParameterDialog(state.device)">
+							<mat-icon>add</mat-icon>
+							Add Parameter
+						</button>
 					</div>
 				</div>
 
@@ -148,6 +160,18 @@
 						<ng-container matColumnDef="updated_at">
 							<th mat-header-cell *matHeaderCellDef>Updated At</th>
 							<td mat-cell *matCellDef="let p">{{ p.updated_at | date : 'medium' }}</td>
+						</ng-container>
+
+						<ng-container matColumnDef="actions">
+							<th mat-header-cell *matHeaderCellDef>Actions</th>
+							<td mat-cell *matCellDef="let p">
+								<button mat-icon-button type="button" aria-label="Update parameter" (click)="openUpdateParameterDialog(state.device, p)">
+									<mat-icon>edit</mat-icon>
+								</button>
+								<button mat-icon-button type="button" aria-label="Remove parameter" (click)="removeParameter(state.device, p)">
+									<mat-icon>delete</mat-icon>
+								</button>
+							</td>
 						</ng-container>
 
 						<tr mat-header-row *matHeaderRowDef="parameterColumns"></tr>
