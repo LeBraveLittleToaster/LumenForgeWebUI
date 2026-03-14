@@ -133,6 +133,35 @@
 	font-weight: 500;
 }
 
+.removable-chip {
+	gap: 6px;
+	padding-right: 4px;
+}
+
+.chip-remove-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	width: 20px;
+	height: 20px;
+	border-radius: 999px;
+	cursor: pointer;
+	padding: 0;
+}
+
+.chip-remove-btn:hover {
+	background: color-mix(in srgb, var(--mat-sys-on-secondary-container) 12%, transparent);
+}
+
+.chip-remove-btn mat-icon {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+}
+
 .state-card {
 	display: flex;
 	flex-direction: column;

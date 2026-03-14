@@ -249,3 +249,27 @@ mat-card.lf-card:hover {
   width: 28px !important;
   height: 28px !important;
 }
+
+/* ── Global dialog sizing ─────────────────────────────────── */
+.cdk-overlay-pane.lf-app-dialog {
+  width: min(1200px, 96vw) !important;
+  max-width: 96vw !important;
+  height: 92vh !important;
+  max-height: 95vh !important;
+}
+
+.cdk-overlay-pane.lf-app-dialog .mat-mdc-dialog-container {
+  height: 100%;
+}
+
+.cdk-overlay-pane.lf-app-dialog .mat-mdc-dialog-surface {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.cdk-overlay-pane.lf-app-dialog mat-dialog-content,
+.cdk-overlay-pane.lf-app-dialog .mat-mdc-dialog-content {
+  flex: 1;
+  max-height: none;
+}

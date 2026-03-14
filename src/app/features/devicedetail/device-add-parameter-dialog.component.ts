@@ -37,7 +37,7 @@ export interface DeviceAddParameterDialogData {
 
         <mat-form-field appearance="outline">
           <mat-label>Value</mat-label>
-          <input matInput formControlName="value" placeholder="e.g. black" />
+          <textarea matInput formControlName="value" placeholder="e.g. black" rows="3"></textarea>
           @if (form.controls.value.hasError('required')) {
             <mat-error>Value is required.</mat-error>
           }

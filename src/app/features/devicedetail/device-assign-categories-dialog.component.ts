@@ -16,6 +16,10 @@ export interface DeviceAssignCategoriesDialogData {
   assignedCategoryGuids: string[];
 }
 
+type CategoryWithGuidFallback = CategoryView & { uuid?: string | null };
+
+const PAGE_SIZE = 10;
+
 @Component({
   selector: 'app-device-assign-categories-dialog',
   imports: [
@@ -44,13 +48,21 @@ export interface DeviceAssignCategoriesDialogData {
         <p class="dialog-empty">No categories found.</p>
       } @else {
         <mat-selection-list [multiple]="true" (selectionChange)="onSelectionChange($event)">
-          @for (category of categories; track category.guid) {
-            <mat-list-option [value]="category.guid" [selected]="selectedCategoryGuids.has(category.guid)">
+          @for (category of categories; track getCategoryGuid(category)) {
+            <mat-list-option [value]="getCategoryGuid(category)" [selected]="selectedCategoryGuids.has(getCategoryGuid(category))">
               <span matListItemTitle>{{ category.name }}</span>
               <span matListItemLine class="category-desc">{{ category.description || 'No description' }}</span>
             </mat-list-option>
           }
         </mat-selection-list>
+
+        @if (hasMore) {
+          <div class="load-more-wrapper">
+            <button mat-stroked-button type="button" (click)="loadMore()" [disabled]="loadingMore || saving">
+              {{ loadingMore ? 'Loading...' : 'Load more' }}
+            </button>
+          </div>
+        }
       }
 
       @if (!loading) {
@@ -71,7 +83,8 @@ export interface DeviceAssignCategoriesDialogData {
     .search-field { width: 100%; margin-bottom: 8px; }
     .dialog-spinner { display: flex; justify-content: center; padding: 16px; }
     .dialog-empty { text-align: center; color: var(--mat-sys-on-surface-variant); padding: 16px; margin: 0; }
-    mat-selection-list { max-height: 300px; overflow-y: auto; display: block; }
+    mat-selection-list { height: min(72vh, 700px); overflow-y: auto; display: block; }
+    .load-more-wrapper { display: flex; justify-content: center; margin-top: 12px; }
     .category-desc { font-size: 0.8rem; color: var(--mat-sys-on-surface-variant); }
     .error-text { color: var(--mat-sys-error); margin: 8px 0 0; }
   `]
@@ -79,10 +92,13 @@ export interface DeviceAssignCategoriesDialogData {
 export class DeviceAssignCategoriesDialogComponent implements OnInit {
   searchCtrl = new FormControl('', { nonNullable: true });
   selectedCategoryGuids = new Set<string>();
-  categories: CategoryView[] = [];
+  categories: CategoryWithGuidFallback[] = [];
   loading = true;
+  loadingMore = false;
   saving = false;
+  hasMore = false;
   error: string | null = null;
+  private currentSearch = '';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DeviceAssignCategoriesDialogData,
@@ -103,9 +119,21 @@ export class DeviceAssignCategoriesDialogComponent implements OnInit {
     });
   }
 
+  loadMore(): void {
+    if (!this.hasMore || this.loading || this.loadingMore) {
+      return;
+    }
+
+    this.fetchCategories(true);
+  }
+
   onSelectionChange(event: MatSelectionListChange): void {
     for (const option of event.options) {
-      const value = option.value as string;
+      const value = option.value as string | undefined;
+      if (!value) {
+        continue;
+      }
+
       if (option.selected) {
         this.selectedCategoryGuids.add(value);
       } else {
@@ -115,11 +143,31 @@ export class DeviceAssignCategoriesDialogComponent implements OnInit {
   }
 
   private loadCategories(search: string): void {
+    this.currentSearch = search;
     this.loading = true;
+    this.loadingMore = false;
     this.error = null;
+    this.hasMore = false;
+    this.categories = [];
     this.cdr.detectChanges();
 
-    this.inventoryApiClient.listCategories({ search }).pipe(
+    this.fetchCategories(false);
+  }
+
+  private fetchCategories(append: boolean): void {
+    if (append) {
+      this.loadingMore = true;
+    } else {
+      this.loading = true;
+    }
+
+    this.cdr.detectChanges();
+
+    this.inventoryApiClient.listCategories({
+      search: this.currentSearch,
+      limit: PAGE_SIZE + 1,
+      offset: append ? this.categories.length : 0,
+    }).pipe(
       timeout(10000),
       catchError(() => {
         this.error = 'Failed to load categories.';
@@ -127,10 +175,29 @@ export class DeviceAssignCategoriesDialogComponent implements OnInit {
       }),
       finalize(() => {
         this.loading = false;
+        this.loadingMore = false;
         this.cdr.detectChanges();
       })
     ).subscribe(result => {
-      this.categories = Array.isArray(result) ? result : (result.list ?? []);
+      const responseItems = Array.isArray(result) ? result : (result.list ?? []);
+      const hasExtraItem = responseItems.length > PAGE_SIZE;
+      const pageItems = hasExtraItem ? responseItems.slice(0, PAGE_SIZE) : responseItems;
+
+      const mappedItems = pageItems
+        .map(category => {
+          const guid = this.getCategoryGuid(category as CategoryWithGuidFallback);
+          return guid ? { ...category, guid } : null;
+        })
+        .filter((category): category is CategoryWithGuidFallback => category !== null);
+
+      const total = Array.isArray(result) ? undefined : result.total;
+      const nextCategories = append ? [...this.categories, ...mappedItems] : mappedItems;
+
+      this.categories = nextCategories;
+      this.hasMore = typeof total === 'number'
+        ? nextCategories.length < total
+        : hasExtraItem;
+
       this.cdr.detectChanges();
     });
   }
@@ -158,5 +225,9 @@ export class DeviceAssignCategoriesDialogComponent implements OnInit {
     ).subscribe(updatedDevice => {
       this.dialogRef.close(updatedDevice.categories);
     });
+  }
+
+  getCategoryGuid(category: CategoryWithGuidFallback): string {
+    return category.guid ?? category.uuid ?? '';
   }
 }

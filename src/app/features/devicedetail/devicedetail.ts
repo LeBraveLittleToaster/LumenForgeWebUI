@@ -22,6 +22,23 @@ interface DeviceDetailState {
 }
 
 @Component({
+  selector: 'app-remove-category-confirm-dialog',
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule],
+  template: `
+    <h2 mat-dialog-title>Remove Category</h2>
+    <mat-dialog-content>
+      Remove this category from the device?
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close>Decline</button>
+      <button mat-flat-button color="warn" [mat-dialog-close]="true">Accept</button>
+    </mat-dialog-actions>
+  `
+})
+export class RemoveCategoryConfirmDialogComponent {}
+
+@Component({
   selector: 'app-devicedetail',
   imports: [
     CommonModule,
@@ -74,7 +91,9 @@ export class Devicedetail implements OnInit {
       width: '520px',
       data: {
         deviceGuid: device.guid,
-        assignedCategoryGuids: (device.categories ?? []).map(category => category.guid)
+        assignedCategoryGuids: (device.categories ?? [])
+          .map(category => this.getCategoryId(category as DeviceView['categories'][number] & { uuid?: string | null }))
+          .filter((id): id is string => !!id)
       }
     });
 
@@ -130,6 +149,30 @@ export class Devicedetail implements OnInit {
     });
   }
 
+  removeCategory(device: DeviceView, category: DeviceView['categories'][number], event?: Event): void {
+    event?.stopPropagation();
+
+    const categoryIdToRemove = this.getCategoryId(category as { guid?: string | null; uuid?: string | null });
+    if (!categoryIdToRemove) {
+      return;
+    }
+
+    this.dialog.open(RemoveCategoryConfirmDialogComponent).afterClosed().pipe(
+      filter((confirmed): confirmed is true => !!confirmed),
+      switchMap(() => {
+        const categoryGuids = (device.categories ?? [])
+          .map(current => this.getCategoryId(current as { guid?: string | null; uuid?: string | null }))
+          .filter((id): id is string => !!id && id !== categoryIdToRemove);
+
+        return this.inventoryApiClient.setDeviceCategories(device.guid, { categoryGuids }).pipe(
+          catchError(() => EMPTY)
+        );
+      })
+    ).subscribe(() => {
+      this.refreshTrigger$.next();
+    });
+  }
+
   formatStock(device: DeviceView): string {
     if (!device.stock) {
       return 'No stock record';
@@ -139,6 +182,10 @@ export class Devicedetail implements OnInit {
 
   get hasPhoto(): (device: DeviceView | null) => boolean {
     return (device) => !!device?.photo_url;
+  }
+
+  private getCategoryId(category: { guid?: string | null; uuid?: string | null }): string {
+    return category.guid ?? category.uuid ?? '';
   }
 
 }

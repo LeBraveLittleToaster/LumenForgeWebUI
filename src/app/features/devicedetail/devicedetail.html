@@ -120,7 +120,16 @@
 				} @else {
 					<div class="chips-wrap">
 						@for (cat of state.device.categories; track cat.guid) {
-							<span class="info-chip">{{ cat.name }}</span>
+							<span class="info-chip removable-chip">
+								<span>{{ cat.name }}</span>
+								<button
+									type="button"
+									class="chip-remove-btn"
+									aria-label="Remove category {{ cat.name }}"
+									(click)="removeCategory(state.device, cat, $event)">
+									<mat-icon>close</mat-icon>
+								</button>
+							</span>
 						}
 					</div>
 				}
