@@ -1,9 +1,9 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
-import { DeviceView, InventoryApiClient } from '@lumenforge/api-client';
+import { CatalogueApiClient, CatalogueItemView } from '@lumenforge/api-client';
 import { BehaviorSubject, catchError, finalize, Observable, of } from 'rxjs';
 
 export interface RentalRequestDeviceItem {
-  device: DeviceView;
+  item: CatalogueItemView;
 }
 
 export class RentalRequestDevicesDataSource implements DataSource<RentalRequestDeviceItem> {
@@ -14,7 +14,7 @@ export class RentalRequestDevicesDataSource implements DataSource<RentalRequestD
   readonly loading$ = this.loadingSubject.asObservable();
   readonly total$ = this.totalSubject.asObservable();
 
-  constructor(private readonly inventoryApiClient: InventoryApiClient) {}
+  constructor(private readonly catalogueApiClient: CatalogueApiClient) {}
 
   connect(_: CollectionViewer): Observable<readonly RentalRequestDeviceItem[]> {
     return this.devicesSubject.asObservable();
@@ -29,16 +29,19 @@ export class RentalRequestDevicesDataSource implements DataSource<RentalRequestD
   loadDevices(filter: string, _sortDirection: 'asc' | 'desc', pageIndex: number, pageSize: number): void {
     this.loadingSubject.next(true);
 
-    this.inventoryApiClient.listPublicDevices({
-      search: filter,
+    this.catalogueApiClient.listItems({
+      search: filter || null,
       limit: pageSize,
       offset: pageIndex * pageSize,
+      publishedOnly: true,
     }).pipe(
-      catchError(() => of({ list: [], total: 0 })),
+      catchError(() => of({ list: [] as CatalogueItemView[], total: 0 })),
       finalize(() => this.loadingSubject.next(false))
     ).subscribe(result => {
-      this.devicesSubject.next(result.list.map(device => ({ device })));
-      this.totalSubject.next(result.total);
+      const items = Array.isArray(result) ? result : result.list;
+      const total = Array.isArray(result) ? result.length : result.total;
+      this.devicesSubject.next(items.map(item => ({ item })));
+      this.totalSubject.next(total);
     });
   }
 

@@ -7,7 +7,7 @@
   </div>
 
   <div class="content-card">
-    <mat-stepper linear>
+    <mat-stepper linear (selectionChange)="onStepperSelectionChange($event)">
       <mat-step [stepControl]="eventForm">
         <form [formGroup]="eventForm">
           <ng-template matStepLabel>Event Data</ng-template>
@@ -84,26 +84,26 @@
 
             <ng-container matColumnDef="quantity">
               <th mat-header-cell *matHeaderCellDef>Qty</th>
-              <td mat-cell *matCellDef="let row">
+              <td mat-cell *matCellDef="let row" (click)="$event.stopPropagation()">
                 <input
                   class="qty-input"
                   type="number"
                   min="1"
-                    [value]="getPendingQuantity(row.device.guid)"
+                  [value]="getPendingQuantity(row.item.guid)"
                   #qtyInput
-                  (change)="setPendingQuantity(row.device.guid, qtyInput.value)" />
+                  (change)="setPendingQuantity(row.item.guid, qtyInput.value)" />
               </td>
             </ng-container>
 
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>Actions</th>
-              <td mat-cell *matCellDef="let row">
+              <td mat-cell *matCellDef="let row" (click)="$event.stopPropagation()">
                 <button mat-button type="button" (click)="addRequestedDevice(row)">Add</button>
               </td>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="['name', 'serial', 'vendor', 'stock', 'quantity', 'actions']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['name', 'serial', 'vendor', 'stock', 'quantity', 'actions']"></tr>
+            <tr mat-header-row *matHeaderRowDef="['name', 'description', 'quantity', 'actions']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['name', 'description', 'quantity', 'actions']" class="clickable-row" (click)="openItemPreview(row.item)"></tr>
           </table>
 
           <mat-paginator
@@ -113,6 +113,22 @@
             (page)="onDevicePage($event)">
           </mat-paginator>
         </div>
+
+        @if (selectedItem) {
+          <div class="item-preview-backdrop" (click)="closeItemPreview()">
+            <div class="item-preview-popup" (click)="$event.stopPropagation()">
+              <button mat-icon-button class="item-preview-close" type="button" aria-label="Close preview" (click)="closeItemPreview()">
+                <mat-icon>close</mat-icon>
+              </button>
+              @if (selectedItem.photo_url) {
+                <img class="item-preview-img" [src]="selectedItem.photo_url" [alt]="selectedItem.name" />
+              } @else {
+                <div class="item-preview-no-photo">No photo available</div>
+              }
+              <p class="item-preview-description">{{ selectedItem.description }}</p>
+            </div>
+          </div>
+        }
 
         <mat-divider></mat-divider>
 

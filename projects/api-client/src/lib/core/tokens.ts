@@ -10,6 +10,15 @@ export const AUTH_API_BASE_URL = new InjectionToken<string>(
 );
 
 /**
+ * Base URL for the Catalogue API.
+ * This token can be provided in the application's root module or any feature module to configure the API base URL.
+ */
+export const CATALOGUE_API_BASE_URL = new InjectionToken<string>(
+  'CATALOGUE_API_BASE_URL',
+  { factory: () => '' }
+);
+
+/**
  * Base URL for the Inventory API.
  * This token can be provided in the application's root module or any feature module to configure the API base URL.
  */

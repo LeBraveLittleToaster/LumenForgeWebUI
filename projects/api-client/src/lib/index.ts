@@ -3,8 +3,23 @@
  */
 export { type Guid, type IsoDate, type IsoInstant, type StockUnitType } from './core/common';
 export { toHttpParams, type Primitive } from './core/http-params';
-export { AUTH_API_BASE_URL, INVENTORY_API_BASE_URL, MAINTENANCE_API_BASE_URL, RENTAL_API_BASE_URL } from './core/tokens';
+export { AUTH_API_BASE_URL, CATALOGUE_API_BASE_URL, INVENTORY_API_BASE_URL, MAINTENANCE_API_BASE_URL, RENTAL_API_BASE_URL } from './core/tokens';
 export { type ListQueryDto } from './core/models/query';
+
+/**
+ * Catalogue API exports
+ */
+export { CatalogueApiClient } from './catalogue/catalogue-api.client';
+export {
+  type CreateCatalogueItemDto,
+  type UpdateCatalogueItemDto,
+} from './catalogue/models/dtos';
+export {
+  type CatalogueItemView,
+  type CatalogueListView,
+  type CatalogueListOrPaginatedList,
+} from './catalogue/models/views';
+export { type CatalogueListQueryDto, type CatalogueItemQueryDto } from './catalogue/models/query';
 
 /**
  * Auth API exports
@@ -86,3 +101,11 @@ export { type MaintenanceQueryDto } from './maintenance/models/query';
  * Rental API exports
  */
 export { RentalApiClient } from './rental/rental-api.client';
+export {
+  type RentalQuestionView,
+  type RentalQuestionsQueryDto,
+  type CreateQuestionDto,
+  type SubmitAnswerDto,
+  type SurveyAnswerResponse,
+  type RecommendQuestionsInputDto,
+} from './rental/rental-api.client';

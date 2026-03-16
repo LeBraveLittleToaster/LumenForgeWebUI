@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Component, Inject, OnInit, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, ReactiveFormsModule, Validators, ValidationErrors } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,7 +17,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { ColumnDef } from '../../shared/data-table/data-table';
-import { RentalApiClient, InventoryApiClient } from '@lumenforge/api-client';
+import { RentalApiClient, CatalogueApiClient, CatalogueItemView } from '@lumenforge/api-client';
 import { RentalRequestDevicesDataSource, RentalRequestDeviceItem } from './rental-request-devices.data-source';
 
 export type QuestionAnswer = 'yes' | 'no' | 'not_important' | 'unknown';
@@ -69,10 +70,8 @@ export class RentalRequest implements OnInit {
   });
 
   readonly deviceColumns: ColumnDef<RentalRequestDeviceItem>[] = [
-    { key: 'name', header: 'Device Name', cell: r => r.device.name || 'Unnamed device' },
-    { key: 'serial', header: 'Serial Number', cell: r => r.device.serial_number },
-    { key: 'vendor', header: 'Vendor', cell: r => r.device.vendor?.name || '---' },
-    { key: 'stock', header: 'Stock', cell: r => String(r.device.stock?.stock_count ?? 0) },
+    { key: 'name', header: 'Name', cell: r => r.item.name },
+    { key: 'description', header: 'Description', cell: r => r.item.description },
   ];
 
   readonly answerOptions: Array<{ value: QuestionAnswer; label: string }> = [
@@ -94,18 +93,53 @@ export class RentalRequest implements OnInit {
   requestedDevices: RequestedDevice[] = [];
   deviceQuantities: Record<string, number> = {};
   questions: string[] = [];
+  selectedItem: CatalogueItemView | null = null;
 
   constructor(
-    @Inject(InventoryApiClient) private readonly inventoryApiClient: InventoryApiClient,
+    @Inject(CatalogueApiClient) private readonly catalogueApiClient: CatalogueApiClient,
     @Inject(RentalApiClient) private readonly rentalApiClient: RentalApiClient
   ) {}
 
   ngOnInit(): void {
-    this.dataSource = new RentalRequestDevicesDataSource(this.inventoryApiClient);
+    this.dataSource = new RentalRequestDevicesDataSource(this.catalogueApiClient);
     this.dataSource.loadDevices('', 'asc', 0, 10);
+  }
 
-    this.rentalApiClient.getQuestions().subscribe((questions: string[]) => {
+  onStepperSelectionChange(event: StepperSelectionEvent): void {
+    if (event.selectedIndex === 2) {
+      this.loadRecommendedQuestions();
+    }
+  }
+
+  private loadRecommendedQuestions(): void {
+    const step1 = this.eventForm.getRawValue();
+
+    const toIsoOrNull = (value: unknown): string | null => {
+      if (!value) {
+        return null;
+      }
+      const date = new Date(value as string | number | Date);
+      return Number.isNaN(date.getTime()) ? null : date.toISOString();
+    };
+
+    this.rentalApiClient.getCommonQuestions({
+      name: step1.name ?? null,
+      shortDescription: step1.shortDescription ?? null,
+      eventStart: toIsoOrNull(step1.eventStart),
+      eventEnd: toIsoOrNull(step1.eventEnd),
+      location: step1.location ?? null,
+      event_name: step1.name ?? null,
+      request_description: step1.shortDescription ?? null,
+      delivery_address: step1.location ?? null,
+      planned_pickup_at: toIsoOrNull(step1.eventStart),
+      planned_return_at: toIsoOrNull(step1.eventEnd),
+    }).subscribe((questions: string[]) => {
       this.questions = questions;
+
+      for (const key of Object.keys(this.questionsForm.controls)) {
+        this.questionsForm.removeControl(key);
+      }
+
       for (let i = 0; i < questions.length; i++) {
         this.questionsForm.addControl(`q_${i}`, new FormControl<QuestionAnswer>('unknown', { nonNullable: true }));
       }
@@ -119,6 +153,14 @@ export class RentalRequest implements OnInit {
       return null;
     }
     return new Date(start) < new Date(end) ? null : { invalidEventRange: true };
+  }
+
+  openItemPreview(item: CatalogueItemView): void {
+    this.selectedItem = item;
+  }
+
+  closeItemPreview(): void {
+    this.selectedItem = null;
   }
 
   onDeviceSearch(): void {
@@ -144,20 +186,20 @@ export class RentalRequest implements OnInit {
   }
 
   addRequestedDevice(row: RentalRequestDeviceItem): void {
-    const quantity = this.getPendingQuantity(row.device.guid);
-    const existing = this.requestedDevices.find(d => d.guid === row.device.guid);
+    const quantity = this.getPendingQuantity(row.item.guid);
+    const existing = this.requestedDevices.find(d => d.guid === row.item.guid);
 
     if (existing) {
       existing.quantity += quantity;
     } else {
       this.requestedDevices.push({
-        guid: row.device.guid,
-        name: row.device.name || row.device.serial_number,
+        guid: row.item.guid,
+        name: row.item.name,
         quantity,
       });
     }
 
-    this.deviceQuantities[row.device.guid] = 1;
+    this.deviceQuantities[row.item.guid] = 1;
   }
 
   updateRequestedQuantity(guid: string, quantityInput: HTMLInputElement): void {
