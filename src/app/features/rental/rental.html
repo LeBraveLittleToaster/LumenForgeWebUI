@@ -1,0 +1,37 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Rentals</h1>
+      <p class="page-subtitle">Browse all rental requests and drill into status transitions.</p>
+    </div>
+    <div class="page-header-actions">
+      <button mat-flat-button routerLink="/rental/create">
+        <mat-icon>add</mat-icon>
+        New Rental Request
+      </button>
+    </div>
+  </div>
+
+  <div class="content-card">
+    <div class="card-toolbar">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-form">
+        <mat-label>Search rentals...</mat-label>
+        <input matInput [formControl]="searchCtrl" (keyup.enter)="onSearch()" enterkeyhint="search" placeholder="Title, event, customer or status">
+        @if (searchCtrl.value) {
+          <button type="button" matIconButton class="clear-btn" matSuffix aria-label="Clear" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+    </div>
+
+    <app-data-table
+      [dataSource]="dataSource"
+      [columns]="columns"
+      [loading$]="dataSource.loading$"
+      [length$]="dataSource.total$"
+      [rowRouterLink]="rowRouterLink"
+      (page)="onPage($event)">
+    </app-data-table>
+  </div>
+</div>

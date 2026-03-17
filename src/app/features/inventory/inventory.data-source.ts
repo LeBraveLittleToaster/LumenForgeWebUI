@@ -28,16 +28,16 @@ export class InventoryDataSource implements DataSource<InventoryDataItem> {
         this.inventoryApiClient.listDevices({ search: filter, limit: pageSize, offset: pageIndex * pageSize }).pipe(
             catchError(() => {
                 console.log('InventoryDataSource: Failed to load devices');
-                return of([]);
+                return of({ list: [] as DeviceView[], total: 0 });
             }),
             finalize(() => {
                 this.loadingSubject.next(false);
                 console.log('InventoryDataSource: Finished loading devices');
             })
-        ).subscribe(devices => { 
-            const deviceDataItems = devices.map(device => ({ deviceView: device }));
+        ).subscribe(result => { 
+            const deviceDataItems = result.list.map(device => ({ deviceView: device }));
             this.devicesSubject.next(deviceDataItems);
-            this.totalSubject.next(devices.length);
+            this.totalSubject.next(result.total);
         });
     }
 

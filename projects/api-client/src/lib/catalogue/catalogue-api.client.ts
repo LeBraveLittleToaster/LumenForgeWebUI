@@ -7,7 +7,7 @@ import { Guid } from '../core/common';
 import { toHttpParams } from './http-params';
 import { CreateCatalogueItemDto, UpdateCatalogueItemDto } from './models/dtos';
 import { CatalogueItemQueryDto, CatalogueListQueryDto } from './models/query';
-import { CatalogueItemView, CatalogueListOrPaginatedList } from './models/views';
+import { CatalogueItemView, CatalogueListView } from './models/views';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogueApiClient {
@@ -22,8 +22,8 @@ export class CatalogueApiClient {
     return `${b}${p}`;
   }
 
-  listItems(query: CatalogueListQueryDto = {}): Observable<CatalogueListOrPaginatedList> {
-    return this.http.get<CatalogueListOrPaginatedList>(
+  listItems(query: CatalogueListQueryDto = {}): Observable<CatalogueListView<CatalogueItemView>> {
+    return this.http.get<CatalogueListView<CatalogueItemView>>(
       this.url('/api/v1/catalogue/items'),
       {
         params: toHttpParams({

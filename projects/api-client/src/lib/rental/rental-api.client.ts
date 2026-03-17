@@ -1,54 +1,38 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Guid } from '../core/common';
 import { toHttpParams } from '../core/http-params';
 import { RENTAL_API_BASE_URL } from '../core/tokens';
-
-export interface RentalQuestionView {
-  question_guid?: Guid;
-  question_uuid?: Guid;
-  question_text?: string;
-  text?: string;
-  category?: string | null;
-  display_order?: number;
-  is_active?: boolean;
-}
-
-export interface RentalQuestionsQueryDto {
-  search?: string | null;
-  limit?: number;
-  offset?: number;
-}
-
-export interface CreateQuestionDto {
-  question_text: string;
-  category?: string | null;
-  display_order?: number;
-  is_active?: boolean;
-}
-
-export type SurveyAnswerResponse = 'Yes' | 'No' | 'NotImportant' | 'Unknown';
-
-export interface SubmitAnswerDto {
-  question_uuid: Guid;
-  response: SurveyAnswerResponse;
-  comment?: string | null;
-  rental_uuid?: Guid | null;
-}
-
-export interface RecommendQuestionsInputDto {
-  name?: string | null;
-  shortDescription?: string | null;
-  eventStart?: string | null;
-  eventEnd?: string | null;
-  location?: string | null;
-  event_name?: string | null;
-  request_description?: string | null;
-  delivery_address?: string | null;
-  planned_pickup_at?: string | null;
-  planned_return_at?: string | null;
-}
+import { PaginatedList } from '../inventory/models/views';
+import {
+  CreateQuestionDto,
+  EventContextDto,
+  SubmitAnswerDto,
+  SubmitAnswersBulkDto,
+  CreateRentalDto,
+  UpdateRentalDto,
+  GenerateChecklistDto,
+  SignChecklistDto,
+  UpdateChecklistItemDto,
+  TransitionRentalStatusDto,
+} from './models/dtos';
+import {
+  QuestionView,
+  AnswerView,
+  RentalView,
+  RentalStatusView,
+  RentalTransitionsView,
+  ChecklistView,
+  ChecklistItemView,
+  StockBindingConflictView,
+} from './models/views';
+import {
+  RentalQuestionsQueryDto,
+  RentalQueryDto,
+  RentalConflictQueryDto,
+  RentalInclude,
+} from './models/query';
 
 @Injectable({ providedIn: 'root' })
 export class RentalApiClient {
@@ -63,102 +47,157 @@ export class RentalApiClient {
     return `${b}${p}`;
   }
 
-  private normalizeQuestionArray(value: unknown): RentalQuestionView[] {
-    if (Array.isArray(value)) {
-      return value.filter((x): x is RentalQuestionView => !!x && typeof x === 'object');
-    }
+  // =========================================================================
+  // Survey Questions
+  // =========================================================================
 
-    if (value && typeof value === 'object') {
-      const obj = value as Record<string, unknown>;
-      const candidates = [obj['list'], obj['items'], obj['data'], obj['questions']];
-      const found = candidates.find(Array.isArray);
-      if (Array.isArray(found)) {
-        return found.filter((x): x is RentalQuestionView => !!x && typeof x === 'object');
-      }
-    }
-
-    return [];
+  /** Lists all active questions (paginated). */
+  listActiveQuestions(limit = 50, offset = 0): Observable<PaginatedList<QuestionView>> {
+    return this.http.get<PaginatedList<QuestionView>>(
+      this.url('/api/v1/rentals/surveys/questions'),
+      { params: toHttpParams({ limit, offset }) }
+    );
   }
 
-  private extractQuestionTexts(value: unknown): string[] {
-    if (Array.isArray(value) && value.every(x => typeof x === 'string')) {
-      return value as string[];
-    }
-
-    const questions = this.normalizeQuestionArray(value);
-    return questions
-      .map(q => q.question_text ?? q.text)
-      .filter((text): text is string => typeof text === 'string' && text.length > 0);
+  /** Lists all questions including inactive (admin, paginated). */
+  listQuestions(query: RentalQuestionsQueryDto = {}): Observable<PaginatedList<QuestionView>> {
+    return this.http.get<PaginatedList<QuestionView>>(
+      this.url('/api/v1/rentals/surveys/questions/all'),
+      { params: toHttpParams({ search: query.search ?? undefined, limit: query.limit, offset: query.offset }) }
+    );
   }
 
-  getCommonQuestions(input: RecommendQuestionsInputDto = {}): Observable<string[]> {
-    return this.http
-      .post<unknown>(this.url('/api/v1/rentals/surveys/questions/recommend'), input)
-      .pipe(map(result => this.extractQuestionTexts(result)));
+  getQuestion(questionGuid: Guid): Observable<QuestionView> {
+    return this.http.get<QuestionView>(this.url(`/api/v1/rentals/surveys/questions/${questionGuid}`));
   }
 
-  getQuestions(): Observable<string[]> {
-    return this.getCommonQuestions();
-  }
-
-  createQuestion(dto: CreateQuestionDto): Observable<void> {
-    return this.http.put<void>(this.url('/api/v1/rentals/surveys/questions'), dto);
-  }
-
-  getQuestion(questionGuid: Guid): Observable<RentalQuestionView> {
-    return this.http.get<RentalQuestionView>(this.url(`/api/v1/rentals/surveys/questions/${questionGuid}`));
+  createQuestion(dto: CreateQuestionDto): Observable<QuestionView> {
+    return this.http.put<QuestionView>(this.url('/api/v1/rentals/surveys/questions'), dto);
   }
 
   deleteQuestion(questionGuid: Guid): Observable<void> {
     return this.http.delete<void>(this.url(`/api/v1/rentals/surveys/questions/${questionGuid}`));
   }
 
-  listQuestions(query: RentalQuestionsQueryDto = {}): Observable<RentalQuestionView[]> {
-    return this.http
-      .get<unknown>(
-        this.url('/api/v1/rentals/surveys/questions/all'),
-        {
-          params: toHttpParams({
-            search: query.search ?? undefined,
-            limit: query.limit,
-            offset: query.offset,
-          }),
-        }
-      )
-      .pipe(map(result => this.normalizeQuestionArray(result)));
+  /** Returns AI-recommended questions for an event context. */
+  recommendQuestions(dto: EventContextDto): Observable<QuestionView[]> {
+    return this.http.post<QuestionView[]>(this.url('/api/v1/rentals/surveys/questions/recommend'), dto);
   }
 
-  getQuestionRecommendations(query: RentalQuestionsQueryDto = {}): Observable<RentalQuestionView[]> {
-    return this.http
-      .post<unknown>(
-        this.url('/api/v1/rentals/surveys/questions/recommend'),
-        {
-          search: query.search ?? undefined,
-          limit: query.limit,
-          offset: query.offset,
-        }
-      )
-      .pipe(map(result => this.normalizeQuestionArray(result)));
+  // =========================================================================
+  // Answers
+  // =========================================================================
+
+  submitAnswer(questionGuid: Guid, dto: SubmitAnswerDto): Observable<AnswerView> {
+    return this.http.post<AnswerView>(this.url(`/api/v1/rentals/surveys/questions/${questionGuid}/answers`), dto);
   }
 
-  submitQuestionAnswer(questionGuid: Guid, dto: SubmitAnswerDto): Observable<void> {
-    return this.http.post<void>(this.url(`/api/v1/rentals/surveys/questions/${questionGuid}/answers`), dto);
-  }
-
-  getQuestionAnswers(questionGuid: Guid, rentalGuid?: Guid): Observable<unknown> {
-    return this.http.get<unknown>(
+  listAnswersForQuestion(questionGuid: Guid, rentalGuid?: Guid, limit = 50, offset = 0): Observable<PaginatedList<AnswerView>> {
+    return this.http.get<PaginatedList<AnswerView>>(
       this.url(`/api/v1/rentals/surveys/questions/${questionGuid}/answers`),
-      {
-        params: toHttpParams({ rentalGuid: rentalGuid ?? undefined }),
-      }
+      { params: toHttpParams({ rentalGuid: rentalGuid ?? undefined, limit, offset }) }
     );
   }
 
-  getAnswer(answerGuid: Guid): Observable<unknown> {
-    return this.http.get<unknown>(this.url(`/api/v1/rentals/surveys/answers/${answerGuid}`));
+  submitAnswersBulk(dto: SubmitAnswersBulkDto): Observable<AnswerView[]> {
+    return this.http.post<AnswerView[]>(this.url('/api/v1/rentals/surveys/answers/bulk'), dto);
+  }
+
+  getAnswer(answerGuid: Guid): Observable<AnswerView> {
+    return this.http.get<AnswerView>(this.url(`/api/v1/rentals/surveys/answers/${answerGuid}`));
   }
 
   deleteAnswer(answerGuid: Guid): Observable<void> {
     return this.http.delete<void>(this.url(`/api/v1/rentals/surveys/answers/${answerGuid}`));
+  }
+
+  // =========================================================================
+  // Rentals
+  // =========================================================================
+
+  listRentals(query: RentalQueryDto = {}, include?: RentalInclude[]): Observable<PaginatedList<RentalView>> {
+    return this.http.get<PaginatedList<RentalView>>(
+      this.url('/api/v1/rentals'),
+      { params: toHttpParams({ ...query, include: include?.join(',') ?? undefined }) }
+    );
+  }
+
+  getRental(rentalGuid: Guid, include?: RentalInclude[]): Observable<RentalView> {
+    return this.http.get<RentalView>(
+      this.url(`/api/v1/rentals/${rentalGuid}`),
+      { params: toHttpParams({ include: include?.join(',') ?? undefined }) }
+    );
+  }
+
+  createRental(dto: CreateRentalDto): Observable<RentalView> {
+    console.log('Creating rental with DTO:', dto);
+    return this.http.put<RentalView>(this.url('/api/v1/rentals'), dto);
+  }
+
+  updateRental(rentalGuid: Guid, dto: UpdateRentalDto): Observable<RentalView> {
+    return this.http.patch<RentalView>(this.url(`/api/v1/rentals/${rentalGuid}`), dto);
+  }
+
+  deleteRental(rentalGuid: Guid): Observable<void> {
+    return this.http.delete<void>(this.url(`/api/v1/rentals/${rentalGuid}`));
+  }
+
+  listConflicts(query: RentalConflictQueryDto): Observable<PaginatedList<StockBindingConflictView>> {
+    return this.http.get<PaginatedList<StockBindingConflictView>>(
+      this.url('/api/v1/rentals/conflicts'),
+      {
+        params: toHttpParams({
+          device_guid: query.device_guid,
+          start: query.start,
+          end: query.end,
+          binding_type: query.binding_type,
+          limit: query.limit,
+          offset: query.offset,
+        }),
+      }
+    );
+  }
+
+  // =========================================================================
+  // Rental Statuses
+  // =========================================================================
+
+  listRentalStatuses(): Observable<PaginatedList<RentalStatusView>> {
+    return this.http.get<PaginatedList<RentalStatusView>>(this.url('/api/v1/rentals/statuses'));
+  }
+
+  listAllowedTransitions(rentalGuid: Guid): Observable<RentalTransitionsView> {
+    return this.http.get<RentalTransitionsView>(this.url(`/api/v1/rentals/${rentalGuid}/transitions`));
+  }
+
+  transitionRentalStatus(rentalGuid: Guid, dto: TransitionRentalStatusDto): Observable<RentalView> {
+    return this.http.post<RentalView>(this.url(`/api/v1/rentals/${rentalGuid}/transitions`), dto);
+  }
+
+  // =========================================================================
+  // Checklists
+  // =========================================================================
+
+  listChecklists(rentalGuid: Guid, limit = 50, offset = 0): Observable<PaginatedList<ChecklistView>> {
+    return this.http.get<PaginatedList<ChecklistView>>(
+      this.url(`/api/v1/rentals/${rentalGuid}/checklists`),
+      { params: toHttpParams({ limit, offset }) }
+    );
+  }
+
+  generateChecklist(rentalGuid: Guid, dto: GenerateChecklistDto): Observable<ChecklistView> {
+    return this.http.post<ChecklistView>(this.url(`/api/v1/rentals/${rentalGuid}/checklists/generate`), dto);
+  }
+
+  getChecklist(rentalGuid: Guid, checklistGuid: Guid): Observable<ChecklistView> {
+    return this.http.get<ChecklistView>(this.url(`/api/v1/rentals/${rentalGuid}/checklists/${checklistGuid}`));
+  }
+
+  updateChecklistItem(rentalGuid: Guid, checklistGuid: Guid, itemGuid: Guid, dto: UpdateChecklistItemDto): Observable<ChecklistItemView> {
+    return this.http.patch<ChecklistItemView>(this.url(`/api/v1/rentals/${rentalGuid}/checklists/${checklistGuid}/items/${itemGuid}`), dto);
+  }
+
+  signChecklist(rentalGuid: Guid, checklistGuid: Guid, dto: SignChecklistDto): Observable<ChecklistView> {
+    return this.http.post<ChecklistView>(this.url(`/api/v1/rentals/${rentalGuid}/checklists/${checklistGuid}/sign`), dto);
   }
 }

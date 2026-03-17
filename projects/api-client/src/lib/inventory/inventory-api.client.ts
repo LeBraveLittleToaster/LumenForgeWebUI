@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { toHttpParams } from './http-params';
 
-import { CategoryView, DeviceParameterView, DeviceView, StockView, VendorView } from './models/views';
+import { CategoryView, DeviceParameterView, DeviceView, PaginatedList, StockView, VendorView } from './models/views';
 import {
   CreateCategoryDto,
   CreateDeviceDto,
@@ -19,13 +19,6 @@ import {
 import { INVENTORY_API_BASE_URL } from '../core/tokens';
 import { ListQueryDto } from './models/query';
 import { Guid } from '../core/common';
-
-interface PaginatedList<T> {
-  list: T[];
-  total: number;
-}
-
-type ListOrPaginatedList<T> = T[] | PaginatedList<T>;
 
 @Injectable({ providedIn: 'root' })
 export class InventoryApiClient {
@@ -43,8 +36,8 @@ export class InventoryApiClient {
   // -------------------------
   // Devices (api/v1/inventory/devices)
   // -------------------------
-  listDevices(query: ListQueryDto = {}): Observable<DeviceView[]> {
-    return this.http.get<DeviceView[]>(
+  listDevices(query: ListQueryDto = {}): Observable<PaginatedList<DeviceView>> {
+    return this.http.get<PaginatedList<DeviceView>>(
       this.url('/api/v1/inventory/devices'),
       { params: toHttpParams({ search: query.search ?? undefined, limit: query.limit, offset: query.offset }) }
     );
@@ -93,8 +86,8 @@ export class InventoryApiClient {
   // -------------------------
   // Categories (api/v1/inventory/categories)
   // -------------------------
-  listCategories(query: ListQueryDto = {}): Observable<ListOrPaginatedList<CategoryView>> {
-    return this.http.get<ListOrPaginatedList<CategoryView>>(
+  listCategories(query: ListQueryDto = {}): Observable<PaginatedList<CategoryView>> {
+    return this.http.get<PaginatedList<CategoryView>>(
       this.url('/api/v1/inventory/categories'),
       { params: toHttpParams({ search: query.search ?? undefined, limit: query.limit, offset: query.offset }) }
     );
@@ -119,8 +112,8 @@ export class InventoryApiClient {
   // -------------------------
   // Vendors (api/v1/inventory/vendors)
   // -------------------------
-  listVendors(query: ListQueryDto = {}): Observable<VendorView[]> {
-    return this.http.get<VendorView[]>(
+  listVendors(query: ListQueryDto = {}): Observable<PaginatedList<VendorView>> {
+    return this.http.get<PaginatedList<VendorView>>(
       this.url('/api/v1/inventory/vendors'),
       { params: toHttpParams({ search: query.search ?? undefined, limit: query.limit, offset: query.offset }) }
     );

@@ -19,9 +19,11 @@ export class Admin {
   get canViewCategories() { return this.auth.hasPermission(Permissions.CategoryRead); }
   get canViewVendors() { return this.auth.hasPermission(Permissions.VendorRead); }
   get canViewInventory() { return this.auth.hasPermission(Permissions.DeviceRead); }
+  get canViewMaintenance() { return this.auth.hasPermission(Permissions.MaintenanceRead); }
+  get canViewRental() { return this.auth.hasPermission(Permissions.RentalRead); }
 
   get hasAuthSection() { return this.canViewUsers || this.canViewGroups; }
-  get hasInventorySection() { return this.canViewCategories || this.canViewVendors || this.canViewInventory; }
+  get hasInventorySection() { return this.canViewCategories || this.canViewVendors || this.canViewInventory || this.canViewMaintenance || this.canViewRental; }
 
   logout() {
     this.auth.logout();

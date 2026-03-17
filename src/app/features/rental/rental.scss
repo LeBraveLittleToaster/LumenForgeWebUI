@@ -1,0 +1,33 @@
+.status-switch-wrap {
+  margin: 0 0 16px;
+  padding: 12px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--mat-sys-surface) 92%, var(--mat-sys-primary) 8%);
+}
+
+.status-switch-label {
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: var(--mat-sys-on-surface);
+}
+
+.status-toggle-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status-toggle {
+  border-radius: 999px;
+}
+
+.status-toggle--active {
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+  border-color: var(--mat-sys-primary);
+}
+
+.card-toolbar {
+  margin-bottom: 12px;
+}

@@ -173,6 +173,10 @@
                     }
                   </mat-select>
                 </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Comment (optional)</mat-label>
+                  <textarea matInput [formControlName]="'comment_' + i" rows="2" maxlength="2000" placeholder="Add further explanation…"></textarea>
+                </mat-form-field>
               </div>
             }
           }

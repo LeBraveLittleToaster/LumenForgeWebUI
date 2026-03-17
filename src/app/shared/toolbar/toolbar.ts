@@ -66,7 +66,7 @@ export class Toolbar implements OnInit, OnDestroy {
         Permissions.MaintenanceDelete,
       ]
     },
-    { label: 'Rental', route: '/rental/management' },
+    { label: 'Rental', route: '/rental' },
     { label: 'Billing', route: '/billing' },
     { label: 'Reports', route: '/reports' }
   ];

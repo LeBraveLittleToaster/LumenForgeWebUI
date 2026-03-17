@@ -12,6 +12,7 @@ import { InventoryApiClient } from '@lumenforge/api-client';
 import { VendorDataSource, VendorDataItem } from './vendor.data-source';
 import { DataTableComponent, ColumnDef } from '../../shared/data-table/data-table';
 import { VendorCreateDialogComponent } from './vendor-create-dialog.component';
+import { VendorUpdateDialogComponent } from './vendor-update-dialog.component';
 
 @Component({
   selector: 'app-vendor',
@@ -72,6 +73,15 @@ export class Vendor implements OnInit {
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(VendorCreateDialogComponent);
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.dataSource.loadVendors(this.searchCtrl.value ?? '', 'asc', 0, 10);
+      }
+    });
+  }
+
+  onEditRow(row: VendorDataItem) {
+    const dialogRef = this.dialog.open(VendorUpdateDialogComponent, { data: row.vendorView });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.dataSource.loadVendors(this.searchCtrl.value ?? '', 'asc', 0, 10);

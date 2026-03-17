@@ -38,10 +38,8 @@ export class RentalRequestDevicesDataSource implements DataSource<RentalRequestD
       catchError(() => of({ list: [] as CatalogueItemView[], total: 0 })),
       finalize(() => this.loadingSubject.next(false))
     ).subscribe(result => {
-      const items = Array.isArray(result) ? result : result.list;
-      const total = Array.isArray(result) ? result.length : result.total;
-      this.devicesSubject.next(items.map(item => ({ item })));
-      this.totalSubject.next(total);
+      this.devicesSubject.next(result.list.map(item => ({ item })));
+      this.totalSubject.next(result.total);
     });
   }
 

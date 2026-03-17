@@ -19,7 +19,8 @@ import { Devicedetail } from './features/devicedetail/devicedetail';
 import { Maintenance } from './features/maintenance/maintenance';
 import { MaintenanceJobCreate } from './features/maintenance/maintenance-job-create';
 import { MaintenanceJobDetail } from './features/maintenance/maintenance-job-detail';
-import { RentalManagement } from './features/rental-management/rental-management';
+import { Rental } from './features/rental/rental';
+import { RentalDetail } from './features/rental-detail/rental-detail';
 import { RentalRequest } from './features/rental-request/rental-request';
 
 export const routes: Routes = [
@@ -84,13 +85,22 @@ export const routes: Routes = [
     },
     {
         path: 'rental',
-        canActivate: [authGuard],
+        canActivate: [authGuard, permissionGuard(
+            Permissions.RentalRead,
+            Permissions.RentalUpdate,
+            Permissions.RentalDelete,
+        )],
+        component: Rental,
+    },
+    {
+        path: 'rental/create',
+        canActivate: [authGuard, permissionGuard(Permissions.RentalCreate)],
         component: RentalRequest,
     },
     {
-        path: 'rental/management',
-        canActivate: [authGuard],
-        component: RentalManagement,
+        path: 'rental/:rentalGuid',
+        canActivate: [authGuard, permissionGuard(Permissions.RentalRead)],
+        component: RentalDetail,
     },
     {
         path: "admin",

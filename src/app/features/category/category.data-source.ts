@@ -26,20 +26,14 @@ export class CategoryDataSource implements DataSource<CategoryDataItem> {
         this.loadingSubject.next(true);
         this.inventoryApiClient.listCategories({
             search: filter,
-            limit: pageSize + 1,
+            limit: pageSize,
             offset: pageIndex * pageSize
         }).pipe(
-            catchError(() => of([] as CategoryView[])),
+            catchError(() => of({ list: [] as CategoryView[], total: 0 })),
             finalize(() => this.loadingSubject.next(false))
         ).subscribe(result => {
-            const categories = Array.isArray(result) ? result : (result.list ?? []);
-            const hasMore = categories.length > pageSize;
-            const items = hasMore ? categories.slice(0, pageSize) : categories;
-            this.categoriesSubject.next(items.map(c => ({ categoryView: c })));
-            const total = hasMore
-                ? (pageIndex + 2) * pageSize
-                : pageIndex * pageSize + items.length;
-            this.totalSubject.next(total);
+            this.categoriesSubject.next(result.list.map(c => ({ categoryView: c })));
+            this.totalSubject.next(result.total);
         });
     }
 

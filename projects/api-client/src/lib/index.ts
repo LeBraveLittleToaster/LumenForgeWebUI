@@ -17,7 +17,6 @@ export {
 export {
   type CatalogueItemView,
   type CatalogueListView,
-  type CatalogueListOrPaginatedList,
 } from './catalogue/models/views';
 export { type CatalogueListQueryDto, type CatalogueItemQueryDto } from './catalogue/models/query';
 
@@ -66,6 +65,7 @@ export {
   type UpdateVendorDto,
 } from './inventory/models/dtos';
 export {
+  type PaginatedList,
   type CategoryView,
   type VendorView,
   type DeviceParameterView,
@@ -102,10 +102,36 @@ export { type MaintenanceQueryDto } from './maintenance/models/query';
  */
 export { RentalApiClient } from './rental/rental-api.client';
 export {
-  type RentalQuestionView,
-  type RentalQuestionsQueryDto,
   type CreateQuestionDto,
+  type EventContextDto,
   type SubmitAnswerDto,
+  type SubmitAnswersBulkDto,
   type SurveyAnswerResponse,
-  type RecommendQuestionsInputDto,
-} from './rental/rental-api.client';
+  type CreateRentalDto,
+  type UpdateRentalDto,
+  type GenerateChecklistDto,
+  type SignChecklistDto,
+  type UpdateChecklistItemDto,
+  type TransitionRentalStatusDto,
+} from './rental/models/dtos';
+export {
+  type QuestionView,
+  type AnswerView,
+  type RentalView,
+  type RentalStatusView,
+  type RentalTransitionsView,
+  type RentalItemView,
+  type ChecklistView,
+  type ChecklistItemView,
+  type StockBindingConflictView,
+  type RentalPriority,
+  type RentalItemStatus,
+  type ChecklistType,
+  type BindingType,
+} from './rental/models/views';
+export {
+  type RentalQuestionsQueryDto,
+  type RentalQueryDto,
+  type RentalConflictQueryDto,
+  type RentalInclude,
+} from './rental/models/query';

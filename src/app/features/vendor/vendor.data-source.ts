@@ -1,5 +1,5 @@
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
-import { VendorView, InventoryApiClient } from "@lumenforge/api-client";
+import { VendorView, InventoryApiClient, ListQueryDto } from "@lumenforge/api-client";
 import { BehaviorSubject, catchError, finalize, Observable, of } from "rxjs";
 
 export class VendorDataSource implements DataSource<VendorDataItem> {
@@ -26,19 +26,15 @@ export class VendorDataSource implements DataSource<VendorDataItem> {
         this.loadingSubject.next(true);
         this.inventoryApiClient.listVendors({
             search: filter,
-            limit: pageSize + 1,
+            limit: pageSize,
             offset: pageIndex * pageSize
         }).pipe(
-            catchError(() => of([] as VendorView[])),
+            catchError(() => of({ list: [] as VendorView[], total: 0 })),
             finalize(() => this.loadingSubject.next(false))
-        ).subscribe(vendors => {
-            const hasMore = vendors.length > pageSize;
-            const items = hasMore ? vendors.slice(0, pageSize) : vendors;
-            this.vendorsSubject.next(items.map(v => ({ vendorView: v })));
-            const total = hasMore
-                ? (pageIndex + 2) * pageSize
-                : pageIndex * pageSize + items.length;
-            this.totalSubject.next(total);
+        ).subscribe(result => {
+            console.log('VendorDataSource: Loaded vendors', result);
+            this.vendorsSubject.next(result.list.map(v => ({ vendorView: v })));
+            this.totalSubject.next(result.total);
         });
     }
 

@@ -1,0 +1,42 @@
+.detail-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.kv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.notes-block h3 {
+  margin: 14px 0 4px;
+}
+
+.notes-block p {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.state-strip {
+  margin-bottom: 14px;
+}
+
+.state-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.allowed-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.muted {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}

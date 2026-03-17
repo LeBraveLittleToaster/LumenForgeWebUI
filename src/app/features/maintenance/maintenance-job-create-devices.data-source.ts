@@ -31,17 +31,14 @@ export class MaintenanceJobCreateDevicesDataSource implements DataSource<Mainten
 
     this.inventoryApiClient.listDevices({
       search: filter,
-      limit: pageSize + 1,
+      limit: pageSize,
       offset: pageIndex * pageSize,
     }).pipe(
-      catchError(() => of([] as DeviceView[])),
+      catchError(() => of({ list: [] as DeviceView[], total: 0 })),
       finalize(() => this.loadingSubject.next(false))
-    ).subscribe(devices => {
-      const hasMore = devices.length > pageSize;
-      const items = hasMore ? devices.slice(0, pageSize) : devices;
-      this.devicesSubject.next(items.map(device => ({ device })));
-      const total = hasMore ? (pageIndex + 2) * pageSize : pageIndex * pageSize + items.length;
-      this.totalSubject.next(total);
+    ).subscribe(result => {
+      this.devicesSubject.next(result.list.map(device => ({ device })));
+      this.totalSubject.next(result.total);
     });
   }
 }

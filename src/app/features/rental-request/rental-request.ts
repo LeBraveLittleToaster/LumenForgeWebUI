@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Component, Inject, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { AbstractControl, FormBuilder, FormControl, ReactiveFormsModule, Validators, ValidationErrors } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -17,8 +18,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { ColumnDef } from '../../shared/data-table/data-table';
-import { RentalApiClient, CatalogueApiClient, CatalogueItemView } from '@lumenforge/api-client';
+import { RentalApiClient, CatalogueApiClient, CatalogueItemView, QuestionView } from '@lumenforge/api-client';
 import { RentalRequestDevicesDataSource, RentalRequestDeviceItem } from './rental-request-devices.data-source';
+import { catchError, EMPTY } from 'rxjs';
 
 export type QuestionAnswer = 'yes' | 'no' | 'not_important' | 'unknown';
 
@@ -52,6 +54,7 @@ interface RequestedDevice {
 export class RentalRequest implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly router = inject(Router);
 
   readonly eventForm = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(120)]],
@@ -122,19 +125,14 @@ export class RentalRequest implements OnInit {
       return Number.isNaN(date.getTime()) ? null : date.toISOString();
     };
 
-    this.rentalApiClient.getCommonQuestions({
-      name: step1.name ?? null,
-      shortDescription: step1.shortDescription ?? null,
-      eventStart: toIsoOrNull(step1.eventStart),
-      eventEnd: toIsoOrNull(step1.eventEnd),
+    this.rentalApiClient.recommendQuestions({
+      event_name: step1.name ?? '',
+      description: step1.shortDescription ?? null,
+      start: toIsoOrNull(step1.eventStart),
+      end: toIsoOrNull(step1.eventEnd),
       location: step1.location ?? null,
-      event_name: step1.name ?? null,
-      request_description: step1.shortDescription ?? null,
-      delivery_address: step1.location ?? null,
-      planned_pickup_at: toIsoOrNull(step1.eventStart),
-      planned_return_at: toIsoOrNull(step1.eventEnd),
-    }).subscribe((questions: string[]) => {
-      this.questions = questions;
+    }).subscribe((questions: QuestionView[]) => {
+      this.questions = questions.map(q => q.question_text);
 
       for (const key of Object.keys(this.questionsForm.controls)) {
         this.questionsForm.removeControl(key);
@@ -142,6 +140,7 @@ export class RentalRequest implements OnInit {
 
       for (let i = 0; i < questions.length; i++) {
         this.questionsForm.addControl(`q_${i}`, new FormControl<QuestionAnswer>('unknown', { nonNullable: true }));
+        this.questionsForm.addControl(`comment_${i}`, new FormControl<string>('', { nonNullable: true }));
       }
     });
   }
@@ -221,17 +220,38 @@ export class RentalRequest implements OnInit {
       return;
     }
 
-    const payload = {
-      event: this.eventForm.value,
-      requestedDevices: this.requestedDevices,
-      questions: this.questions.map((q, i) => ({
-        question: q,
-        answer: (this.questionsForm.get(`q_${i}`)?.value ?? 'unknown') as QuestionAnswer,
-      })),
-      pickup: this.pickupForm.value,
+    const toIsoOrNull = (value: unknown): string | null => {
+      if (!value) {
+        return null;
+      }
+
+      const date = new Date(value as string | number | Date);
+      return Number.isNaN(date.getTime()) ? null : date.toISOString();
     };
 
-    console.log('Rental request payload', payload);
-    this.snackBar.open('Rental request captured successfully.', 'Close', { duration: 3000 });
+    this.rentalApiClient.createRental({
+      request_title: this.eventForm.controls.name.value,
+      request_description: this.eventForm.controls.shortDescription.value,
+      event_name: this.eventForm.controls.name.value,
+      customer_notes: this.questions
+        .map((q, i) => {
+          const answer = (this.questionsForm.get(`q_${i}`)?.value ?? 'unknown') as QuestionAnswer;
+          const comment = (this.questionsForm.get<string>(`comment_${i}`)?.value as string) || null;
+          return `${q}: ${answer}${comment ? ` (${comment})` : ''}`;
+        })
+        .join('\n') || null,
+      delivery_address: this.eventForm.controls.location.value,
+      priority: 'NORMAL',
+      planned_pickup_at: toIsoOrNull(this.pickupForm.controls.pickupTime.value),
+      planned_return_at: toIsoOrNull(this.pickupForm.controls.dropoffTime.value),
+    }).pipe(
+      catchError(() => {
+        this.snackBar.open('Failed to create rental request.', 'Close', { duration: 4000 });
+        return EMPTY;
+      })
+    ).subscribe(created => {
+      this.snackBar.open(`Rental request created (${created.uuid}).`, 'Close', { duration: 3500 });
+      this.router.navigate(['/rental']);
+    });
   }
 }

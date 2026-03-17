@@ -54,6 +54,30 @@
       </mat-card>
       }
 
+      @if (canViewMaintenance) {
+      <mat-card class="admin-card" appearance="outlined" routerLink="/maintenance">
+        <div class="admin-card__icon-banner">
+          <mat-icon>build</mat-icon>
+        </div>
+        <mat-card-header>
+          <mat-card-title>Maintenance</mat-card-title>
+          <mat-card-subtitle>Manage maintenance jobs and schedules</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+      }
+
+      @if (canViewRental) {
+      <mat-card class="admin-card" appearance="outlined" routerLink="/rental">
+        <div class="admin-card__icon-banner">
+          <mat-icon>event_available</mat-icon>
+        </div>
+        <mat-card-header>
+          <mat-card-title>Rental</mat-card-title>
+          <mat-card-subtitle>Open rental management and requests</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+      }
+
       @if (canViewCategories) {
       <mat-card class="admin-card" appearance="outlined" routerLink="/admin/categories">
         <div class="admin-card__icon-banner">

@@ -12,6 +12,7 @@ import { InventoryApiClient } from '@lumenforge/api-client';
 import { CategoryDataSource, CategoryDataItem } from './category.data-source';
 import { DataTableComponent, ColumnDef } from '../../shared/data-table/data-table';
 import { CategoryCreateDialogComponent } from './category-create-dialog.component';
+import { CategoryUpdateDialogComponent } from './category-update-dialog.component';
 
 @Component({
   selector: 'app-category',
@@ -73,6 +74,15 @@ export class Category implements OnInit {
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(CategoryCreateDialogComponent);
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.dataSource.loadCategories(this.searchCtrl.value ?? '', 'asc', 0, 10);
+      }
+    });
+  }
+
+  onEditRow(row: CategoryDataItem) {
+    const dialogRef = this.dialog.open(CategoryUpdateDialogComponent, { data: row.categoryView });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.dataSource.loadCategories(this.searchCtrl.value ?? '', 'asc', 0, 10);

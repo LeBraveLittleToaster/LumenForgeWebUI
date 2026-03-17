@@ -65,8 +65,8 @@ export class InventoryCreate implements OnInit {
   }
 
   loadVendors(): void {
-    this.inventoryApiClient.listVendors({}).subscribe(vendors => {
-      this.vendors = vendors;
+    this.inventoryApiClient.listVendors({}).subscribe(result => {
+      this.vendors = result.list;
     });
   }
 

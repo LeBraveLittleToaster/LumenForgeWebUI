@@ -1,5 +1,10 @@
 import { Guid, IsoDate, IsoInstant, StockUnitType } from "../../core/common";
 
+export interface PaginatedList<T> {
+  list: T[];
+  total: number;
+}
+
 export interface CategoryView {
   guid: Guid;
   name: string;

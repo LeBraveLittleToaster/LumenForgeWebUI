@@ -49,14 +49,17 @@ export class DataTableComponent {
   @Input() pageSizeOptions = [5, 10, 25, 100];
   @Input() rowRouterLink?: (row: any) => any[];
   @Input() canDelete = false;
+  @Input() canEdit = false;
 
   @Output() page = new EventEmitter<PageEvent>();
   @Output() deleteRow = new EventEmitter<any>();
+  @Output() editRow = new EventEmitter<any>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   get displayedColumns(): string[] {
     const cols = this.columns.map(c => c.key);
+    if (this.canEdit) cols.push('edit');
     if (this.canDelete) cols.push('delete');
     return cols;
   }
