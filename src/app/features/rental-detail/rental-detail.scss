@@ -4,6 +4,23 @@
   gap: 16px;
 }
 
+.detail-status-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  padding: 24px;
+}
+
+.inline-status {
+  justify-content: flex-start;
+  padding: 0 0 16px;
+}
+
+.error-card {
+  max-width: 520px;
+}
+
 .kv-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

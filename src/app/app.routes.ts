@@ -22,6 +22,12 @@ import { MaintenanceJobDetail } from './features/maintenance/maintenance-job-det
 import { Rental } from './features/rental/rental';
 import { RentalDetail } from './features/rental-detail/rental-detail';
 import { RentalRequest } from './features/rental-request/rental-request';
+import { RentalTransitionApprove } from './features/rental-detail/rental-transition-approve';
+import { RentalTransitionReject } from './features/rental-detail/rental-transition-reject';
+import { RentalTransitionCancel } from './features/rental-detail/rental-transition-cancel';
+import { RentalTransitionPickup } from './features/rental-detail/rental-transition-pickup';
+import { RentalTransitionReturn } from './features/rental-detail/rental-transition-return';
+import { RentalTransitionGeneric } from './features/rental-detail/rental-transition-generic';
 
 export const routes: Routes = [
     {
@@ -101,6 +107,36 @@ export const routes: Routes = [
         path: 'rental/:rentalGuid',
         canActivate: [authGuard, permissionGuard(Permissions.RentalRead)],
         component: RentalDetail,
+    },
+    {
+        path: 'rental/:rentalGuid/approve/:statusGuid',
+        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        component: RentalTransitionApprove,
+    },
+    {
+        path: 'rental/:rentalGuid/reject/:statusGuid',
+        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        component: RentalTransitionReject,
+    },
+    {
+        path: 'rental/:rentalGuid/cancel/:statusGuid',
+        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        component: RentalTransitionCancel,
+    },
+    {
+        path: 'rental/:rentalGuid/pickup/:statusGuid',
+        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        component: RentalTransitionPickup,
+    },
+    {
+        path: 'rental/:rentalGuid/return/:statusGuid',
+        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        component: RentalTransitionReturn,
+    },
+    {
+        path: 'rental/:rentalGuid/transition/:statusGuid',
+        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        component: RentalTransitionGeneric,
     },
     {
         path: "admin",

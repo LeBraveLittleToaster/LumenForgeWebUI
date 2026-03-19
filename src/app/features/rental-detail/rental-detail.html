@@ -12,62 +12,101 @@
     </div>
   </div>
 
+  <div>rentalLoading: {{ rentalLoading }}</div>
+  <div>has rental: {{ !!rental }}</div>
+
+  @if (rentalLoading) {
+  <div class="detail-status-panel">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p class="muted">Loading rental details...</p>
+  </div>
+  }
+
+  @if (rentalError) {
+  <mat-card appearance="outlined" class="detail-status-panel error-card">
+    <mat-card-content>
+      <p>{{ rentalError }}</p>
+      <button mat-stroked-button (click)="loadRental()">
+        <mat-icon>refresh</mat-icon>
+        Retry
+      </button>
+    </mat-card-content>
+  </mat-card>
+  }
+
   @if (rental; as rentalData) {
-    <div class="detail-layout">
-      <mat-card appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>{{ rentalData.request_title || 'Untitled request' }}</mat-card-title>
-          <mat-card-subtitle>{{ rentalData.event_name || 'No event name provided' }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="kv-grid">
-            <div><strong>Rental UUID:</strong> {{ rentalData.uuid }}</div>
-            <div><strong>Customer:</strong> {{ rentalData.customer_user_id }}</div>
-            <div><strong>Priority:</strong> {{ rentalData.priority }}</div>
-            <div><strong>Current Status:</strong> {{ prettifyStatus(rentalData.rental_status_name) }}</div>
-            <div><strong>Pickup:</strong> {{ rentalData.planned_pickup_at || '-' }}</div>
-            <div><strong>Return:</strong> {{ rentalData.planned_return_at || '-' }}</div>
+  <div class="detail-layout">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ rentalData.request_title || 'Untitled request' }}</mat-card-title>
+        <mat-card-subtitle>{{ rentalData.event_name || 'No event name provided' }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="kv-grid">
+          <div><strong>Rental UUID:</strong> {{ rentalData.uuid }}</div>
+          <div><strong>Customer:</strong> {{ rentalData.customer_user_id }}</div>
+          <div><strong>Priority:</strong> {{ rentalData.priority }}</div>
+          <div><strong>Current Status:</strong> {{ getRentalStatusLabel(rentalData) }}</div>
+          <div><strong>Pickup:</strong> {{ rentalData.planned_pickup_at || '-' }}</div>
+          <div><strong>Return:</strong> {{ rentalData.planned_return_at || '-' }}</div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="notes-block">
+          <h3>Description</h3>
+          <p>{{ rentalData.request_description || 'No description.' }}</p>
+          <h3>Customer Notes</h3>
+          <p>{{ rentalData.customer_notes || 'No notes.' }}</p>
+          <h3>Delivery Address</h3>
+          <p>{{ rentalData.delivery_address || 'No address provided.' }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>State Machine</mat-card-title>
+        <mat-card-subtitle>Only allowed transitions from current state are enabled.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        @if (transitionsLoading) {
+        <div class="detail-status-panel inline-status">
+          <mat-spinner diameter="24"></mat-spinner>
+          <p class="muted">Loading transitions...</p>
+        </div>
+        }
+
+        @if (transitionsError) {
+        <div class="detail-status-panel inline-status">
+          <p class="muted">{{ transitionsError }}</p>
+          <button mat-stroked-button (click)="loadTransitions()">
+            <mat-icon>refresh</mat-icon>
+            Retry
+          </button>
+        </div>
+        }
+
+        @if (transitions; as transitionData) {
+        <div class="state-strip">
+          <span class="state-label">Current</span>
+          <mat-chip>{{ getStatusLabel(transitionData.current) }}</mat-chip>
+        </div>
+
+        <div class="state-strip">
+          <span class="state-label">Allowed Next States</span>
+          <div class="allowed-list">
+            @for (status of transitionData.allowed; track getStatusTrackKey(status, $index)) {
+            <button mat-flat-button (click)="transitionTo(status)">{{ getStatusLabel(status) }}</button>
+            }
+            @if (transitionData.allowed.length === 0) {
+            <p class="muted">This rental is in a terminal state.</p>
+            }
           </div>
-
-          <mat-divider></mat-divider>
-
-          <div class="notes-block">
-            <h3>Description</h3>
-            <p>{{ rentalData.request_description || 'No description.' }}</p>
-            <h3>Customer Notes</h3>
-            <p>{{ rentalData.customer_notes || 'No notes.' }}</p>
-            <h3>Delivery Address</h3>
-            <p>{{ rentalData.delivery_address || 'No address provided.' }}</p>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>State Machine</mat-card-title>
-          <mat-card-subtitle>Only allowed transitions from current state are enabled.</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          @if (transitions; as transitionData) {
-            <div class="state-strip">
-              <span class="state-label">Current</span>
-              <mat-chip>{{ prettifyStatus(transitionData.current.name) }}</mat-chip>
-            </div>
-
-            <div class="state-strip">
-              <span class="state-label">Allowed Next States</span>
-              <div class="allowed-list">
-                @for (status of transitionData.allowed; track status.uuid) {
-                  <button mat-flat-button (click)="transitionTo(status)">{{ prettifyStatus(status.name) }}</button>
-                }
-                @if (transitionData.allowed.length === 0) {
-                  <p class="muted">This rental is in a terminal state.</p>
-                }
-              </div>
-            </div>
-          }
-        </mat-card-content>
-      </mat-card>
-    </div>
+        </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
   }
 </div>

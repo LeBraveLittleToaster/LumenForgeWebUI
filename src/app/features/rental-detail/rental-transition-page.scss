@@ -1,0 +1,33 @@
+.transition-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-width: 700px;
+}
+
+.context-card {
+  .kv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+  }
+}
+
+.form-card {
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.warn-hint {
+  color: var(--mat-sys-error);
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}

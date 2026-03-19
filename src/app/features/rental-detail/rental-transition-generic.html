@@ -1,0 +1,66 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Confirm Status Transition</h1>
+      <p class="page-subtitle">Move this rental to a new state.</p>
+    </div>
+    <div class="page-header-actions">
+      <button mat-stroked-button [routerLink]="['/rental', rentalGuid]">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Rental
+      </button>
+    </div>
+  </div>
+
+  <div class="transition-layout">
+    @if (rental) {
+      <mat-card appearance="outlined" class="context-card">
+        <mat-card-header>
+          <mat-card-title>{{ rental.request_title || 'Untitled request' }}</mat-card-title>
+          <mat-card-subtitle>Current status: {{ prettifyStatus(rental.rental_status_name) }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="kv-grid">
+            <div><strong>Customer:</strong> {{ rental.customer_user_id }}</div>
+            <div><strong>Event:</strong> {{ rental.event_name || '-' }}</div>
+            <div><strong>Priority:</strong> {{ rental.priority }}</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <mat-card appearance="outlined" class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>swap_horiz</mat-icon>
+          @if (targetStatus) {
+            Transition to: {{ prettifyStatus(targetStatus.name) }}
+          } @else {
+            Confirm Transition
+          }
+        </mat-card-title>
+        @if (targetStatus?.description) {
+          <mat-card-subtitle>{{ targetStatus!.description }}</mat-card-subtitle>
+        }
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="outline">
+            <mat-label>Reason / notes (optional)</mat-label>
+            <textarea matInput formControlName="reason" rows="4"
+              placeholder="Provide any additional context for this transition..."></textarea>
+          </mat-form-field>
+          <div class="form-actions">
+            <button type="button" mat-stroked-button [routerLink]="['/rental', rentalGuid]" [disabled]="submitting">
+              Cancel
+            </button>
+            <button type="submit" mat-flat-button color="primary" [disabled]="submitting">
+              <mat-icon>arrow_forward</mat-icon>
+              {{ submitting ? 'Saving...' : 'Confirm Transition' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
