@@ -1,13 +1,12 @@
-// Rental process detail — action-driven graph view
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnInit, inject } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { RentalActionView, RentalApiClient, RentalHistoryEntryView, RentalView } from '@lumenforge/api-client';
+import { RentalActionView, RentalApiClient, RentalActionLogView, RentalProcessView } from '@lumenforge/api-client';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import {
   formatDateTime,
@@ -181,7 +180,7 @@ interface GraphEdge {
                   @for (entry of history.slice().reverse(); track $index) {
                     <div class="history-row">
                       <strong>{{ getHistoryLabel(entry) }}</strong>
-                      <span>{{ formatDateTime(entry.performed_at ?? entry.created_at) }}</span>
+                      <span>{{ formatDateTime(entry.performed_at) }}</span>
                     </div>
                   }
                 </div>
@@ -197,12 +196,15 @@ interface GraphEdge {
 })
 export class RentalDetail implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly ngZone = inject(NgZone);
+  private readonly cd = inject(ChangeDetectorRef);
+  private readonly changeRef = inject(ChangeDetectorRef);
 
   processGuid = '';
-  rental: RentalView | null = null;
+  rental: RentalProcessView | null = null;
   availableActions: RentalActionView[] = [];
-  history: RentalHistoryEntryView[] = [];
-  rentalLoading = false;
+  history: RentalActionLogView[] = [];
+  rentalLoading = true;
   rentalError = '';
   graphNodes: GraphNode[] = [];
   graphEdges: GraphEdge[] = [];
@@ -219,6 +221,7 @@ export class RentalDetail implements OnInit {
     }
 
     this.loadRental();
+    this.changeRef.detectChanges();
   }
 
   loadRental(): void {
@@ -233,11 +236,16 @@ export class RentalDetail implements OnInit {
         catchError(() => of([] as RentalActionView[]))
       ),
       history: this.rentalApiClient.listRentalHistory(this.processGuid, { limit: 100, offset: 0 }).pipe(
-        catchError(() => of({ list: [] as RentalHistoryEntryView[], total: 0 }))
+        catchError(() => of({ list: [] as RentalActionLogView[], total: 0 }))
       ),
     }).pipe(
       finalize(() => {
-        this.rentalLoading = false;
+        console.log('Finished loading rental details');
+        this.ngZone.run(() => {
+          this.rentalLoading = false;
+          this.cd.markForCheck();
+        });
+        console.log('Loaded rental details:', { rental: this.rental, availableActions: this.availableActions, history: this.history });
       })
     ).subscribe({
       next: result => {

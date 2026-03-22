@@ -107,6 +107,31 @@ export class RentalRequest implements OnInit {
   ngOnInit(): void {
     this.dataSource = new RentalRequestDevicesDataSource(this.catalogueApiClient);
     this.dataSource.loadDevices('', 'asc', 0, 10);
+
+    // DEV: prefill step 1 (Event Data) and step 4 (Pickup & Dropoff) for faster iteration
+    const devEventStart = new Date();
+    devEventStart.setDate(devEventStart.getDate() + 7);
+    const devEventEnd = new Date(devEventStart);
+    devEventEnd.setDate(devEventEnd.getDate() + 3);
+
+    this.eventForm.patchValue({
+      name: 'Dev Test Event',
+      shortDescription: 'Sample event created during development to test the rental request flow.',
+      eventStart: devEventStart.toISOString(),
+      eventEnd: devEventEnd.toISOString(),
+      location: '123 Dev Lane, Testville',
+    });
+
+    const devPickup = new Date(devEventStart);
+    devPickup.setDate(devPickup.getDate() - 1);
+    const devDropoff = new Date(devEventEnd);
+    devDropoff.setDate(devDropoff.getDate() + 1);
+
+    this.pickupForm.patchValue({
+      pickupTime: devPickup.toISOString(),
+      dropoffTime: devDropoff.toISOString(),
+      transportationMethod: 'Customer pickup',
+    });
   }
 
   onStepperSelectionChange(event: StepperSelectionEvent): void {

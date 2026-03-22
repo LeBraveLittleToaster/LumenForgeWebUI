@@ -1,9 +1,9 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
-import { RentalApiClient, RentalView } from '@lumenforge/api-client';
+import { RentalApiClient, RentalProcessSummaryView } from '@lumenforge/api-client';
 import { BehaviorSubject, catchError, finalize, Observable, of } from 'rxjs';
 
 export interface RentalDataItem {
-  rental: RentalView;
+  rental: RentalProcessSummaryView;
 }
 
 export class RentalDataSource implements DataSource<RentalDataItem> {
@@ -34,7 +34,7 @@ export class RentalDataSource implements DataSource<RentalDataItem> {
       limit: pageSize,
       offset: pageIndex * pageSize,
     }).pipe(
-      catchError(() => of({ list: [] as RentalView[], total: 0 })),
+      catchError(() => of({ list: [] as RentalProcessSummaryView[], total: 0 })),
       finalize(() => this.loadingSubject.next(false)),
     ).subscribe(result => {
       this.rentalsSubject.next(result.list.map(rental => ({ rental })));

@@ -39,18 +39,18 @@ import {
   RentalActionType,
   RentalActionView,
   RentalApiClient,
-  RentalView,
+  RentalProcessView,
   ScanChecklistDto,
   ScrapRentalDto,
   SignChecklistDto,
 } from '@lumenforge/api-client';
-import { finalize, forkJoin } from 'rxjs';
+import { finalize, forkJoin, Observable } from 'rxjs';
 import {
   DAMAGE_SEVERITY_OPTIONS,
   RENTAL_ACTION_CONFIG,
   type RentalActionConfig,
   type RentalActionFieldConfig,
-} from './rental-action.registry';
+} from './rental-action-form-config';
 import {
   formatDateOnly,
   formatDateTime,
@@ -112,7 +112,7 @@ export class RentalActionPage implements OnInit {
 
   @Input({ required: true }) actionType!: RentalActionType | string;
 
-  readonly process = signal<RentalView | null>(null);
+  readonly process = signal<RentalProcessView | null>(null);
   readonly availableActions = signal<RentalActionView[]>([]);
   readonly loading = signal(true);
   readonly submitting = signal(false);
@@ -294,38 +294,9 @@ export class RentalActionPage implements OnInit {
     return field.key;
   }
 
-  private seedDraftsFromProcess(process: RentalView): void {
+  private seedDraftsFromProcess(process: RentalProcessView): void {
     if (this.bindingOptions().length > 0 && this.damageEntries().length === 0 && this.config()?.formKind === 'record-damages') {
       this.addDamageEntry();
-    }
-
-    if (this.config()?.formKind === 'assign-items') {
-      const seededDevices = (process.items ?? process.rental?.items ?? [])
-        .filter(item => item.device_guid)
-        .map(item => ({
-          device: {
-            guid: item.device_guid!,
-            serial_number: item.device_serial_number ?? '-',
-            name: item.device_name ?? 'Assigned device',
-            description: null,
-            photo_url: null,
-            purchase_price: 0,
-            purchase_date: '',
-            maintenance_status_uuid: '',
-            maintenance_status_name: '',
-            vendor: { guid: '', name: '', created_at: '', updated_at: '' },
-            stock: null,
-            parameters: [],
-            categories: [],
-            created_at: '',
-            updated_at: '',
-          },
-          quantity: item.quantity_approved ?? item.quantity_requested ?? 1,
-        } satisfies SelectedDevice));
-
-      if (seededDevices.length > 0) {
-        this.selectedDevices.set(seededDevices);
-      }
     }
   }
 
@@ -419,16 +390,18 @@ export class RentalActionPage implements OnInit {
       case 'includePayments':
         return this.includePayments.value;
     }
+
+    return null;
   }
 
-  private buildRequest() {
+  private buildRequest(): Observable<unknown> {
     switch (this.normalizedActionType()) {
       case 'approve-request': {
         const dto: ApproveRequestDto = { comment: this.toNullable(this.comment.value) };
         return this.rentalApiClient.approveRequest(this.processGuid, dto);
       }
       case 'reject-request': {
-        const dto: RejectRequestDto = { reason: this.toNullable(this.reason.value) };
+        const dto: RejectRequestDto = { reason: this.reason.value.trim() || this.reason.value };
         return this.rentalApiClient.rejectRequest(this.processGuid, dto);
       }
       case 'assign-items': {
@@ -446,7 +419,7 @@ export class RentalActionPage implements OnInit {
         return this.rentalApiClient.approveItems(this.processGuid, dto);
       }
       case 'reject-items': {
-        const dto: RejectItemsDto = { reason: this.toNullable(this.reason.value) };
+        const dto: RejectItemsDto = { reason: this.reason.value.trim() || this.reason.value };
         return this.rentalApiClient.rejectItems(this.processGuid, dto);
       }
       case 'generate-checklist': {
@@ -456,14 +429,14 @@ export class RentalActionPage implements OnInit {
       case 'scan-checklist': {
         const dto: ScanChecklistDto = {
           checklist_guid: this.checklistGuid.value,
-          scanned_value: this.toNullable(this.scannedValue.value),
+          scanned_value: this.scannedValue.value.trim() || this.scannedValue.value,
         };
         return this.rentalApiClient.scanChecklist(this.processGuid, dto);
       }
       case 'sign-checklist': {
         const dto: SignChecklistDto = {
           checklist_guid: this.checklistGuid.value,
-          signature_data: this.toNullable(this.signatureData.value),
+          signature_data: this.signatureData.value.trim() || this.signatureData.value,
         };
         return this.rentalApiClient.signChecklist(this.processGuid, dto);
       }
@@ -492,7 +465,7 @@ export class RentalActionPage implements OnInit {
       case 'reject-extension': {
         const dto: RejectExtensionDto = {
           extension_guid: this.extensionGuid.value,
-          reason: this.toNullable(this.reason.value),
+          reason: this.reason.value.trim() || this.reason.value,
         };
         return this.rentalApiClient.rejectExtension(this.processGuid, dto);
       }
@@ -500,7 +473,7 @@ export class RentalActionPage implements OnInit {
         const dto: RecordDamagesDto = {
           damages: this.damageEntries().map(entry => ({
             stock_binding_guid: entry.stockBindingGuid,
-            description: this.toNullable(entry.description),
+            description: entry.description.trim() || entry.description,
             severity: entry.severity,
           })),
         };
@@ -533,11 +506,11 @@ export class RentalActionPage implements OnInit {
       case 'complete':
         return this.rentalApiClient.complete(this.processGuid, { comment: this.toNullable(this.comment.value) });
       case 'cancel': {
-        const dto: CancelRentalDto = { reason: this.toNullable(this.reason.value) };
+        const dto: CancelRentalDto = { reason: this.reason.value.trim() || this.reason.value };
         return this.rentalApiClient.cancel(this.processGuid, dto);
       }
       case 'scrap': {
-        const dto: ScrapRentalDto = { reason: this.toNullable(this.reason.value) };
+        const dto: ScrapRentalDto = { reason: this.reason.value.trim() || this.reason.value };
         return this.rentalApiClient.scrap(this.processGuid, dto);
       }
     }

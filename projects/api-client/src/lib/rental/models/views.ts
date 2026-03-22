@@ -5,6 +5,8 @@ import { SurveyAnswerResponse } from './dtos';
 
 export type ChecklistType = 'PICKUP' | 'DROPOFF';
 
+export type RentalPriority = 'Low' | 'Normal' | 'High' | 'Urgent';
+
 export type RentalStage =
   | 'None'
   | 'Requested'
@@ -75,33 +77,27 @@ export interface AnswerView {
   created_at: string;
 }
 
-// ------------------- Rental Views -------------------
+// ------------------- Rental Action / History Views -------------------
 
+/** An action available to be performed on a rental process at its current stage. */
 export interface RentalActionView {
-  type?: RentalActionType | string;
-  action_type?: RentalActionType | string;
-  name?: string;
-  display_name?: string;
+  action_type: RentalActionType | string;
   description?: string | null;
-  available?: boolean;
-  enabled?: boolean;
-  requires_confirmation?: boolean;
-  metadata?: Record<string, unknown> | null;
 }
 
-export interface RentalHistoryEntryView {
-  uuid?: Guid;
-  action_type?: string;
-  action_name?: string;
-  display_name?: string;
-  description?: string | null;
-  stage_before?: RentalStage | null;
-  stage_after?: RentalStage | null;
-  actor_user_id?: string | null;
-  created_at?: string;
-  performed_at?: string;
-  metadata?: Record<string, unknown> | null;
+/** Audit log entry returned by the rental history endpoint. */
+export interface RentalActionLogView {
+  guid: Guid;
+  action_type: RentalActionType | string;
+  performed_by_kc_id: string;
+  stage_before: RentalStage;
+  stage_after: RentalStage;
+  success: boolean;
+  error_message?: string | null;
+  performed_at: string;
 }
+
+// ------------------- Stock Binding Views -------------------
 
 export interface StockBindingConflictView {
   binding_guid: Guid;
@@ -126,144 +122,93 @@ export interface StockBindingView {
   created_at: string;
 }
 
+// ------------------- Checklist Views -------------------
+
 export interface ChecklistItemView {
-  uuid: Guid;
-  rental_item_uuid?: Guid;
-  stock_binding_guid?: Guid | null;
-  label?: string | null;
+  guid: Guid;
+  stock_binding_guid: Guid;
+  device_name: string;
+  is_scanned: boolean;
   scanned_value?: string | null;
-  is_checked?: boolean;
-  quantity_checked?: number;
-  condition_ok?: boolean;
-  condition_notes?: string | null;
-  damaged_quantity?: number;
-  damage_summary?: string | null;
-  damage_description?: string | null;
-  created_at?: string;
-  updated_at?: string;
+  scanned_by_kc_id?: string | null;
+  scanned_at?: string | null;
 }
 
 export interface ChecklistView {
-  uuid: Guid;
+  guid: Guid;
   checklist_type: ChecklistType;
-  source_checklist_uuid?: Guid | null;
-  generated_by_user_id?: string | null;
-  generated_at?: string;
+  is_signed: boolean;
+  signed_by_kc_id?: string | null;
   signed_at?: string | null;
-  signed_by_user_id?: string | null;
-  notes?: string | null;
-  total_items?: number;
-  checked_items_count?: number;
-  is_complete?: boolean;
-  is_signed?: boolean;
-  created_at?: string;
-  updated_at?: string;
-  items?: ChecklistItemView[];
+  created_at: string;
+  items: ChecklistItemView[];
 }
 
-export interface RentalItemView {
-  uuid: Guid;
-  device_guid?: Guid | null;
-  device_name?: string | null;
-  device_serial_number?: string | null;
-  quantity_requested?: number;
-  quantity_approved?: number | null;
-  quantity_picked_up?: number | null;
-  quantity_returned?: number | null;
-  quantity_damaged?: number | null;
-  quantity_lost?: number | null;
-  stock_bindings?: StockBindingView[];
-  created_at?: string;
-  updated_at?: string;
-}
+// ------------------- Extension / Damage Views -------------------
 
 export interface RentalExtensionView {
-  uuid: Guid;
-  requested_end?: string | null;
-  new_requested_end?: string | null;
+  guid: Guid;
+  new_requested_end: string;
+  original_end: string;
   reason?: string | null;
-  status?: string | null;
-  created_at?: string;
-  decided_at?: string | null;
+  is_approved?: boolean | null;
+  review_comment?: string | null;
+  requested_by_kc_id: string;
+  reviewed_by_kc_id?: string | null;
+  requested_at: string;
+  reviewed_at?: string | null;
 }
 
 export interface RentalDamageReportView {
-  uuid: Guid;
-  stock_binding_guid?: Guid;
-  description?: string | null;
-  severity?: DamageSeverity;
-  created_at?: string;
+  guid: Guid;
+  stock_binding_guid: Guid;
+  description: string;
+  severity: DamageSeverity;
+  reported_by_kc_id: string;
+  reported_at: string;
 }
 
-export interface RentalPaymentView {
-  uuid: Guid;
-  invoice_guid?: Guid;
-  amount?: number;
-  method?: PaymentMethod;
-  reference?: string | null;
-  created_at?: string;
-}
+// ------------------- Core Rental Views -------------------
 
-export interface RentalInvoiceView {
-  uuid: Guid;
-  amount_due?: number;
-  amount_paid?: number;
-  due_date?: string | null;
-  status?: string | null;
-  created_at?: string;
-  payments?: RentalPaymentView[];
-}
-
-export interface RentalRecordView {
-  uuid?: Guid;
-  customer_name?: string | null;
-  customer_email?: string | null;
-  purpose?: string | null;
-  notes?: string | null;
-  requested_start?: string | null;
-  requested_end?: string | null;
-  request_title?: string | null;
-  request_description?: string | null;
-  event_name?: string | null;
-  customer_notes?: string | null;
-  delivery_address?: string | null;
-  planned_pickup_at?: string | null;
-  planned_return_at?: string | null;
-  items?: RentalItemView[];
-  checklists?: ChecklistView[];
-  extensions?: RentalExtensionView[];
-  damage_reports?: RentalDamageReportView[];
-  invoices?: RentalInvoiceView[];
-}
-
+/** Inner rental data — nested inside RentalProcessView.rental. */
 export interface RentalView {
   uuid: Guid;
-  process_guid?: Guid;
-  current_stage?: RentalStage | null;
-  stage?: RentalStage | null;
-  owner_kc_id?: string | null;
+  customer_kc_id: string;
   customer_name?: string | null;
   customer_email?: string | null;
   purpose?: string | null;
+  requested_start: string;
+  requested_end: string;
+  priority: RentalPriority;
   notes?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Full process view returned by GET /rentals/:guid. */
+export interface RentalProcessView {
+  guid: Guid;
+  current_stage: RentalStage;
+  created_by_kc_id: string;
+  created_at: string;
+  updated_at: string;
+  rental?: RentalView | null;
+  checklists?: ChecklistView[] | null;
+  extensions?: RentalExtensionView[] | null;
+  damage_reports?: RentalDamageReportView[] | null;
+}
+
+/** Compact summary view returned by rental list endpoints. */
+export interface RentalProcessSummaryView {
+  guid: Guid;
+  current_stage: RentalStage;
+  created_by_kc_id: string;
+  customer_name?: string | null;
+  customer_email?: string | null;
   requested_start?: string | null;
   requested_end?: string | null;
-  created_at?: string;
-  updated_at?: string;
-  rental?: RentalRecordView | null;
-  available_actions?: RentalActionView[];
-  history?: RentalHistoryEntryView[];
-  checklists?: ChecklistView[];
-  extensions?: RentalExtensionView[];
-  damage_reports?: RentalDamageReportView[];
-  invoices?: RentalInvoiceView[];
-  request_title?: string | null;
-  request_description?: string | null;
-  event_name?: string | null;
-  customer_notes?: string | null;
-  delivery_address?: string | null;
-  planned_pickup_at?: string | null;
-  planned_return_at?: string | null;
-  customer_user_id?: string | null;
-  items?: RentalItemView[];
+  priority?: RentalPriority | null;
+  created_at: string;
+  updated_at: string;
 }
+

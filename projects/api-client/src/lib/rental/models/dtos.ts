@@ -62,7 +62,7 @@ export interface ApproveRequestDto {
 }
 
 export interface RejectRequestDto {
-  reason: string | null;
+  reason: string;
 }
 
 export interface ItemAssignmentDto {
@@ -83,7 +83,7 @@ export interface ApproveItemsDto {
 }
 
 export interface RejectItemsDto {
-  reason: string | null;
+  reason: string;
 }
 
 export interface GenerateChecklistDto {
@@ -92,12 +92,12 @@ export interface GenerateChecklistDto {
 
 export interface SignChecklistDto {
   checklist_guid: Guid;
-  signature_data: string | null;
+  signature_data: string;
 }
 
 export interface ScanChecklistDto {
   checklist_guid: Guid;
-  scanned_value: string | null;
+  scanned_value: string;
 }
 
 export interface RecordPickupDto {
@@ -120,12 +120,12 @@ export interface ApproveExtensionDto {
 
 export interface RejectExtensionDto {
   extension_guid: Guid;
-  reason: string | null;
+  reason: string;
 }
 
 export interface DamageEntryDto {
   stock_binding_guid: Guid;
-  description: string | null;
+  description: string;
   severity: DamageSeverity;
 }
 
@@ -158,9 +158,9 @@ export interface CompleteRentalDto {
 }
 
 export interface CancelRentalDto {
-  reason: string | null;
+  reason: string;
 }
 
 export interface ScrapRentalDto {
-  reason: string | null;
+  reason: string;
 }

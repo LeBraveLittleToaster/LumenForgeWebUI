@@ -39,7 +39,7 @@ export class Rental implements OnInit {
     {
       key: 'window',
       header: 'Window',
-      cell: r => this.formatWindow(r.rental.requested_start ?? r.rental.planned_pickup_at ?? null, r.rental.requested_end ?? r.rental.planned_return_at ?? null),
+      cell: r => this.formatWindow(r.rental.requested_start ?? null, r.rental.requested_end ?? null),
     },
     { key: 'customer', header: 'Customer', cell: r => getCustomerDisplay(r.rental) },
   ];

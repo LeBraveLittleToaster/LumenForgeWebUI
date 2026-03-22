@@ -38,8 +38,9 @@ import {
   QuestionView,
   AnswerView,
   RentalActionView,
-  RentalHistoryEntryView,
-  RentalView,
+  RentalActionLogView,
+  RentalProcessView,
+  RentalProcessSummaryView,
   ChecklistView,
 } from './models/views';
 import {
@@ -91,15 +92,15 @@ export class RentalApiClient {
     return [];
   }
 
-  private normalizeHistory(response: unknown): PaginatedList<RentalHistoryEntryView> {
+  private normalizeHistory(response: unknown): PaginatedList<RentalActionLogView> {
     if (response && typeof response === 'object') {
       const record = response as Record<string, unknown>;
       if (Array.isArray(record['list']) && typeof record['total'] === 'number') {
-        return response as PaginatedList<RentalHistoryEntryView>;
+        return response as PaginatedList<RentalActionLogView>;
       }
 
       if (Array.isArray(record['history'])) {
-        const history = record['history'] as RentalHistoryEntryView[];
+        const history = record['history'] as RentalActionLogView[];
         return { list: history, total: history.length };
       }
     }
@@ -175,8 +176,8 @@ export class RentalApiClient {
   // Rental Processes - Overview
   // =========================================================================
 
-  listRentals(query: RentalQueryDto = {}): Observable<PaginatedList<RentalView>> {
-    return this.http.get<PaginatedList<RentalView>>(
+  listRentals(query: RentalQueryDto = {}): Observable<PaginatedList<RentalProcessSummaryView>> {
+    return this.http.get<PaginatedList<RentalProcessSummaryView>>(
       this.url('/api/v1/rentals'),
       {
         params: toHttpParams({
@@ -194,8 +195,8 @@ export class RentalApiClient {
     );
   }
 
-  listMyRentals(query: RentalQueryDto = {}): Observable<PaginatedList<RentalView>> {
-    return this.http.get<PaginatedList<RentalView>>(
+  listMyRentals(query: RentalQueryDto = {}): Observable<PaginatedList<RentalProcessSummaryView>> {
+    return this.http.get<PaginatedList<RentalProcessSummaryView>>(
       this.url('/api/v1/rentals/my'),
       {
         params: toHttpParams({
@@ -213,14 +214,14 @@ export class RentalApiClient {
     );
   }
 
-  getRental(processGuid: Guid, include?: RentalInclude[]): Observable<RentalView> {
-    return this.http.get<RentalView>(
+  getRental(processGuid: Guid, include?: RentalInclude[]): Observable<RentalProcessView> {
+    return this.http.get<RentalProcessView>(
       this.url(`/api/v1/rentals/${processGuid}`),
       { params: toHttpParams({ include: include?.join(',') ?? undefined }) }
     );
   }
 
-  listRentalHistory(processGuid: Guid, query: RentalHistoryQueryDto = {}): Observable<PaginatedList<RentalHistoryEntryView>> {
+  listRentalHistory(processGuid: Guid, query: RentalHistoryQueryDto = {}): Observable<PaginatedList<RentalActionLogView>> {
     return this.http.get<unknown>(
       this.url(`/api/v1/rentals/${processGuid}/history`),
       {
@@ -242,95 +243,95 @@ export class RentalApiClient {
   // Rental Actions
   // =========================================================================
 
-  createRental(dto: CreateRentalDto): Observable<RentalView> {
-    return this.http.post<RentalView>(this.url('/api/v1/rentals/actions/create'), dto);
+  createRental(dto: CreateRentalDto): Observable<RentalProcessView> {
+    return this.http.post<RentalProcessView>(this.url('/api/v1/rentals/actions/create'), dto);
   }
 
-  approveRequest(processGuid: Guid, dto: ApproveRequestDto = {}): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'approve-request', dto);
+  approveRequest(processGuid: Guid, dto: ApproveRequestDto = {}): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'approve-request', dto);
   }
 
-  rejectRequest(processGuid: Guid, dto: RejectRequestDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'reject-request', dto);
+  rejectRequest(processGuid: Guid, dto: RejectRequestDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'reject-request', dto);
   }
 
-  assignItems(processGuid: Guid, dto: AssignItemsDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'assign-items', dto);
+  assignItems(processGuid: Guid, dto: AssignItemsDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'assign-items', dto);
   }
 
-  removeItems(processGuid: Guid, dto: RemoveItemsDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'remove-items', dto);
+  removeItems(processGuid: Guid, dto: RemoveItemsDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'remove-items', dto);
   }
 
-  approveItems(processGuid: Guid, dto: ApproveItemsDto = {}): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'approve-items', dto);
+  approveItems(processGuid: Guid, dto: ApproveItemsDto = {}): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'approve-items', dto);
   }
 
-  rejectItems(processGuid: Guid, dto: RejectItemsDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'reject-items', dto);
+  rejectItems(processGuid: Guid, dto: RejectItemsDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'reject-items', dto);
   }
 
   generateChecklist(processGuid: Guid, dto: GenerateChecklistDto): Observable<ChecklistView> {
     return this.callAction<ChecklistView>(processGuid, 'generate-checklist', dto);
   }
 
-  scanChecklist(processGuid: Guid, dto: ScanChecklistDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'scan-checklist', dto);
+  scanChecklist(processGuid: Guid, dto: ScanChecklistDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'scan-checklist', dto);
   }
 
-  signChecklist(processGuid: Guid, dto: SignChecklistDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'sign-checklist', dto);
+  signChecklist(processGuid: Guid, dto: SignChecklistDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'sign-checklist', dto);
   }
 
-  recordPickup(processGuid: Guid, dto: RecordPickupDto = {}): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'record-pickup', dto);
+  recordPickup(processGuid: Guid, dto: RecordPickupDto = {}): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'record-pickup', dto);
   }
 
-  recordReturn(processGuid: Guid, dto: RecordReturnDto = {}): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'record-return', dto);
+  recordReturn(processGuid: Guid, dto: RecordReturnDto = {}): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'record-return', dto);
   }
 
-  requestExtension(processGuid: Guid, dto: RequestExtensionDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'request-extension', dto);
+  requestExtension(processGuid: Guid, dto: RequestExtensionDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'request-extension', dto);
   }
 
-  approveExtension(processGuid: Guid, dto: ApproveExtensionDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'approve-extension', dto);
+  approveExtension(processGuid: Guid, dto: ApproveExtensionDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'approve-extension', dto);
   }
 
-  rejectExtension(processGuid: Guid, dto: RejectExtensionDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'reject-extension', dto);
+  rejectExtension(processGuid: Guid, dto: RejectExtensionDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'reject-extension', dto);
   }
 
-  recordDamages(processGuid: Guid, dto: RecordDamagesDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'record-damages', dto);
+  recordDamages(processGuid: Guid, dto: RecordDamagesDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'record-damages', dto);
   }
 
-  createMaintenanceJobs(processGuid: Guid, dto: CreateMaintenanceJobsDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'create-maintenance-jobs', dto);
+  createMaintenanceJobs(processGuid: Guid, dto: CreateMaintenanceJobsDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'create-maintenance-jobs', dto);
   }
 
-  generateInvoice(processGuid: Guid, dto: GenerateInvoiceDto = {}): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'generate-invoice', dto);
+  generateInvoice(processGuid: Guid, dto: GenerateInvoiceDto = {}): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'generate-invoice', dto);
   }
 
-  recordPayment(processGuid: Guid, dto: RecordPaymentDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'record-payment', dto);
+  recordPayment(processGuid: Guid, dto: RecordPaymentDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'record-payment', dto);
   }
 
-  generateReport(processGuid: Guid, dto: GenerateReportDto = {}): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'generate-report', dto);
+  generateReport(processGuid: Guid, dto: GenerateReportDto = {}): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'generate-report', dto);
   }
 
-  complete(processGuid: Guid, dto: CompleteRentalDto = {}): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'complete', dto);
+  complete(processGuid: Guid, dto: CompleteRentalDto = {}): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'complete', dto);
   }
 
-  cancel(processGuid: Guid, dto: CancelRentalDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'cancel', dto);
+  cancel(processGuid: Guid, dto: CancelRentalDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'cancel', dto);
   }
 
-  scrap(processGuid: Guid, dto: ScrapRentalDto): Observable<RentalView> {
-    return this.callAction<RentalView>(processGuid, 'scrap', dto);
+  scrap(processGuid: Guid, dto: ScrapRentalDto): Observable<RentalProcessView> {
+    return this.callAction<RentalProcessView>(processGuid, 'scrap', dto);
   }
 }

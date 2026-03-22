@@ -1,16 +1,14 @@
 import {
   ChecklistView,
+  RentalActionLogView,
   RentalActionType,
   RentalActionView,
   RentalDamageReportView,
   RentalExtensionView,
-  RentalHistoryEntryView,
-  RentalInvoiceView,
-  RentalItemView,
-  RentalRecordView,
-  RentalView,
-  StockBindingView,
+  RentalProcessSummaryView,
+  RentalProcessView,
 } from '@lumenforge/api-client';
+import { getRentalActionMeta } from './rental-action.registry';
 
 export interface RentalBindingOption {
   guid: string;
@@ -119,7 +117,7 @@ export function formatDateOnly(value: string | null | undefined): string {
 export function normalizeActionType(action: RentalActionView | string | null | undefined): RentalActionType | string {
   const source = typeof action === 'string'
     ? action
-    : readString(action?.type, action?.action_type, action?.name, action?.display_name) ?? '';
+    : readString(action?.action_type) ?? '';
 
   const normalized = source
     .trim()
@@ -132,173 +130,152 @@ export function normalizeActionType(action: RentalActionView | string | null | u
 }
 
 export function getActionLabel(action: RentalActionView | string): string {
-  if (typeof action !== 'string') {
-    const explicit = readString(action.display_name, action.name, action.description);
-    if (explicit) {
-      return prettifyToken(explicit);
-    }
-  }
-
-  return prettifyToken(String(normalizeActionType(action)));
+  const normalized = normalizeActionType(action);
+  const meta = getRentalActionMeta(normalized);
+  return meta?.label ?? prettifyToken(String(normalized));
 }
 
-export function getProcessGuid(process: RentalView | null | undefined): string {
+export function getProcessGuid(process: RentalProcessView | RentalProcessSummaryView | null | undefined): string {
+  return process ? String(process.guid) : '';
+}
+
+function getRentalRecord(process: RentalProcessView | null | undefined) {
+  return process?.rental ?? null;
+}
+
+export function getCurrentStage(process: RentalProcessView | RentalProcessSummaryView | null | undefined): string {
+  return prettifyToken(process?.current_stage ?? null);
+}
+
+export function getRentalTitle(process: RentalProcessView | RentalProcessSummaryView | null | undefined): string {
   if (!process) {
-    return '';
+    return 'Rental Process';
   }
-
-  return readString(process.process_guid, process.uuid) ?? '';
-}
-
-export function getRentalRecord(process: RentalView | null | undefined): RentalRecordView | null {
-  if (!process) {
-    return null;
-  }
-
-  return process.rental ?? process;
-}
-
-export function getCurrentStage(process: RentalView | null | undefined): string {
-  if (!process) {
-    return '-';
-  }
-
-  const record = asRecord(process);
-  return prettifyToken(
-    readString(
-      process.current_stage,
-      process.stage,
-      record?.['current_stage'],
-      record?.['stage'],
-      record?.['rental_stage'],
-    )
-  );
-}
-
-export function getRentalTitle(process: RentalView | null | undefined): string {
-  const rental = getRentalRecord(process);
+  const rental = getRentalRecord(process as RentalProcessView);
   return readString(
-    rental?.request_title,
-    process?.purpose,
     rental?.purpose,
-    rental?.event_name,
-    process?.customer_name,
+    rental?.customer_name,
+    (process as RentalProcessSummaryView).customer_name,
   ) ?? 'Rental Process';
 }
 
-export function getRentalSubtitle(process: RentalView | null | undefined): string {
-  const rental = getRentalRecord(process);
+export function getRentalSubtitle(process: RentalProcessView | RentalProcessSummaryView | null | undefined): string {
+  if (!process) {
+    return 'No customer details';
+  }
+  const rental = getRentalRecord(process as RentalProcessView);
   return readString(
-    process?.customer_name,
     rental?.customer_name,
-    process?.customer_email,
     rental?.customer_email,
-    rental?.event_name,
+    (process as RentalProcessSummaryView).customer_name,
+    (process as RentalProcessSummaryView).customer_email,
   ) ?? 'No customer details';
 }
 
-export function getRentalPurpose(process: RentalView | null | undefined): string {
-  const rental = getRentalRecord(process);
-  return readString(process?.purpose, rental?.purpose, rental?.request_description) ?? 'No purpose provided.';
+export function getRentalPurpose(process: RentalProcessView | RentalProcessSummaryView | null | undefined): string {
+  const rental = getRentalRecord(process as RentalProcessView);
+  return readString(rental?.purpose) ?? 'No purpose provided.';
 }
 
-export function getRentalNotes(process: RentalView | null | undefined): string {
-  const rental = getRentalRecord(process);
-  return readString(process?.notes, rental?.notes, rental?.customer_notes) ?? 'No notes recorded.';
+export function getRentalNotes(process: RentalProcessView | RentalProcessSummaryView | null | undefined): string {
+  const rental = getRentalRecord(process as RentalProcessView);
+  return readString(rental?.notes) ?? 'No notes recorded.';
 }
 
-export function getCustomerDisplay(process: RentalView | null | undefined): string {
-  const rental = getRentalRecord(process);
+export function getCustomerDisplay(process: RentalProcessView | RentalProcessSummaryView | null | undefined): string {
+  if (!process) {
+    return 'Unknown customer';
+  }
+  const rental = getRentalRecord(process as RentalProcessView);
   return readString(
-    process?.customer_name,
     rental?.customer_name,
-    process?.customer_email,
     rental?.customer_email,
-    process?.customer_user_id,
+    rental?.customer_kc_id,
+    (process as RentalProcessSummaryView).customer_name,
+    (process as RentalProcessSummaryView).customer_email,
   ) ?? 'Unknown customer';
 }
 
-export function getRequestedStart(process: RentalView | null | undefined): string | null {
-  const rental = getRentalRecord(process);
-  return readString(process?.requested_start, rental?.requested_start, rental?.planned_pickup_at, process?.planned_pickup_at);
-}
-
-export function getRequestedEnd(process: RentalView | null | undefined): string | null {
-  const rental = getRentalRecord(process);
-  return readString(process?.requested_end, rental?.requested_end, rental?.planned_return_at, process?.planned_return_at);
-}
-
-export function getRentalItems(process: RentalView | null | undefined): RentalItemView[] {
-  const rental = getRentalRecord(process);
-  return process?.items ?? rental?.items ?? [];
-}
-
-export function getRentalChecklists(process: RentalView | null | undefined): ChecklistView[] {
-  const rental = getRentalRecord(process);
-  return process?.checklists ?? rental?.checklists ?? [];
-}
-
-export function getRentalExtensions(process: RentalView | null | undefined): RentalExtensionView[] {
-  const rental = getRentalRecord(process);
-  return process?.extensions ?? rental?.extensions ?? [];
-}
-
-export function getRentalDamageReports(process: RentalView | null | undefined): RentalDamageReportView[] {
-  const rental = getRentalRecord(process);
-  return process?.damage_reports ?? rental?.damage_reports ?? [];
-}
-
-export function getRentalInvoices(process: RentalView | null | undefined): RentalInvoiceView[] {
-  const rental = getRentalRecord(process);
-  return process?.invoices ?? rental?.invoices ?? [];
-}
-
-export function getRentalHistoryEntries(process: RentalView | null | undefined): RentalHistoryEntryView[] {
-  return readArray<RentalHistoryEntryView>(process?.history);
-}
-
-function bindingLabel(binding: StockBindingView, item: RentalItemView): string {
-  const primary = readString(binding.device_name, item.device_name, binding.device_serial_number) ?? binding.guid;
-  const secondary = readString(binding.device_serial_number, item.device_serial_number, item.device_name) ?? 'Assigned item';
-  return `${primary} (${secondary})`;
-}
-
-export function getRentalBindingOptions(process: RentalView | null | undefined): RentalBindingOption[] {
-  return getRentalItems(process).flatMap(item =>
-    (item.stock_bindings ?? []).map(binding => ({
-      guid: binding.guid,
-      label: bindingLabel(binding, item),
-      secondary: `${formatDateOnly(binding.start)} to ${formatDateOnly(binding.end)}`,
-      deviceGuid: binding.device_guid ?? item.device_guid ?? null,
-    }))
+export function getRequestedStart(process: RentalProcessView | RentalProcessSummaryView | null | undefined): string | null {
+  if (!process) return null;
+  const rental = getRentalRecord(process as RentalProcessView);
+  return readString(
+    rental?.requested_start,
+    (process as RentalProcessSummaryView).requested_start,
   );
 }
 
-export function getChecklistOptions(process: RentalView | null | undefined): RentalChecklistOption[] {
+export function getRequestedEnd(process: RentalProcessView | RentalProcessSummaryView | null | undefined): string | null {
+  if (!process) return null;
+  const rental = getRentalRecord(process as RentalProcessView);
+  return readString(
+    rental?.requested_end,
+    (process as RentalProcessSummaryView).requested_end,
+  );
+}
+
+export function getRentalChecklists(process: RentalProcessView | null | undefined): ChecklistView[] {
+  return process?.checklists ?? [];
+}
+
+export function getRentalExtensions(process: RentalProcessView | null | undefined): RentalExtensionView[] {
+  return process?.extensions ?? [];
+}
+
+export function getRentalDamageReports(process: RentalProcessView | null | undefined): RentalDamageReportView[] {
+  return process?.damage_reports ?? [];
+}
+
+export function getRentalBindingOptions(process: RentalProcessView | null | undefined): RentalBindingOption[] {
+  const checklists = process?.checklists ?? [];
+  const seen = new Set<string>();
+  const options: RentalBindingOption[] = [];
+
+  for (const checklist of checklists) {
+    for (const item of checklist.items) {
+      const bindingGuid = String(item.stock_binding_guid);
+      if (!seen.has(bindingGuid)) {
+        seen.add(bindingGuid);
+        options.push({
+          guid: bindingGuid,
+          label: item.device_name,
+          secondary: prettifyToken(checklist.checklist_type),
+          deviceGuid: null,
+        });
+      }
+    }
+  }
+
+  return options;
+}
+
+export function getChecklistOptions(process: RentalProcessView | null | undefined): RentalChecklistOption[] {
   return getRentalChecklists(process).map(checklist => ({
-    guid: checklist.uuid,
-    label: `${prettifyToken(checklist.checklist_type)} checklist ${formatDateOnly(checklist.generated_at ?? checklist.created_at)}`,
+    guid: String(checklist.guid),
+    label: `${prettifyToken(checklist.checklist_type)} checklist — ${formatDateOnly(checklist.created_at)}`,
   }));
 }
 
-export function getExtensionOptions(process: RentalView | null | undefined): RentalExtensionOption[] {
+export function getExtensionOptions(process: RentalProcessView | null | undefined): RentalExtensionOption[] {
   return getRentalExtensions(process).map(extension => ({
-    guid: extension.uuid,
-    label: `${formatDateOnly(extension.new_requested_end ?? extension.requested_end)} • ${prettifyToken(extension.status)}`,
+    guid: String(extension.guid),
+    label: `Until ${formatDateOnly(extension.new_requested_end)} • ${
+      extension.is_approved === true ? 'Approved'
+      : extension.is_approved === false ? 'Rejected'
+      : 'Pending'
+    }`,
   }));
 }
 
-export function getInvoiceOptions(process: RentalView | null | undefined): RentalInvoiceOption[] {
-  return getRentalInvoices(process).map(invoice => ({
-    guid: invoice.uuid,
-    label: `${prettifyToken(invoice.status)} • due ${formatDateOnly(invoice.due_date)}`,
-  }));
+export function getInvoiceOptions(_process: RentalProcessView | null | undefined): RentalInvoiceOption[] {
+  // Invoice data is not included in the rental process view.
+  return [];
 }
 
-export function getHistoryTimestamp(entry: RentalHistoryEntryView): string | null {
-  return readString(entry.performed_at, entry.created_at);
+export function getHistoryTimestamp(entry: RentalActionLogView): string | null {
+  return entry.performed_at ?? null;
 }
 
-export function getHistoryLabel(entry: RentalHistoryEntryView): string {
-  return prettifyToken(readString(entry.display_name, entry.action_name, entry.action_type) ?? 'Process Update');
+export function getHistoryLabel(entry: RentalActionLogView): string {
+  return prettifyToken(String(normalizeActionType(entry.action_type)));
 }
