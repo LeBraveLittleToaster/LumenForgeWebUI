@@ -1,0 +1,133 @@
+<div class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Rental Process</h1>
+            <p class="page-subtitle">Inspect the process graph, completed history, and available actions for the current
+                stage.</p>
+        </div>
+        <div class="page-header-actions">
+            <button mat-stroked-button routerLink="/rental">
+                <mat-icon>arrow_back</mat-icon>
+                Back to Rentals
+            </button>
+        </div>
+    </div>
+
+    @if (rentalLoading) {
+    <div class="detail-status-panel">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p class="muted">Loading rental process...</p>
+    </div>
+    }
+
+    @if (rentalError) {
+    <mat-card appearance="outlined" class="detail-status-panel error-card">
+        <mat-card-content>
+            <p>{{ rentalError }}</p>
+            <button mat-stroked-button (click)="loadRental()">
+                <mat-icon>refresh</mat-icon>
+                Retry
+            </button>
+        </mat-card-content>
+    </mat-card>
+    }
+
+    @if (rental) {
+    <div class="detail-layout">
+        <mat-card appearance="outlined" class="overview-card">
+            <mat-card-header>
+                <mat-card-title>{{ getRentalTitle(rental) }}</mat-card-title>
+                <mat-card-subtitle>{{ getRentalSubtitle(rental) }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="kv-grid">
+                    <div><strong>Process GUID:</strong> {{ getProcessGuid(rental) }}</div>
+                    <div><strong>Current Stage:</strong> {{ getCurrentStage(rental) }}</div>
+                    <div><strong>Customer:</strong> {{ getCustomerDisplay(rental) }}</div>
+                    <div><strong>Requested Start:</strong> {{ formatDateTime(getRequestedStart(rental)) }}</div>
+                    <div><strong>Requested End:</strong> {{ formatDateTime(getRequestedEnd(rental)) }}</div>
+                    <div><strong>Available Actions:</strong> {{ availableActions.length }}</div>
+                </div>
+
+                <div class="notes-block">
+                    <h3>Purpose</h3>
+                    <p>{{ getRentalPurpose(rental) }}</p>
+                    <h3>Notes</h3>
+                    <p>{{ getRentalNotes(rental) }}</p>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined" class="graph-card">
+            <mat-card-header>
+                <mat-card-title>Process Graph</mat-card-title>
+                <mat-card-subtitle>Completed actions are solid nodes. Available next actions branch out as translucent
+                    nodes.</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="graph-scroll">
+                    <div class="graph-canvas" [style.width.px]="graphWidth" [style.height.px]="graphHeight">
+                        <svg class="graph-edges" [attr.viewBox]="'0 0 ' + graphWidth + ' ' + graphHeight"
+                            preserveAspectRatio="none">
+                            @for (edge of graphEdges; track trackEdge($index, edge)) {
+                            <line [attr.x1]="edge.x1" [attr.y1]="edge.y1" [attr.x2]="edge.x2" [attr.y2]="edge.y2"
+                                [attr.stroke-dasharray]="edge.dashed ? '7 6' : null">
+                            </line>
+                            }
+                        </svg>
+
+                        @for (node of graphNodes; track trackNode($index, node)) {
+                        <a class="graph-node" [class.graph-node--current]="node.variant === 'current'"
+                            [class.graph-node--available]="node.variant === 'available'" [style.left.px]="node.x"
+                            [style.top.px]="node.y" [style.width.px]="node.width" [style.height.px]="node.height"
+                            [routerLink]="node.route ?? ['/rental', processGuid]">
+                            <strong>{{ node.label }}</strong>
+                            <span>{{ node.subtitle }}</span>
+                        </a>
+                        }
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+            <mat-card-header>
+                <mat-card-title>Available Actions</mat-card-title>
+                <mat-card-subtitle>Each action opens a dedicated page for the required data entry.</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                @if (availableActions.length === 0) {
+                <p class="muted">The API did not return any available actions for the current stage.</p>
+                } @else {
+                <div class="action-list">
+                    @for (action of availableActions; track normalizeActionType(action)) {
+                    <a mat-stroked-button [routerLink]="actionRoute(action)">{{ getActionLabel(action) }}</a>
+                    }
+                </div>
+                }
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+            <mat-card-header>
+                <mat-card-title>History</mat-card-title>
+                <mat-card-subtitle>Audit trail returned by the overview API.</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                @if (history.length === 0) {
+                <p class="muted">No history entries were returned.</p>
+                } @else {
+                <div class="history-list">
+                    @for (entry of history.slice().reverse(); track $index) {
+                    <div class="history-row">
+                        <strong>{{ getHistoryLabel(entry) }}</strong>
+                        <span>{{ formatDateTime(entry.performed_at) }}</span>
+                    </div>
+                    }
+                </div>
+                }
+            </mat-card-content>
+        </mat-card>
+    </div>
+    }
+</div>
