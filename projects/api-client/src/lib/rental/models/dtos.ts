@@ -1,7 +1,5 @@
 import { Guid } from '../../core/common';
-import { RentalPriority } from './views';
-
-type ChecklistType = 'PICKUP' | 'DROPOFF';
+import { ChecklistType, DamageSeverity, PaymentMethod } from './views';
 
 // ------------------- Survey / Answer DTOs -------------------
 
@@ -48,63 +46,121 @@ export interface EventContextDto {
   location?: string | null;
 }
 
-// ------------------- Rental DTOs -------------------
+// ------------------- Rental Create / Action DTOs -------------------
 
-/** Payload for creating a new rental. */
 export interface CreateRentalDto {
-  request_title?: string | null;
-  request_description?: string | null;
-  event_name?: string | null;
-  customer_notes?: string | null;
-  delivery_address?: string | null;
-  priority?: RentalPriority;
-  /** ISO-8601 instant string. */
-  planned_pickup_at?: string | null;
-  /** ISO-8601 instant string. */
-  planned_return_at?: string | null;
+  customer_name?: string | null;
+  customer_email?: string | null;
+  purpose?: string | null;
+  requested_start: string;
+  requested_end: string;
+  notes?: string | null;
 }
 
-/** Payload for partially updating a rental. Null fields are left unchanged. */
-export interface UpdateRentalDto {
-  rental_status_guid?: Guid | null;
-  request_title?: string | null;
-  request_description?: string | null;
-  event_name?: string | null;
-  customer_notes?: string | null;
-  delivery_address?: string | null;
-  priority?: RentalPriority | null;
-  /** ISO-8601 instant string. */
-  planned_pickup_at?: string | null;
-  /** ISO-8601 instant string. */
-  planned_return_at?: string | null;
+export interface ApproveRequestDto {
+  comment?: string | null;
 }
 
-// ------------------- Checklist DTOs -------------------
+export interface RejectRequestDto {
+  reason: string | null;
+}
 
-/** Payload for generating a checklist for a rental. */
+export interface ItemAssignmentDto {
+  device_guid: Guid;
+  quantity: number;
+}
+
+export interface AssignItemsDto {
+  items: ItemAssignmentDto[];
+}
+
+export interface RemoveItemsDto {
+  stock_binding_guids: Guid[];
+}
+
+export interface ApproveItemsDto {
+  comment?: string | null;
+}
+
+export interface RejectItemsDto {
+  reason: string | null;
+}
+
 export interface GenerateChecklistDto {
   checklist_type: ChecklistType;
-  source_checklist_guid?: Guid | null;
-  notes?: string | null;
 }
 
-/** Payload for signing off a checklist. */
 export interface SignChecklistDto {
+  checklist_guid: Guid;
+  signature_data: string | null;
+}
+
+export interface ScanChecklistDto {
+  checklist_guid: Guid;
+  scanned_value: string | null;
+}
+
+export interface RecordPickupDto {
   notes?: string | null;
 }
 
-/** Payload for submitting an inspection result for a single checklist item. */
-export interface UpdateChecklistItemDto {
-  quantity_checked: number;
-  condition_ok: boolean;
-  condition_notes?: string | null;
-  damaged_quantity?: number;
-  damage_summary?: string | null;
-  damage_description?: string | null;
+export interface RecordReturnDto {
+  notes?: string | null;
 }
 
-/** Payload for status transitions on an existing rental. */
-export interface TransitionRentalStatusDto {
-  target_status_guid: Guid;
+export interface RequestExtensionDto {
+  new_requested_end: string;
   reason?: string | null;
+}
+
+export interface ApproveExtensionDto {
+  extension_guid: Guid;
+  comment?: string | null;
+}
+
+export interface RejectExtensionDto {
+  extension_guid: Guid;
+  reason: string | null;
+}
+
+export interface DamageEntryDto {
+  stock_binding_guid: Guid;
+  description: string | null;
+  severity: DamageSeverity;
+}
+
+export interface RecordDamagesDto {
+  damages: DamageEntryDto[];
+}
+
+export interface CreateMaintenanceJobsDto {
+  damaged_stock_binding_guids: Guid[];
+}
+
+export interface GenerateInvoiceDto {
+  due_date_override?: string | null;
+}
+
+export interface RecordPaymentDto {
+  invoice_guid: Guid;
+  amount: number;
+  method: PaymentMethod;
+  reference?: string | null;
+}
+
+export interface GenerateReportDto {
+  include_damages?: boolean;
+  include_payments?: boolean;
+}
+
+export interface CompleteRentalDto {
+  comment?: string | null;
+}
+
+export interface CancelRentalDto {
+  reason: string | null;
+}
+
+export interface ScrapRentalDto {
+  reason: string | null;
 }

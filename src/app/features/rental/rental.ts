@@ -10,6 +10,7 @@ import { RouterLink } from '@angular/router';
 import { RentalApiClient } from '@lumenforge/api-client';
 import { DataTableComponent, ColumnDef } from '../../shared/data-table/data-table';
 import { RentalDataItem, RentalDataSource } from './rental.data-source';
+import { formatDateOnly, getCurrentStage, getCustomerDisplay, getProcessGuid, getRentalPurpose, getRentalTitle } from '../rental-detail/rental-process.utils';
 
 @Component({
   selector: 'app-rental',
@@ -28,19 +29,19 @@ import { RentalDataItem, RentalDataSource } from './rental.data-source';
   styleUrl: './rental.scss',
 })
 export class Rental implements OnInit {
-  readonly rowRouterLink = (row: RentalDataItem): any[] => ['/rental', row.rental.uuid];
+  readonly rowRouterLink = (row: RentalDataItem): any[] => ['/rental', getProcessGuid(row.rental)];
 
   readonly columns: ColumnDef<RentalDataItem>[] = [
-    { key: 'title', header: 'Title', cell: r => r.rental.request_title ?? 'Untitled request' },
-    { key: 'event', header: 'Event', cell: r => r.rental.event_name ?? '-' },
-    { key: 'status', header: 'Status', cell: r => this.prettifyStatus(r.rental.rental_status_name) },
-    { key: 'priority', header: 'Priority', cell: r => this.prettifyStatus(r.rental.priority) },
+    { key: 'title', header: 'Title', cell: r => getRentalTitle(r.rental) },
+    { key: 'event', header: 'Event', cell: r => getRentalPurpose(r.rental) },
+    { key: 'status', header: 'Status', cell: r => getCurrentStage(r.rental) },
+    { key: 'priority', header: 'Priority', cell: r => '-' },
     {
       key: 'window',
       header: 'Window',
-      cell: r => this.formatWindow(r.rental.planned_pickup_at, r.rental.planned_return_at),
+      cell: r => this.formatWindow(r.rental.requested_start ?? r.rental.planned_pickup_at ?? null, r.rental.requested_end ?? r.rental.planned_return_at ?? null),
     },
-    { key: 'customer', header: 'Customer', cell: r => r.rental.customer_user_id },
+    { key: 'customer', header: 'Customer', cell: r => getCustomerDisplay(r.rental) },
   ];
 
   dataSource!: RentalDataSource;
@@ -82,16 +83,6 @@ export class Rental implements OnInit {
       return '-';
     }
 
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    return `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`;
-  }
-
-  prettifyStatus(value: string | null | undefined): string {
-    if (!value) {
-      return 'Unknown';
-    }
-
-    return value.replace(/([a-z])([A-Z])/g, '$1 $2');
+    return `${formatDateOnly(start)} - ${formatDateOnly(end)}`;
   }
 }

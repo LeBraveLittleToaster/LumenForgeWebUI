@@ -12,20 +12,23 @@
   padding: 24px;
 }
 
-.inline-status {
-  justify-content: flex-start;
-  padding: 0 0 16px;
-}
-
 .error-card {
   max-width: 520px;
+}
+
+.overview-card {
+  grid-column: 1 / -1;
+}
+
+.graph-card {
+  grid-column: 1 / -1;
 }
 
 .kv-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .notes-block h3 {
@@ -37,20 +40,80 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
-.state-strip {
-  margin-bottom: 14px;
+.graph-scroll {
+  overflow-x: auto;
+  padding-bottom: 8px;
 }
 
-.state-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 8px;
+.graph-canvas {
+  position: relative;
+  min-height: 200px;
 }
 
-.allowed-list {
+.graph-edges {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.graph-edges line {
+  stroke: color-mix(in srgb, var(--mat-sys-outline) 78%, transparent);
+  stroke-width: 3;
+}
+
+.graph-node {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-highest);
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+}
+
+.graph-node strong {
+  font-size: 0.95rem;
+}
+
+.graph-node span {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.82rem;
+}
+
+.graph-node--current {
+  border-color: var(--mat-sys-primary);
+  background: color-mix(in srgb, var(--mat-sys-primary-container) 66%, transparent);
+}
+
+.graph-node--available {
+  opacity: 0.72;
+  background: color-mix(in srgb, var(--mat-sys-tertiary-container) 44%, transparent);
+}
+
+.action-list {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
 }
 
 .muted {

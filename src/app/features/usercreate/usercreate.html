@@ -59,7 +59,7 @@
     <p>You are now done.</p>
     <div>
       <button matButton matStepperPrevious>Back</button>
-      <button matButton disabled]="(isSending$ | async) === true || firstFormGroup.invalid || secondFormGroup.invalid" (click)="createUser()">Send</button>
+      <button matButton [disabled]="(isSending$ | async) === true || firstFormGroup.invalid || secondFormGroup.invalid" (click)="createUser()">Send</button>
     </div>
   </mat-step>
 </mat-stepper>

@@ -219,7 +219,7 @@
 
           <div class="step-actions">
             <button mat-button matStepperPrevious>Back</button>
-            <button mat-flat-button type="button" [disabled]="pickupForm.invalid || eventForm.invalid || requestedDevices.length === 0" (click)="submitRequest()">
+            <button mat-flat-button type="button" [disabled]="pickupForm.invalid || eventForm.invalid" (click)="submitRequest()">
               Submit Request
             </button>
           </div>
