@@ -1,0 +1,15 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ title() }}</h1>
+      <p class="page-subtitle">{{ description() }}</p>
+    </div>
+    <div class="page-header-actions">
+      <button mat-stroked-button [routerLink]="['/rental', processGuid]">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Process
+      </button>
+    </div>
+  </div>
+  <ng-content />
+</div>

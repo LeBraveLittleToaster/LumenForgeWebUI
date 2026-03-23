@@ -1,0 +1,120 @@
+<app-action-container
+  title="Assign Inventory Items"
+  description="Select inventory devices and quantities to reserve for this rental.">
+  @if (loading()) {
+    <div class="action-state">
+      <mat-spinner diameter="36"></mat-spinner>
+      <p class="muted">Loading rental process context...</p>
+    </div>
+  } @else if (!process()) {
+    <mat-card appearance="outlined" class="action-state">
+      <mat-card-content><p>The action page could not be initialized.</p></mat-card-content>
+    </mat-card>
+  } @else {
+    <div class="action-layout">
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>{{ getRentalTitle(process()) }}</mat-card-title>
+          <mat-card-subtitle>{{ getRentalSubtitle(process()) }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="summary-grid">
+            <div><span class="summary-label">Process</span><span>{{ getProcessGuid(process()) }}</span></div>
+            <div><span class="summary-label">Current stage</span><span>{{ getCurrentStage(process()) }}</span></div>
+            <div><span class="summary-label">Customer</span><span>{{ getCustomerDisplay(process()) }}</span></div>
+            <div>
+              <span class="summary-label">Requested window</span>
+              <span>{{ formatDateOnly(getRequestedStart(process())) }} to {{ formatDateOnly(getRequestedEnd(process())) }}</span>
+            </div>
+          </div>
+          <div class="summary-section"><h3>Purpose</h3><p>{{ getRentalPurpose(process()) }}</p></div>
+          <div class="summary-section"><h3>Notes</h3><p>{{ getRentalNotes(process()) }}</p></div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="outlined">
+        <mat-card-header><mat-card-title>Assign Items</mat-card-title></mat-card-header>
+        <mat-card-content>
+          @if (!isAvailable()) {
+            <div class="availability-warning">
+              <mat-icon>warning</mat-icon>
+              <span>This action is not listed as currently available by the API. Submission is blocked.</span>
+            </div>
+          }
+
+          <div class="assign-toolbar">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label>Search inventory</mat-label>
+              <input matInput [formControl]="deviceSearch" placeholder="Serial number or device name" enterkeyhint="search" />
+            </mat-form-field>
+            <button mat-flat-button type="button" (click)="loadInventoryDevices()">Search</button>
+          </div>
+
+          <div class="dual-column-grid">
+            <section class="selection-column">
+              <header>
+                <h3>Inventory</h3>
+                <p class="muted">Select devices and reserve quantities for the rental.</p>
+              </header>
+              @if (inventoryLoading()) {
+                <div class="inline-loading">
+                  <mat-spinner diameter="24"></mat-spinner>
+                  <span>Loading inventory...</span>
+                </div>
+              } @else if (devices().length === 0) {
+                <p class="muted">No inventory devices matched the current search.</p>
+              } @else {
+                <div class="selection-list">
+                  @for (device of devices(); track device.guid) {
+                    <button type="button" class="selection-row" (click)="addDevice(device)">
+                      <div>
+                        <strong>{{ device.name || device.serial_number }}</strong>
+                        <span>{{ device.serial_number }}</span>
+                      </div>
+                      <span class="selection-action">Add</span>
+                    </button>
+                  }
+                </div>
+              }
+            </section>
+
+            <section class="selection-column">
+              <header>
+                <h3>Assigned for Submission</h3>
+                <p class="muted">This matches the payload that will be sent to the action endpoint.</p>
+              </header>
+              @if (selectedDevices().length === 0) {
+                <p class="muted">No devices selected yet.</p>
+              } @else {
+                <div class="selection-list selected-list">
+                  @for (entry of selectedDevices(); track entry.device.guid) {
+                    <div class="selection-row selection-row--static">
+                      <div>
+                        <strong>{{ entry.device.name || entry.device.serial_number }}</strong>
+                        <span>{{ entry.device.serial_number }}</span>
+                      </div>
+                      <div class="selection-controls">
+                        <input type="number" min="1" [value]="entry.quantity"
+                          (change)="updateSelectedQuantity(entry.device.guid, $any($event.target).value)" />
+                        <button mat-icon-button type="button" aria-label="Remove device"
+                          (click)="removeSelectedDevice(entry.device.guid)">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </section>
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button [routerLink]="['/rental', processGuid]">Cancel</button>
+          <button mat-flat-button type="button" [disabled]="submitting() || !isAvailable()" (click)="submit()">
+            Assign Items
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  }
+</app-action-container>

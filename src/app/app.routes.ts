@@ -22,30 +22,28 @@ import { MaintenanceJobDetail } from './features/maintenance/maintenance-job-det
 import { Rental } from './features/rental/rental';
 import { RentalDetail } from './features/rental-detail/rental-detail';
 import { RentalRequest } from './features/rental-request/rental-request';
-import {
-    RentalActionApproveExtensionPage,
-    RentalActionApproveItemsPage,
-    RentalActionApproveRequestPage,
-    RentalActionAssignItemsPage,
-    RentalActionCancelPage,
-    RentalActionCompletePage,
-    RentalActionCreateMaintenanceJobsPage,
-    RentalActionGenerateChecklistPage,
-    RentalActionGenerateInvoicePage,
-    RentalActionGenerateReportPage,
-    RentalActionRecordDamagesPage,
-    RentalActionRecordPaymentPage,
-    RentalActionRecordPickupPage,
-    RentalActionRecordReturnPage,
-    RentalActionRejectExtensionPage,
-    RentalActionRejectItemsPage,
-    RentalActionRejectRequestPage,
-    RentalActionRemoveItemsPage,
-    RentalActionRequestExtensionPage,
-    RentalActionScanChecklistPage,
-    RentalActionScrapPage,
-    RentalActionSignChecklistPage,
-} from './features/rental-detail/rental-action-pages';
+import { RentalActionApproveRequest } from './features/rental-detail/actions/rental-action-approve-request/rental-action-approve-request';
+import { RentalActionRejectRequest } from './features/rental-detail/actions/rental-action-reject-request/rental-action-reject-request';
+import { RentalActionAssignItems } from './features/rental-detail/actions/rental-action-assign-items/rental-action-assign-items';
+import { RentalActionRemoveItems } from './features/rental-detail/actions/rental-action-remove-items/rental-action-remove-items';
+import { RentalActionApproveItems } from './features/rental-detail/actions/rental-action-approve-items/rental-action-approve-items';
+import { RentalActionRejectItems } from './features/rental-detail/actions/rental-action-reject-items/rental-action-reject-items';
+import { RentalActionGenerateChecklist } from './features/rental-detail/actions/rental-action-generate-checklist/rental-action-generate-checklist';
+import { RentalActionScanChecklist } from './features/rental-detail/actions/rental-action-scan-checklist/rental-action-scan-checklist';
+import { RentalActionSignChecklist } from './features/rental-detail/actions/rental-action-sign-checklist/rental-action-sign-checklist';
+import { RentalActionRecordPickup } from './features/rental-detail/actions/rental-action-record-pickup/rental-action-record-pickup';
+import { RentalActionRecordReturn } from './features/rental-detail/actions/rental-action-record-return/rental-action-record-return';
+import { RentalActionRequestExtension } from './features/rental-detail/actions/rental-action-request-extension/rental-action-request-extension';
+import { RentalActionApproveExtension } from './features/rental-detail/actions/rental-action-approve-extension/rental-action-approve-extension';
+import { RentalActionRejectExtension } from './features/rental-detail/actions/rental-action-reject-extension/rental-action-reject-extension';
+import { RentalActionRecordDamages } from './features/rental-detail/actions/rental-action-record-damages/rental-action-record-damages';
+import { RentalActionCreateMaintenanceJobs } from './features/rental-detail/actions/rental-action-create-maintenance-jobs/rental-action-create-maintenance-jobs';
+import { RentalActionGenerateInvoice } from './features/rental-detail/actions/rental-action-generate-invoice/rental-action-generate-invoice';
+import { RentalActionRecordPayment } from './features/rental-detail/actions/rental-action-record-payment/rental-action-record-payment';
+import { RentalActionGenerateReport } from './features/rental-detail/actions/rental-action-generate-report/rental-action-generate-report';
+import { RentalActionComplete } from './features/rental-detail/actions/rental-action-complete/rental-action-complete';
+import { RentalActionCancel } from './features/rental-detail/actions/rental-action-cancel/rental-action-cancel';
+import { RentalActionScrap } from './features/rental-detail/actions/rental-action-scrap/rental-action-scrap';
 
 export const routes: Routes = [
     {
@@ -129,112 +127,112 @@ export const routes: Routes = [
     {
         path: 'rental/:processGuid/actions/approve-request',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionApproveRequestPage,
+        component: RentalActionApproveRequest,
     },
     {
         path: 'rental/:processGuid/actions/reject-request',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionRejectRequestPage,
+        component: RentalActionRejectRequest,
     },
     {
         path: 'rental/:processGuid/actions/assign-items',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionAssignItemsPage,
+        component: RentalActionAssignItems,
     },
     {
         path: 'rental/:processGuid/actions/remove-items',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionRemoveItemsPage,
+        component: RentalActionRemoveItems,
     },
     {
         path: 'rental/:processGuid/actions/approve-items',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionApproveItemsPage,
+        component: RentalActionApproveItems,
     },
     {
         path: 'rental/:processGuid/actions/reject-items',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionRejectItemsPage,
+        component: RentalActionRejectItems,
     },
     {
         path: 'rental/:processGuid/actions/generate-checklist',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionGenerateChecklistPage,
+        component: RentalActionGenerateChecklist,
     },
     {
         path: 'rental/:processGuid/actions/scan-checklist',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionScanChecklistPage,
+        component: RentalActionScanChecklist,
     },
     {
         path: 'rental/:processGuid/actions/sign-checklist',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionSignChecklistPage,
+        component: RentalActionSignChecklist,
     },
     {
         path: 'rental/:processGuid/actions/record-pickup',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionRecordPickupPage,
+        component: RentalActionRecordPickup,
     },
     {
         path: 'rental/:processGuid/actions/record-return',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionRecordReturnPage,
+        component: RentalActionRecordReturn,
     },
     {
         path: 'rental/:processGuid/actions/request-extension',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionRequestExtensionPage,
+        component: RentalActionRequestExtension,
     },
     {
         path: 'rental/:processGuid/actions/approve-extension',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionApproveExtensionPage,
+        component: RentalActionApproveExtension,
     },
     {
         path: 'rental/:processGuid/actions/reject-extension',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionRejectExtensionPage,
+        component: RentalActionRejectExtension,
     },
     {
         path: 'rental/:processGuid/actions/record-damages',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionRecordDamagesPage,
+        component: RentalActionRecordDamages,
     },
     {
         path: 'rental/:processGuid/actions/create-maintenance-jobs',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionCreateMaintenanceJobsPage,
+        component: RentalActionCreateMaintenanceJobs,
     },
     {
         path: 'rental/:processGuid/actions/generate-invoice',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionGenerateInvoicePage,
+        component: RentalActionGenerateInvoice,
     },
     {
         path: 'rental/:processGuid/actions/record-payment',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionRecordPaymentPage,
+        component: RentalActionRecordPayment,
     },
     {
         path: 'rental/:processGuid/actions/generate-report',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionGenerateReportPage,
+        component: RentalActionGenerateReport,
     },
     {
         path: 'rental/:processGuid/actions/complete',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionCompletePage,
+        component: RentalActionComplete,
     },
     {
         path: 'rental/:processGuid/actions/cancel',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionCancelPage,
+        component: RentalActionCancel,
     },
     {
         path: 'rental/:processGuid/actions/scrap',
         canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
-        component: RentalActionScrapPage,
+        component: RentalActionScrap,
     },
     {
         path: "admin",

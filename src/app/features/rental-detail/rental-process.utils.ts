@@ -8,7 +8,7 @@ import {
   RentalProcessSummaryView,
   RentalProcessView,
 } from '@lumenforge/api-client';
-import { getRentalActionMeta } from './rental-action.registry';
+
 
 export interface RentalBindingOption {
   guid: string;
@@ -130,9 +130,7 @@ export function normalizeActionType(action: RentalActionView | string | null | u
 }
 
 export function getActionLabel(action: RentalActionView | string): string {
-  const normalized = normalizeActionType(action);
-  const meta = getRentalActionMeta(normalized);
-  return meta?.label ?? prettifyToken(String(normalized));
+  return prettifyToken(String(normalizeActionType(action)));
 }
 
 export function getProcessGuid(process: RentalProcessView | RentalProcessSummaryView | null | undefined): string {

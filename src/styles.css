@@ -250,6 +250,84 @@ mat-card.lf-card:hover {
   height: 28px !important;
 }
 
+/* ── Rental action page ───────────────────────────────────── */
+.action-layout {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+}
+
+.summary-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.summary-grid > div,
+.summary-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.summary-section {
+  margin-top: 16px;
+}
+
+.summary-section h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.summary-section p,
+.muted {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.action-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+}
+
+.availability-warning {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--mat-sys-error-container) 70%, transparent);
+  color: var(--mat-sys-on-error-container);
+}
+
+.generic-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.generic-form mat-form-field {
+  width: 100%;
+}
+
+@media (max-width: 960px) {
+  .action-layout,
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── Global dialog sizing ─────────────────────────────────── */
 .cdk-overlay-pane.lf-app-dialog {
   width: min(1200px, 96vw) !important;

@@ -1,0 +1,45 @@
+.selection-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.selection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.selection-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 14px;
+  background: var(--mat-sys-surface);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  strong {
+    font-size: 0.95rem;
+  }
+
+  span {
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.selection-row--selected {
+  border-color: var(--mat-sys-primary);
+  background: color-mix(in srgb, var(--mat-sys-primary-container) 40%, transparent);
+}

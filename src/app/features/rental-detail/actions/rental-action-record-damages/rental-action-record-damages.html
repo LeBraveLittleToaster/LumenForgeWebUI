@@ -1,0 +1,100 @@
+<app-action-container
+  title="Record Damage Reports"
+  description="Capture one or more damage findings against returned stock bindings.">
+  @if (loading()) {
+    <div class="action-state">
+      <mat-spinner diameter="36"></mat-spinner>
+      <p class="muted">Loading rental process context...</p>
+    </div>
+  } @else if (!process()) {
+    <mat-card appearance="outlined" class="action-state">
+      <mat-card-content><p>The action page could not be initialized.</p></mat-card-content>
+    </mat-card>
+  } @else {
+    <div class="action-layout">
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>{{ getRentalTitle(process()) }}</mat-card-title>
+          <mat-card-subtitle>{{ getRentalSubtitle(process()) }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="summary-grid">
+            <div><span class="summary-label">Process</span><span>{{ getProcessGuid(process()) }}</span></div>
+            <div><span class="summary-label">Current stage</span><span>{{ getCurrentStage(process()) }}</span></div>
+            <div><span class="summary-label">Customer</span><span>{{ getCustomerDisplay(process()) }}</span></div>
+            <div>
+              <span class="summary-label">Requested window</span>
+              <span>{{ formatDateOnly(getRequestedStart(process())) }} to {{ formatDateOnly(getRequestedEnd(process())) }}</span>
+            </div>
+          </div>
+          <div class="summary-section"><h3>Purpose</h3><p>{{ getRentalPurpose(process()) }}</p></div>
+          <div class="summary-section"><h3>Notes</h3><p>{{ getRentalNotes(process()) }}</p></div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="outlined">
+        <mat-card-header><mat-card-title>Record Damages</mat-card-title></mat-card-header>
+        <mat-card-content>
+          @if (!isAvailable()) {
+            <div class="availability-warning">
+              <mat-icon>warning</mat-icon>
+              <span>This action is not listed as currently available by the API. Submission is blocked.</span>
+            </div>
+          }
+          <div class="selection-column">
+            <header>
+              <h3>Damage Entries</h3>
+              <p class="muted">Record one or more findings from the returned equipment.</p>
+            </header>
+            <div class="entry-actions">
+              <button mat-stroked-button type="button" (click)="addEntry()">
+                <mat-icon>add</mat-icon>
+                Add Damage Entry
+              </button>
+            </div>
+            @if (damageEntries().length === 0) {
+              <p class="muted">No damage entries added yet.</p>
+            } @else {
+              <div class="damage-list">
+                @for (entry of damageEntries(); track $index) {
+                  <div class="damage-card">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Stock binding</mat-label>
+                      <mat-select [value]="entry.stockBindingGuid"
+                        (valueChange)="updateEntry($index, { stockBindingGuid: $event })">
+                        @for (binding of bindingOptions(); track binding.guid) {
+                          <mat-option [value]="binding.guid">{{ binding.label }}</mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Severity</mat-label>
+                      <mat-select [value]="entry.severity"
+                        (valueChange)="updateEntry($index, { severity: $event })">
+                        @for (opt of damageSeverityOptions; track opt.value) {
+                          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="full-span">
+                      <mat-label>Description</mat-label>
+                      <textarea matInput rows="3" [value]="entry.description"
+                        (input)="updateEntry($index, { description: $any($event.target).value })"></textarea>
+                    </mat-form-field>
+                    <button mat-button type="button" class="danger-link" (click)="removeEntry($index)">Remove</button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button [routerLink]="['/rental', processGuid]">Cancel</button>
+          <button mat-flat-button type="button" [disabled]="submitting() || !isAvailable()" (click)="submit()">
+            Record Damages
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  }
+</app-action-container>

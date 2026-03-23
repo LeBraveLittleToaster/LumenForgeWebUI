@@ -1,0 +1,40 @@
+.selection-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.damage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.damage-card {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 14px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 14px;
+}
+
+.full-span {
+  grid-column: 1 / -1;
+}
+
+.entry-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.danger-link {
+  justify-self: flex-end;
+  color: var(--mat-sys-error);
+}
+
+@media (max-width: 960px) {
+  .damage-card {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,77 @@
+<app-action-container
+  title="Remove Assigned Items"
+  description="Remove one or more current stock bindings from the rental.">
+  @if (loading()) {
+    <div class="action-state">
+      <mat-spinner diameter="36"></mat-spinner>
+      <p class="muted">Loading rental process context...</p>
+    </div>
+  } @else if (!process()) {
+    <mat-card appearance="outlined" class="action-state">
+      <mat-card-content><p>The action page could not be initialized.</p></mat-card-content>
+    </mat-card>
+  } @else {
+    <div class="action-layout">
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>{{ getRentalTitle(process()) }}</mat-card-title>
+          <mat-card-subtitle>{{ getRentalSubtitle(process()) }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="summary-grid">
+            <div><span class="summary-label">Process</span><span>{{ getProcessGuid(process()) }}</span></div>
+            <div><span class="summary-label">Current stage</span><span>{{ getCurrentStage(process()) }}</span></div>
+            <div><span class="summary-label">Customer</span><span>{{ getCustomerDisplay(process()) }}</span></div>
+            <div>
+              <span class="summary-label">Requested window</span>
+              <span>{{ formatDateOnly(getRequestedStart(process())) }} to {{ formatDateOnly(getRequestedEnd(process())) }}</span>
+            </div>
+          </div>
+          <div class="summary-section"><h3>Purpose</h3><p>{{ getRentalPurpose(process()) }}</p></div>
+          <div class="summary-section"><h3>Notes</h3><p>{{ getRentalNotes(process()) }}</p></div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="outlined">
+        <mat-card-header><mat-card-title>Remove Items</mat-card-title></mat-card-header>
+        <mat-card-content>
+          @if (!isAvailable()) {
+            <div class="availability-warning">
+              <mat-icon>warning</mat-icon>
+              <span>This action is not listed as currently available by the API. Submission is blocked.</span>
+            </div>
+          }
+          <div class="selection-column">
+            <header>
+              <h3>Assigned Stock Bindings</h3>
+              <p class="muted">Select the bindings that should be removed from the rental.</p>
+            </header>
+            @if (bindingOptions().length === 0) {
+              <p class="muted">No stock bindings are currently exposed by the process payload.</p>
+            } @else {
+              <div class="selection-list">
+                @for (binding of bindingOptions(); track binding.guid) {
+                  <button type="button" class="selection-row"
+                    [class.selection-row--selected]="selectedBindingGuids().includes(binding.guid)"
+                    (click)="toggleBinding(binding.guid)">
+                    <div>
+                      <strong>{{ binding.label }}</strong>
+                      <span>{{ binding.secondary }}</span>
+                    </div>
+                    <mat-icon>{{ selectedBindingGuids().includes(binding.guid) ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button [routerLink]="['/rental', processGuid]">Cancel</button>
+          <button mat-flat-button type="button" [disabled]="submitting() || !isAvailable()" (click)="submit()">
+            Remove Items
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  }
+</app-action-container>

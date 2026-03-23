@@ -1,0 +1,60 @@
+<app-action-container
+  title="Approve Rental Request"
+  description="Confirm the request is valid and move the process into the approved stage.">
+  @if (loading()) {
+    <div class="action-state">
+      <mat-spinner diameter="36"></mat-spinner>
+      <p class="muted">Loading rental process context...</p>
+    </div>
+  } @else if (!process()) {
+    <mat-card appearance="outlined" class="action-state">
+      <mat-card-content><p>The action page could not be initialized.</p></mat-card-content>
+    </mat-card>
+  } @else {
+    <div class="action-layout">
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>{{ getRentalTitle(process()) }}</mat-card-title>
+          <mat-card-subtitle>{{ getRentalSubtitle(process()) }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="summary-grid">
+            <div><span class="summary-label">Process</span><span>{{ getProcessGuid(process()) }}</span></div>
+            <div><span class="summary-label">Current stage</span><span>{{ getCurrentStage(process()) }}</span></div>
+            <div><span class="summary-label">Customer</span><span>{{ getCustomerDisplay(process()) }}</span></div>
+            <div>
+              <span class="summary-label">Requested window</span>
+              <span>{{ formatDateOnly(getRequestedStart(process())) }} to {{ formatDateOnly(getRequestedEnd(process())) }}</span>
+            </div>
+          </div>
+          <div class="summary-section"><h3>Purpose</h3><p>{{ getRentalPurpose(process()) }}</p></div>
+          <div class="summary-section"><h3>Notes</h3><p>{{ getRentalNotes(process()) }}</p></div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="outlined">
+        <mat-card-header><mat-card-title>Approve Request</mat-card-title></mat-card-header>
+        <mat-card-content>
+          @if (!isAvailable()) {
+            <div class="availability-warning">
+              <mat-icon>warning</mat-icon>
+              <span>This action is not listed as currently available by the API. Submission is blocked.</span>
+            </div>
+          }
+          <div class="generic-form">
+            <mat-form-field appearance="outline">
+              <mat-label>Approval comment</mat-label>
+              <textarea matInput rows="4" [formControl]="comment"></textarea>
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button [routerLink]="['/rental', processGuid]">Cancel</button>
+          <button mat-flat-button type="button" [disabled]="submitting() || !isAvailable()" (click)="submit()">
+            Approve Request
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  }
+</app-action-container>
