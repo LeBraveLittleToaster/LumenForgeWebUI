@@ -15,6 +15,7 @@ import {
   getRequestedEnd, getRequestedStart, normalizeActionType,
 } from '../../rental-process.utils';
 import { ActionContainerComponent } from '../../../../shared/action-container/action-container';
+import { ActionRentalCard } from '../../../../shared/action-rental-card/action-rental-card';
 
 @Component({
   selector: 'app-rental-action-generate-report',
@@ -22,7 +23,7 @@ import { ActionContainerComponent } from '../../../../shared/action-container/ac
   imports: [
     ActionContainerComponent, ReactiveFormsModule, MatButtonModule, MatCardModule,
     MatCheckboxModule, MatIconModule, MatProgressSpinnerModule,
-    MatSnackBarModule, RouterLink,
+    MatSnackBarModule, RouterLink, ActionRentalCard,
   ],
   templateUrl: './rental-action-generate-report.html',
   styleUrl: './rental-action-generate-report.scss',

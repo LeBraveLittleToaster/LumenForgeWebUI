@@ -17,6 +17,7 @@ import {
   getRentalTitle, getRequestedEnd, getRequestedStart, normalizeActionType,
 } from '../../rental-process.utils';
 import { ActionContainerComponent } from '../../../../shared/action-container/action-container';
+import { ActionRentalCard } from '../../../../shared/action-rental-card/action-rental-card';
 
 @Component({
   selector: 'app-rental-action-scan-checklist',
@@ -24,7 +25,7 @@ import { ActionContainerComponent } from '../../../../shared/action-container/ac
   imports: [
     ActionContainerComponent, ReactiveFormsModule, MatButtonModule, MatCardModule,
     MatFormFieldModule, MatIconModule, MatInputModule, MatProgressSpinnerModule,
-    MatSelectModule, MatSnackBarModule, RouterLink,
+    MatSelectModule, MatSnackBarModule, RouterLink, ActionRentalCard,
   ],
   templateUrl: './rental-action-scan-checklist.html',
   styleUrl: './rental-action-scan-checklist.scss',

@@ -16,6 +16,7 @@ import {
   getRequestedEnd, getRequestedStart, normalizeActionType,
 } from '../../rental-process.utils';
 import { ActionContainerComponent } from '../../../../shared/action-container/action-container';
+import { ActionRentalCard } from '../../../../shared/action-rental-card/action-rental-card';
 
 const CHECKLIST_TYPE_OPTIONS: Array<{ value: ChecklistType; label: string }> = [
   { value: 'PICKUP', label: 'Pickup' },
@@ -28,7 +29,7 @@ const CHECKLIST_TYPE_OPTIONS: Array<{ value: ChecklistType; label: string }> = [
   imports: [
     ActionContainerComponent, ReactiveFormsModule, MatButtonModule, MatCardModule,
     MatFormFieldModule, MatIconModule, MatProgressSpinnerModule, MatSelectModule,
-    MatSnackBarModule, RouterLink,
+    MatSnackBarModule, RouterLink, ActionRentalCard,
   ],
   templateUrl: './rental-action-generate-checklist.html',
   styleUrl: './rental-action-generate-checklist.scss',

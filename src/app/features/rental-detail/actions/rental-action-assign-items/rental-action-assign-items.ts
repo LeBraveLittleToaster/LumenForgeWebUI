@@ -19,6 +19,7 @@ import {
   getRequestedEnd, getRequestedStart, normalizeActionType,
 } from '../../rental-process.utils';
 import { ActionContainerComponent } from '../../../../shared/action-container/action-container';
+import { ActionRentalCard } from '../../../../shared/action-rental-card/action-rental-card';
 
 interface SelectedDevice {
   device: DeviceView;
@@ -31,7 +32,7 @@ interface SelectedDevice {
   imports: [
     ActionContainerComponent, ReactiveFormsModule, MatButtonModule, MatCardModule,
     MatFormFieldModule, MatIconModule, MatInputModule, MatProgressSpinnerModule,
-    MatSnackBarModule, RouterLink,
+    MatSnackBarModule, RouterLink, ActionRentalCard,
   ],
   templateUrl: './rental-action-assign-items.html',
   styleUrl: './rental-action-assign-items.scss',

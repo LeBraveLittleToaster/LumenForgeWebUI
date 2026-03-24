@@ -17,6 +17,7 @@ import {
   getRentalTitle, getRequestedEnd, getRequestedStart, normalizeActionType,
 } from '../../rental-process.utils';
 import { ActionContainerComponent } from '../../../../shared/action-container/action-container';
+import { ActionRentalCard } from '../../../../shared/action-rental-card/action-rental-card';
 
 @Component({
   selector: 'app-rental-action-reject-extension',
@@ -25,6 +26,7 @@ import { ActionContainerComponent } from '../../../../shared/action-container/ac
     ActionContainerComponent, ReactiveFormsModule, MatButtonModule, MatCardModule,
     MatFormFieldModule, MatIconModule, MatInputModule, MatProgressSpinnerModule,
     MatSelectModule, MatSnackBarModule, RouterLink,
+    ActionRentalCard,
   ],
   templateUrl: './rental-action-reject-extension.html',
   styleUrl: './rental-action-reject-extension.scss',

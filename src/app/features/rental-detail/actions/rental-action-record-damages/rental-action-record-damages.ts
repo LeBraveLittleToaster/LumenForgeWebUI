@@ -16,6 +16,7 @@ import {
   getRentalTitle, getRequestedEnd, getRequestedStart, normalizeActionType,
 } from '../../rental-process.utils';
 import { ActionContainerComponent } from '../../../../shared/action-container/action-container';
+import { ActionRentalCard } from '../../../../shared/action-rental-card/action-rental-card';
 
 interface DamageEntryDraft {
   stockBindingGuid: string;
@@ -36,7 +37,7 @@ const DAMAGE_SEVERITY_OPTIONS: Array<{ value: DamageSeverity; label: string }> =
   imports: [
     ActionContainerComponent, MatButtonModule, MatCardModule, MatFormFieldModule,
     MatIconModule, MatInputModule, MatProgressSpinnerModule, MatSelectModule,
-    MatSnackBarModule, RouterLink,
+    MatSnackBarModule, RouterLink, ActionRentalCard,
   ],
   templateUrl: './rental-action-record-damages.html',
   styleUrl: './rental-action-record-damages.scss',

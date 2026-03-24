@@ -26,9 +26,20 @@
 
 .kv-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 12px;
   margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.kv-grid-item {
+  display: grid;
+  gap: 4px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.kv-grid-item-value {
+  padding: 0.2em ;
 }
 
 .notes-block h3 {

@@ -41,12 +41,12 @@
             </mat-card-header>
             <mat-card-content>
                 <div class="kv-grid">
-                    <div><strong>Process GUID:</strong> {{ getProcessGuid(rental) }}</div>
-                    <div><strong>Current Stage:</strong> {{ getCurrentStage(rental) }}</div>
-                    <div><strong>Customer:</strong> {{ getCustomerDisplay(rental) }}</div>
-                    <div><strong>Requested Start:</strong> {{ formatDateTime(getRequestedStart(rental)) }}</div>
-                    <div><strong>Requested End:</strong> {{ formatDateTime(getRequestedEnd(rental)) }}</div>
-                    <div><strong>Available Actions:</strong> {{ availableActions.length }}</div>
+                    <div class="kv-grid-item"><strong>Process GUID:</strong> <span class="kv-grid-item-value">{{ getProcessGuid(rental) }} </span></div>
+                    <div class="kv-grid-item"><strong>Current Stage:</strong> <span class="kv-grid-item-value">{{ getCurrentStage(rental) }}</span></div>
+                    <div class="kv-grid-item"><strong>Customer:</strong> <span class="kv-grid-item-value">{{ getCustomerDisplay(rental) }}</span></div>
+                    <div class="kv-grid-item"><strong>Requested Start:</strong> <span class="kv-grid-item-value">{{ formatDateTime(getRequestedStart(rental)) }}</span></div>
+                    <div class="kv-grid-item"><strong>Requested End:</strong> <span class="kv-grid-item-value">{{ formatDateTime(getRequestedEnd(rental)) }}</span></div>
+                    <div class="kv-grid-item"><strong>Available Actions:</strong> <span class="kv-grid-item-value">{{ availableActions.length }}</span></div>
                 </div>
 
                 <div class="notes-block">

@@ -12,25 +12,7 @@
     </mat-card>
   } @else {
     <div class="action-layout">
-      <mat-card appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>{{ getRentalTitle(process()) }}</mat-card-title>
-          <mat-card-subtitle>{{ getRentalSubtitle(process()) }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="summary-grid">
-            <div><span class="summary-label">Process</span><span>{{ getProcessGuid(process()) }}</span></div>
-            <div><span class="summary-label">Current stage</span><span>{{ getCurrentStage(process()) }}</span></div>
-            <div><span class="summary-label">Customer</span><span>{{ getCustomerDisplay(process()) }}</span></div>
-            <div>
-              <span class="summary-label">Requested window</span>
-              <span>{{ formatDateOnly(getRequestedStart(process())) }} to {{ formatDateOnly(getRequestedEnd(process())) }}</span>
-            </div>
-          </div>
-          <div class="summary-section"><h3>Purpose</h3><p>{{ getRentalPurpose(process()) }}</p></div>
-          <div class="summary-section"><h3>Notes</h3><p>{{ getRentalNotes(process()) }}</p></div>
-        </mat-card-content>
-      </mat-card>
+      <app-action-rental-card [process]="process()"></app-action-rental-card>
 
       <mat-card appearance="outlined">
         <mat-card-header><mat-card-title>Reject Items</mat-card-title></mat-card-header>

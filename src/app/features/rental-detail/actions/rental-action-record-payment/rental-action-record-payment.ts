@@ -17,6 +17,7 @@ import {
   getRentalTitle, getRequestedEnd, getRequestedStart, normalizeActionType,
 } from '../../rental-process.utils';
 import { ActionContainerComponent } from '../../../../shared/action-container/action-container';
+import { ActionRentalCard } from '../../../../shared/action-rental-card/action-rental-card';
 
 const PAYMENT_METHOD_OPTIONS: Array<{ value: PaymentMethod; label: string }> = [
   { value: 'CASH', label: 'Cash' },
@@ -31,7 +32,7 @@ const PAYMENT_METHOD_OPTIONS: Array<{ value: PaymentMethod; label: string }> = [
   imports: [
     ActionContainerComponent, ReactiveFormsModule, MatButtonModule, MatCardModule,
     MatFormFieldModule, MatIconModule, MatInputModule, MatProgressSpinnerModule,
-    MatSelectModule, MatSnackBarModule, RouterLink,
+    MatSelectModule, MatSnackBarModule, RouterLink, ActionRentalCard,
   ],
   templateUrl: './rental-action-record-payment.html',
   styleUrl: './rental-action-record-payment.scss',

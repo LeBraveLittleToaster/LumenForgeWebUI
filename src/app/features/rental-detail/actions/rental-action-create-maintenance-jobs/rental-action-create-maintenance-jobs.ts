@@ -13,6 +13,7 @@ import {
   getRentalTitle, getRequestedEnd, getRequestedStart, normalizeActionType,
 } from '../../rental-process.utils';
 import { ActionContainerComponent } from '../../../../shared/action-container/action-container';
+import { ActionRentalCard } from '../../../../shared/action-rental-card/action-rental-card';
 
 @Component({
   selector: 'app-rental-action-create-maintenance-jobs',
@@ -20,6 +21,7 @@ import { ActionContainerComponent } from '../../../../shared/action-container/ac
   imports: [
     ActionContainerComponent, MatButtonModule, MatCardModule,
     MatIconModule, MatProgressSpinnerModule, MatSnackBarModule, RouterLink,
+    ActionRentalCard,
   ],
   templateUrl: './rental-action-create-maintenance-jobs.html',
   styleUrl: './rental-action-create-maintenance-jobs.scss',
