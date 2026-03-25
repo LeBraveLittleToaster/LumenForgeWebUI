@@ -288,6 +288,7 @@ export class RentalRequest implements OnInit {
         return EMPTY;
       })
     ).subscribe(created => {
+      console.log(created)
       this.snackBar.open(`Rental request created (${getProcessGuid(created)}).`, 'Close', { duration: 3500 });
       this.router.navigate(['/rental', getProcessGuid(created)]);
     });
