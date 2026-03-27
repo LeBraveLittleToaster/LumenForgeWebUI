@@ -21,7 +21,6 @@ import { ColumnDef } from '../../shared/data-table/data-table';
 import { RentalApiClient, CatalogueApiClient, CatalogueItemView, QuestionDataType, QuestionView } from '@lumenforge/api-client';
 import { RentalRequestDevicesDataSource, RentalRequestDeviceItem } from './rental-request-devices.data-source';
 import { catchError, EMPTY } from 'rxjs';
-import { getProcessGuid } from '../rental-detail/rental-process.utils';
 
 export type YesNoAnswer = 'yes' | 'no';
 
@@ -328,14 +327,7 @@ export class RentalRequest implements OnInit {
       };
     });
 
-    const notes = [
-      `Location: ${this.eventForm.controls.location.value}`,
-      `Transportation: ${this.pickupForm.controls.transportationMethod.value}`,
-      'Requested catalogue devices:',
-      requestedDevicesNotes,
-      surveyNotes ? 'Survey answers:' : '',
-      surveyNotes,
-    ].filter(Boolean).join('\n');
+    const notes = "No Notes yet"
 
     this.rentalApiClient.createRental({
       customer_name: this.eventForm.controls.name.value,
@@ -351,8 +343,8 @@ export class RentalRequest implements OnInit {
       })
     ).subscribe(created => {
       console.log(created)
-      this.snackBar.open(`Rental request created (${getProcessGuid(created)}).`, 'Close', { duration: 3500 });
-      this.router.navigate(['/rental', getProcessGuid(created)]);
+      this.snackBar.open(`Rental request created (${created.process_instance_guid}).`, 'Close', { duration: 3500 });
+      this.router.navigate(['/rental', created.process_instance_guid]);
     });
   }
 }

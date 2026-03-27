@@ -159,6 +159,13 @@ export interface RentalDamageReportView {
 
 // ------------------- Core Rental Views -------------------
 
+export interface AnswerView {
+  guid: Guid;
+  question_guid: Guid;
+  question_text: string;
+  value: string;
+}
+
 /** Inner rental data — nested inside RentalProcessView.rental. */
 export interface RentalView {
   uuid: Guid;
@@ -172,6 +179,7 @@ export interface RentalView {
   notes?: string | null;
   created_at: string;
   updated_at: string;
+  answers: AnswerView[];
 }
 
 /** Full process view returned by GET /rentals/:guid. */
@@ -199,5 +207,70 @@ export interface RentalProcessSummaryView {
   priority?: RentalPriority | null;
   created_at: string;
   updated_at: string;
+}
+
+// ------------------- Action Result Views -------------------
+
+/** Base view returned by all rental action endpoints. */
+export interface ActionResultView {
+  success: boolean;
+  action_name: string;
+  timestamp: string;
+  new_stage?: RentalStage | null;
+  errors: Record<string, string>;
+}
+
+export interface CreateRentalResultView extends ActionResultView {
+  process_instance_guid: Guid;
+}
+
+export interface GenerateChecklistResultView extends ActionResultView {
+  checklist_guid: Guid;
+}
+
+export interface GenerateInvoiceResultView extends ActionResultView {
+  invoice_guid: Guid;
+}
+
+export interface RequestExtensionResultView extends ActionResultView {
+  extension_guid?: Guid | null;
+}
+
+export interface CreateMaintenanceJobsResultView extends ActionResultView {
+  maintenance_job_guids: Guid[];
+}
+
+export interface RentalReportSummaryView {
+  process_guid: Guid;
+  customer_name?: string | null;
+  stage: string;
+  damage_count: number;
+  extension_count: number;
+}
+
+export interface GenerateReportResultView extends ActionResultView {
+  summary?: RentalReportSummaryView | null;
+}
+
+// ------------------- Rental Overview / Stats Views -------------------
+
+export interface RentalOverviewDto {
+  total_processes: number;
+  by_stage: Record<RentalStage, number>;
+  active_count: number;
+  terminal_count: number;
+  total_damage_reports: number;
+  total_extension_requests: number;
+  pending_extensions: number;
+  total_action_logs: number;
+}
+
+export interface RentalRecentActivityDto {
+  processes_created: number;
+  processes_completed: number;
+  processes_cancelled: number;
+  actions_performed: number;
+  damages_reported: number;
+  window_days: number;
 }
 
