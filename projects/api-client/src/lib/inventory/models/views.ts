@@ -52,3 +52,17 @@ export interface DeviceView {
   created_at: IsoInstant;
   updated_at: IsoInstant;
 }
+
+export type DeviceRelationType = 'Flexible' | 'Fixed';
+
+export interface DeviceRelationView {
+  guid: Guid;
+  parent_device_guid: Guid;
+  child_device_guid: Guid;
+  parent_device_name?: string | null;
+  child_device_name?: string | null;
+  contained_amount: number;
+  relation_type: DeviceRelationType;
+  created_at: IsoInstant;
+  updated_at: IsoInstant;
+}

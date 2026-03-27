@@ -4,10 +4,11 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { toHttpParams } from './http-params';
 
-import { CategoryView, DeviceParameterView, DeviceView, PaginatedList, StockView, VendorView } from './models/views';
+import { CategoryView, DeviceParameterView, DeviceRelationView, DeviceView, PaginatedList, StockView, VendorView } from './models/views';
 import {
   CreateCategoryDto,
   CreateDeviceDto,
+  CreateDeviceRelationDto,
   CreateVendorDto,
   SetDeviceCategoriesDto,
   UpdateCategoryDto,
@@ -133,5 +134,20 @@ export class InventoryApiClient {
 
   deleteVendor(vendorGuid: Guid): Observable<void> {
     return this.http.delete<void>(this.url(`/api/v1/inventory/vendors/${vendorGuid}`));
+  }
+
+  // -------------------------
+  // Device Relations (api/v1/inventory/device-relations)
+  // -------------------------
+  createDeviceRelation(dto: CreateDeviceRelationDto): Observable<DeviceRelationView> {
+    return this.http.put<DeviceRelationView>(this.url('/api/v1/inventory/device-relations'), dto);
+  }
+
+  getChildRelations(parentDeviceGuid: Guid): Observable<PaginatedList<DeviceRelationView>> {
+    return this.http.get<PaginatedList<DeviceRelationView>>(this.url(`/api/v1/inventory/device-relations/by-parent/${parentDeviceGuid}`));
+  }
+
+  deleteDeviceRelation(relationGuid: Guid): Observable<void> {
+    return this.http.delete<void>(this.url(`/api/v1/inventory/device-relations/${relationGuid}`));
   }
 }

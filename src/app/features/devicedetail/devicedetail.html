@@ -144,6 +144,61 @@
 			<div class="content-card section-card">
 				<div class="section-header">
 					<div>
+						<h2 class="section-title">Case Contents</h2>
+						<p class="section-subtitle">Child devices contained in this case.</p>
+					</div>
+					<div class="section-actions">
+						<button mat-stroked-button type="button" (click)="openAddChildDialog(state.device)">
+							<mat-icon>add_link</mat-icon>
+							Add Child
+						</button>
+					</div>
+				</div>
+
+				@if (childRelations$ | async; as relations) {
+					@if (relations.length === 0) {
+						<div class="empty-state">
+							<mat-icon>inventory_2</mat-icon>
+							<p>No child devices linked. Use "Add Child" to build case contents.</p>
+						</div>
+					} @else {
+						<table mat-table [dataSource]="relations">
+							<ng-container matColumnDef="child_device_name">
+								<th mat-header-cell *matHeaderCellDef>Child Device</th>
+								<td mat-cell *matCellDef="let r">{{ r.child_device_name || r.child_device_guid }}</td>
+							</ng-container>
+
+							<ng-container matColumnDef="contained_amount">
+								<th mat-header-cell *matHeaderCellDef>Amount</th>
+								<td mat-cell *matCellDef="let r">{{ r.contained_amount }}</td>
+							</ng-container>
+
+							<ng-container matColumnDef="relation_type">
+								<th mat-header-cell *matHeaderCellDef>Type</th>
+								<td mat-cell *matCellDef="let r">
+									<span class="info-chip">{{ r.relation_type }}</span>
+								</td>
+							</ng-container>
+
+							<ng-container matColumnDef="actions">
+								<th mat-header-cell *matHeaderCellDef>Actions</th>
+								<td mat-cell *matCellDef="let r">
+									<button mat-icon-button type="button" aria-label="Remove child relation" (click)="removeChildRelation(r)">
+										<mat-icon>link_off</mat-icon>
+									</button>
+								</td>
+							</ng-container>
+
+							<tr mat-header-row *matHeaderRowDef="relationColumns"></tr>
+							<tr mat-row *matRowDef="let row; columns: relationColumns"></tr>
+						</table>
+					}
+				}
+			</div>
+
+			<div class="content-card section-card">
+				<div class="section-header">
+					<div>
 						<h2 class="section-title">Parameters</h2>
 						<p class="section-subtitle">Key-value metadata for this device.</p>
 					</div>

@@ -55,6 +55,7 @@ export {
   type CreateDeviceParameterDto,
   type CreateStockDto,
   type CreateDeviceDto,
+  type CreateDeviceRelationDto,
   type UpdateDeviceDto,
   type UpdateStockDto,
   type SetDeviceCategoriesDto,
@@ -71,6 +72,8 @@ export {
   type DeviceParameterView,
   type StockView,
   type DeviceView,
+  type DeviceRelationView,
+  type DeviceRelationType,
 } from './inventory/models/views';
 export { type ListQueryDto as InventoryListQueryDto } from './inventory/models/query';
 

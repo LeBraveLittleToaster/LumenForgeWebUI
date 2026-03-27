@@ -1,4 +1,5 @@
 import { Guid, IsoDate, StockUnitType } from '../../core/common';
+import { DeviceRelationType } from './views';
 
 export interface CreateDeviceParameterDto {
   key: string;
@@ -65,4 +66,11 @@ export interface CreateVendorDto {
 
 export interface UpdateVendorDto {
   name: string;
+}
+
+export interface CreateDeviceRelationDto {
+  parent_device_guid: Guid;
+  child_device_guid: Guid;
+  contained_amount?: number;
+  relation_type?: DeviceRelationType;
 }
