@@ -1,12 +1,5 @@
 import { RentalSortField, RentalStage } from './views';
 
-/** Common paging + search parameters for listing survey questions. */
-export interface RentalQuestionsQueryDto {
-  search?: string | null;
-  limit?: number;
-  offset?: number;
-}
-
 /** Paging, search, and filter parameters for listing rental processes. */
 export interface RentalQueryDto {
   limit?: number;

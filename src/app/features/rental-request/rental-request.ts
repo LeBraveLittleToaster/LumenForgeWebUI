@@ -18,12 +18,18 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { ColumnDef } from '../../shared/data-table/data-table';
-import { RentalApiClient, CatalogueApiClient, CatalogueItemView, QuestionView } from '@lumenforge/api-client';
+import { RentalApiClient, CatalogueApiClient, CatalogueItemView, QuestionDataType, QuestionView } from '@lumenforge/api-client';
 import { RentalRequestDevicesDataSource, RentalRequestDeviceItem } from './rental-request-devices.data-source';
 import { catchError, EMPTY } from 'rxjs';
 import { getProcessGuid } from '../rental-detail/rental-process.utils';
 
-export type QuestionAnswer = 'yes' | 'no' | 'not_important' | 'unknown';
+export type YesNoAnswer = 'yes' | 'no';
+
+interface QuestionEntry {
+  guid: string;
+  text: string;
+  dataType: QuestionDataType;
+}
 
 interface RequestedDevice {
   guid: string;
@@ -78,11 +84,9 @@ export class RentalRequest implements OnInit {
     { key: 'description', header: 'Description', cell: r => r.item.description },
   ];
 
-  readonly answerOptions: Array<{ value: QuestionAnswer; label: string }> = [
+  readonly yesNoOptions: Array<{ value: YesNoAnswer; label: string }> = [
     { value: 'yes', label: 'Yes' },
     { value: 'no', label: 'No' },
-    { value: 'not_important', label: 'Not Important' },
-    { value: 'unknown', label: 'Unknown' },
   ];
 
   readonly transportationOptions = [
@@ -96,7 +100,7 @@ export class RentalRequest implements OnInit {
   deviceSearchCtrl = new FormControl('', { nonNullable: true });
   requestedDevices: RequestedDevice[] = [];
   deviceQuantities: Record<string, number> = {};
-  questions: string[] = [];
+  questions: QuestionEntry[] = [];
   selectedItem: CatalogueItemView | null = null;
 
   constructor(
@@ -136,39 +140,82 @@ export class RentalRequest implements OnInit {
 
   onStepperSelectionChange(event: StepperSelectionEvent): void {
     if (event.selectedIndex === 2) {
-      this.loadRecommendedQuestions();
+      this.loadQuestions();
     }
   }
 
-  private loadRecommendedQuestions(): void {
-    const step1 = this.eventForm.getRawValue();
-
-    const toIsoOrNull = (value: unknown): string | null => {
-      if (!value) {
-        return null;
-      }
-      const date = new Date(value as string | number | Date);
-      return Number.isNaN(date.getTime()) ? null : date.toISOString();
+  private loadQuestions(): void {
+    const event = this.eventForm.getRawValue();
+    const toIsoOrNow = (value: unknown): string => {
+      const date = value ? new Date(value as string | number | Date) : null;
+      return date && !Number.isNaN(date.getTime()) ? date.toISOString() : new Date().toISOString();
     };
 
-    this.rentalApiClient.recommendQuestions({
-      event_name: step1.name ?? '',
-      description: step1.shortDescription ?? null,
-      start: toIsoOrNull(step1.eventStart),
-      end: toIsoOrNull(step1.eventEnd),
-      location: step1.location ?? null,
-    }).subscribe((questions: QuestionView[]) => {
-      this.questions = questions.map(q => q.question_text);
+    this.rentalApiClient.listQuestions({
+      event_name: event.name ?? '',
+      event_description: event.shortDescription ?? '',
+      event_start_date: toIsoOrNow(event.eventStart),
+      event_end_date: toIsoOrNow(event.eventEnd),
+      event_location: event.location ?? '',
+    }).subscribe(questions => {
+      this.questions = questions.map((question: QuestionView) => ({
+        guid: question.guid,
+        text: question.text,
+        dataType: question.question_data_type ?? 'FREETEXT',
+      }));
 
       for (const key of Object.keys(this.questionsForm.controls)) {
         this.questionsForm.removeControl(key);
       }
 
       for (let i = 0; i < questions.length; i++) {
-        this.questionsForm.addControl(`q_${i}`, new FormControl<QuestionAnswer>('unknown', { nonNullable: true }));
-        this.questionsForm.addControl(`comment_${i}`, new FormControl<string>('', { nonNullable: true }));
+        const question = this.questions[i];
+        switch (question.dataType) {
+          case 'YES_NO':
+            this.questionsForm.addControl(`q_${i}`, new FormControl<YesNoAnswer>('no', { nonNullable: true }));
+            break;
+          case 'NUMBER_INT':
+            this.questionsForm.addControl(`q_${i}`, new FormControl<string>('', {
+              nonNullable: true,
+              validators: [Validators.required, Validators.pattern(/^-?\d+$/)],
+            }));
+            break;
+          case 'NUMBER_FLOAT':
+            this.questionsForm.addControl(`q_${i}`, new FormControl<string>('', {
+              nonNullable: true,
+              validators: [Validators.required, Validators.pattern(/^-?\d+(\.\d+)?$/)],
+            }));
+            break;
+          case 'FREETEXT':
+          default:
+            this.questionsForm.addControl(`q_${i}`, new FormControl<string>('', {
+              nonNullable: true,
+              validators: [Validators.required],
+            }));
+            break;
+        }
+
+        if (question.dataType !== 'FREETEXT') {
+          this.questionsForm.addControl(`comment_${i}`, new FormControl<string>('', { nonNullable: true }));
+        }
       }
     });
+  }
+
+  isYesNo(question: QuestionEntry): boolean {
+    return question.dataType === 'YES_NO';
+  }
+
+  isInteger(question: QuestionEntry): boolean {
+    return question.dataType === 'NUMBER_INT';
+  }
+
+  isFloat(question: QuestionEntry): boolean {
+    return question.dataType === 'NUMBER_FLOAT';
+  }
+
+  isFreeText(question: QuestionEntry): boolean {
+    return question.dataType === 'FREETEXT';
   }
 
   eventTimeRangeValidator(control: AbstractControl): ValidationErrors | null {
@@ -261,11 +308,25 @@ export class RentalRequest implements OnInit {
 
     const surveyNotes = this.questions
       .map((question, index) => {
-        const answer = (this.questionsForm.get(`q_${index}`)?.value ?? 'unknown') as QuestionAnswer;
-        const comment = (this.questionsForm.get<string>(`comment_${index}`)?.value as string) || null;
-        return `${question}: ${answer}${comment ? ` (${comment})` : ''}`;
+        const answer = String(this.questionsForm.get(`q_${index}`)?.value ?? '');
+        const comment = question.dataType === 'FREETEXT'
+          ? ''
+          : String(this.questionsForm.get<string>(`comment_${index}`)?.value ?? '').trim();
+        return `${question.text}: ${answer}${comment ? ` (${comment})` : ''}`;
       })
       .join('\n');
+
+    const answers = this.questions.map((question, index) => {
+      const answer = String(this.questionsForm.get(`q_${index}`)?.value ?? '');
+      const comment = question.dataType === 'FREETEXT'
+        ? ''
+        : String(this.questionsForm.get<string>(`comment_${index}`)?.value ?? '').trim();
+
+      return {
+        question_guid: question.guid,
+        answer: JSON.stringify({ value: answer, comment }),
+      };
+    });
 
     const notes = [
       `Location: ${this.eventForm.controls.location.value}`,
@@ -282,6 +343,7 @@ export class RentalRequest implements OnInit {
       requested_start: toIsoOrNull(this.pickupForm.controls.pickupTime.value) ?? new Date().toISOString(),
       requested_end: toIsoOrNull(this.pickupForm.controls.dropoffTime.value) ?? new Date().toISOString(),
       notes,
+      answers,
     }).pipe(
       catchError(() => {
         this.snackBar.open('Failed to create rental request.', 'Close', { duration: 4000 });

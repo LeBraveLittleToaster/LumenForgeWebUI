@@ -1,5 +1,4 @@
 import { Guid } from '../../core/common';
-import { SurveyAnswerResponse } from './dtos';
 
 // ------------------- Enums -------------------
 
@@ -55,26 +54,16 @@ export type PaymentMethod = 'CASH' | 'CARD' | 'TRANSFER' | 'OTHER';
 
 export type DamageSeverity = 'MINOR' | 'MODERATE' | 'SEVERE' | 'TOTAL_LOSS';
 
-// ------------------- Survey / Answer Views -------------------
+export type QuestionDataType = 'NUMBER_INT' | 'NUMBER_FLOAT' | 'FREETEXT' | 'YES_NO';
+
+// ------------------- Rental Question Views -------------------
 
 export interface QuestionView {
-  uuid: Guid;
-  question_text: string;
+  guid: Guid;
+  text: string;
   category: string | null;
   display_order: number;
-  is_active: boolean;
-  created_at: string;
-}
-
-export interface AnswerView {
-  uuid: Guid;
-  question_uuid: Guid;
-  question_text: string;
-  response: SurveyAnswerResponse;
-  comment: string | null;
-  respondent_user_id: string | null;
-  rental_uuid: Guid | null;
-  created_at: string;
+  question_data_type?: QuestionDataType | null;
 }
 
 // ------------------- Rental Action / History Views -------------------
