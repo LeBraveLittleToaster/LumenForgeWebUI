@@ -109,8 +109,7 @@ export {
   type CancelRentalDto,
   type CompleteRentalDto,
   type CreateMaintenanceJobsDto,
-  type CreateQuestionDto,
-  type EventContextDto,
+  type CreateRentalFormInput,
   type CreateRentalDto,
   type DamageEntryDto,
   type GenerateChecklistDto,
@@ -129,13 +128,10 @@ export {
   type ScanChecklistDto,
   type ScrapRentalDto,
   type SignChecklistDto,
-  type SubmitAnswerDto,
-  type SubmitAnswersBulkDto,
-  type SurveyAnswerResponse,
 } from './rental/models/dtos';
 export {
   type QuestionView,
-  type AnswerView,
+  type QuestionDataType,
   type DamageSeverity,
   type RentalView,
   type RentalProcessView,
@@ -157,7 +153,6 @@ export {
   type RentalStage,
 } from './rental/models/views';
 export {
-  type RentalQuestionsQueryDto,
   type RentalQueryDto,
   type RentalHistoryQueryDto,
   type RentalInclude,

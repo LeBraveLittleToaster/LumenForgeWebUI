@@ -162,21 +162,41 @@
           @if (questions.length === 0) {
             <p class="muted">No questions available from the server.</p>
           } @else {
-            @for (question of questions; track question; let i = $index) {
+            @for (question of questions; track question.guid; let i = $index) {
               <div class="question-row">
-                <div class="question-text">{{ question }}</div>
-                <mat-form-field appearance="outline">
-                  <mat-label>Answer</mat-label>
-                  <mat-select [formControlName]="'q_' + i">
-                    @for (opt of answerOptions; track opt.value) {
-                      <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Comment (optional)</mat-label>
-                  <textarea matInput [formControlName]="'comment_' + i" rows="2" maxlength="2000" placeholder="Add further explanation…"></textarea>
-                </mat-form-field>
+                <div class="question-text">{{ question.text }}</div>
+                @if (isYesNo(question)) {
+                  <mat-form-field appearance="outline">
+                    <mat-label>Answer</mat-label>
+                    <mat-select [formControlName]="'q_' + i">
+                      @for (opt of yesNoOptions; track opt.value) {
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                } @else if (isInteger(question)) {
+                  <mat-form-field appearance="outline">
+                    <mat-label>Answer (Integer)</mat-label>
+                    <input matInput type="number" step="1" [formControlName]="'q_' + i" />
+                  </mat-form-field>
+                } @else if (isFloat(question)) {
+                  <mat-form-field appearance="outline">
+                    <mat-label>Answer (Decimal)</mat-label>
+                    <input matInput type="number" step="any" [formControlName]="'q_' + i" />
+                  </mat-form-field>
+                } @else {
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Answer</mat-label>
+                    <textarea matInput [formControlName]="'q_' + i" rows="2" maxlength="2000"></textarea>
+                  </mat-form-field>
+                }
+
+                @if (!isFreeText(question)) {
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Comment (optional)</mat-label>
+                    <textarea matInput [formControlName]="'comment_' + i" rows="2" maxlength="2000" placeholder="Add further explanation…"></textarea>
+                  </mat-form-field>
+                }
               </div>
             }
           }

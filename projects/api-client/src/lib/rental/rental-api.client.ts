@@ -6,6 +6,7 @@ import { toHttpParams } from '../core/http-params';
 import { RENTAL_API_BASE_URL } from '../core/tokens';
 import { PaginatedList } from '../inventory/models/views';
 import {
+  CreateRentalFormInput,
   CreateRentalDto,
   ApproveItemsDto,
   ApproveRequestDto,
@@ -14,8 +15,6 @@ import {
   CancelRentalDto,
   CompleteRentalDto,
   CreateMaintenanceJobsDto,
-  CreateQuestionDto,
-  EventContextDto,
   GenerateInvoiceDto,
   GenerateChecklistDto,
   GenerateReportDto,
@@ -31,12 +30,9 @@ import {
   ScanChecklistDto,
   ScrapRentalDto,
   SignChecklistDto,
-  SubmitAnswerDto,
-  SubmitAnswersBulkDto,
 } from './models/dtos';
 import {
   QuestionView,
-  AnswerView,
   RentalActionView,
   RentalActionLogView,
   RentalProcessView,
@@ -44,7 +40,6 @@ import {
   ChecklistView,
 } from './models/views';
 import {
-  RentalQuestionsQueryDto,
   RentalQueryDto,
   RentalHistoryQueryDto,
   RentalInclude,
@@ -108,68 +103,26 @@ export class RentalApiClient {
     return { list: [], total: 0 };
   }
 
-  // =========================================================================
-  // Survey Questions
-  // =========================================================================
+  private normalizeQuestions(response: unknown): QuestionView[] {
+    if (!response || typeof response !== 'object') {
+      return [];
+    }
 
-  /** Lists all active questions (paginated). */
-  listActiveQuestions(limit = 50, offset = 0): Observable<PaginatedList<QuestionView>> {
-    return this.http.get<PaginatedList<QuestionView>>(
-      this.url('/api/v1/rentals/surveys/questions'),
-      { params: toHttpParams({ limit, offset }) }
-    );
-  }
-
-  /** Lists all questions including inactive (admin, paginated). */
-  listQuestions(query: RentalQuestionsQueryDto = {}): Observable<PaginatedList<QuestionView>> {
-    return this.http.get<PaginatedList<QuestionView>>(
-      this.url('/api/v1/rentals/surveys/questions/all'),
-      { params: toHttpParams({ search: query.search ?? undefined, limit: query.limit, offset: query.offset }) }
-    );
-  }
-
-  getQuestion(questionGuid: Guid): Observable<QuestionView> {
-    return this.http.get<QuestionView>(this.url(`/api/v1/rentals/surveys/questions/${questionGuid}`));
-  }
-
-  createQuestion(dto: CreateQuestionDto): Observable<QuestionView> {
-    return this.http.put<QuestionView>(this.url('/api/v1/rentals/surveys/questions'), dto);
-  }
-
-  deleteQuestion(questionGuid: Guid): Observable<void> {
-    return this.http.delete<void>(this.url(`/api/v1/rentals/surveys/questions/${questionGuid}`));
-  }
-
-  /** Returns AI-recommended questions for an event context. */
-  recommendQuestions(dto: EventContextDto): Observable<QuestionView[]> {
-    return this.http.post<QuestionView[]>(this.url('/api/v1/rentals/surveys/questions/recommend'), dto);
+    const record = response as Record<string, unknown>;
+    const questions = record['questions'];
+    return Array.isArray(questions) ? questions as QuestionView[] : [];
   }
 
   // =========================================================================
-  // Answers
+  // Rental Questions
   // =========================================================================
 
-  submitAnswer(questionGuid: Guid, dto: SubmitAnswerDto): Observable<AnswerView> {
-    return this.http.post<AnswerView>(this.url(`/api/v1/rentals/surveys/questions/${questionGuid}/answers`), dto);
-  }
-
-  listAnswersForQuestion(questionGuid: Guid, rentalGuid?: Guid, limit = 50, offset = 0): Observable<PaginatedList<AnswerView>> {
-    return this.http.get<PaginatedList<AnswerView>>(
-      this.url(`/api/v1/rentals/surveys/questions/${questionGuid}/answers`),
-      { params: toHttpParams({ rentalGuid: rentalGuid ?? undefined, limit, offset }) }
-    );
-  }
-
-  submitAnswersBulk(dto: SubmitAnswersBulkDto): Observable<AnswerView[]> {
-    return this.http.post<AnswerView[]>(this.url('/api/v1/rentals/surveys/answers/bulk'), dto);
-  }
-
-  getAnswer(answerGuid: Guid): Observable<AnswerView> {
-    return this.http.get<AnswerView>(this.url(`/api/v1/rentals/surveys/answers/${answerGuid}`));
-  }
-
-  deleteAnswer(answerGuid: Guid): Observable<void> {
-    return this.http.delete<void>(this.url(`/api/v1/rentals/surveys/answers/${answerGuid}`));
+  /** Loads the question set for creating a rental request. */
+  listQuestions(input: CreateRentalFormInput): Observable<QuestionView[]> {
+    return this.http.post<unknown>(
+      this.url('/api/v1/rentals/questions'),
+      input,
+    ).pipe(map(response => this.normalizeQuestions(response)));
   }
 
   // =========================================================================

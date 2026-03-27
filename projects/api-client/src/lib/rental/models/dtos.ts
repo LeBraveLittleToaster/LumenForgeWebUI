@@ -1,49 +1,14 @@
 import { Guid } from '../../core/common';
 import { ChecklistType, DamageSeverity, PaymentMethod } from './views';
 
-// ------------------- Survey / Answer DTOs -------------------
+// ------------------- Rental Questions DTOs -------------------
 
-export type SurveyAnswerResponse = 'Yes' | 'No' | 'NotImportant' | 'Unknown';
-
-/** Single answer entry used in bulk-submit. */
-export interface AnswerEntryDto {
-  question_uuid: Guid;
-  response: SurveyAnswerResponse;
-  comment?: string | null;
-}
-
-/** Payload for submitting a single answer to a question. */
-export interface SubmitAnswerDto {
-  question_uuid: Guid;
-  response: SurveyAnswerResponse;
-  comment?: string | null;
-  rental_uuid?: Guid | null;
-}
-
-/** Bulk-submit multiple answers for a rental at once. */
-export interface SubmitAnswersBulkDto {
-  rental_uuid: Guid;
-  answers: AnswerEntryDto[];
-}
-
-/** Payload for creating a new survey question. */
-export interface CreateQuestionDto {
-  question_text: string;
-  category?: string | null;
-  display_order?: number;
-  is_active?: boolean;
-}
-
-/**
- * Context about a rental event used for AI-based question recommendations.
- * Maps to EventContextDto on the server.
- */
-export interface EventContextDto {
+export interface CreateRentalFormInput {
   event_name: string;
-  description?: string | null;
-  start?: string | null;
-  end?: string | null;
-  location?: string | null;
+  event_description: string;
+  event_start_date: string;
+  event_end_date: string;
+  event_location: string;
 }
 
 // ------------------- Rental Create / Action DTOs -------------------
@@ -55,6 +20,12 @@ export interface CreateRentalDto {
   requested_start: string;
   requested_end: string;
   notes?: string | null;
+  answers?: CreateRentalAnswerDto[];
+}
+
+export interface CreateRentalAnswerDto {
+  question_guid: Guid;
+  answer: string;
 }
 
 export interface ApproveRequestDto {
