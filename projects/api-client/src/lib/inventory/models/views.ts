@@ -35,6 +35,15 @@ export interface StockView {
   updated_at: IsoInstant;
 }
 
+export interface StockBindingView {
+  guid: Guid;
+  binding_type: string;
+  device_guid: Guid;
+  start: IsoInstant;
+  end: IsoInstant;
+  created_at: IsoInstant;
+}
+
 export interface DeviceView {
   guid: Guid;
   serial_number: string;
@@ -43,12 +52,16 @@ export interface DeviceView {
   photo_url?: string | null;
   purchase_price: number;
   purchase_date: IsoDate;
+  stock_unit_type: StockUnitType;
+  stock_amount: number;
   maintenance_status_uuid: Guid;
   maintenance_status_name: string;
   vendor: VendorView;
-  stock?: StockView | null;
+  stock_bindings: StockBindingView[];
   parameters: DeviceParameterView[];
   categories: CategoryView[];
+  child_device_relations: DeviceRelationView[];
+  parent_device_relations: DeviceRelationView[];
   created_at: IsoInstant;
   updated_at: IsoInstant;
 }

@@ -7,7 +7,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, EMPTY, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, EMPTY, filter, map, Observable, of, startWith, switchMap } from 'rxjs';
 
 import { InventoryApiClient, DeviceParameterView, DeviceView, DeviceRelationView } from '@lumenforge/api-client';
 import { DeviceAddParameterDialogComponent } from './device-add-parameter-dialog.component';
@@ -55,12 +55,10 @@ export class RemoveCategoryConfirmDialogComponent {}
 })
 export class Devicedetail implements OnInit {
   readonly parameterColumns = ['key', 'value', 'updated_at', 'actions'];
+  readonly parentRelationColumns = ['parent_device_name', 'contained_amount', 'relation_type', 'actions'];
   readonly relationColumns = ['child_device_name', 'contained_amount', 'relation_type', 'actions'];
   state$!: Observable<DeviceDetailState>;
-  childRelations$!: Observable<DeviceRelationView[]>;
-  childRelations: DeviceRelationView[] = [];
   private readonly refreshTrigger$ = new BehaviorSubject<void>(undefined);
-  private readonly refreshRelations$ = new BehaviorSubject<void>(undefined);
 
   constructor(
     private route: ActivatedRoute,
@@ -84,16 +82,6 @@ export class Devicedetail implements OnInit {
           startWith({ loading: true, device: null, error: null } as DeviceDetailState)
         )
       )
-    );
-
-    this.childRelations$ = combineLatest([deviceGuid$, this.refreshRelations$]).pipe(
-      switchMap(([deviceGuid]) =>
-        this.inventoryApiClient.getChildRelations(deviceGuid).pipe(
-          map(response => response.list),
-          catchError(() => of([] as DeviceRelationView[]))
-        )
-      ),
-      tap(relations => this.childRelations = relations)
     );
   }
 
@@ -189,10 +177,7 @@ export class Devicedetail implements OnInit {
   }
 
   formatStock(device: DeviceView): string {
-    if (!device.stock) {
-      return 'No stock record';
-    }
-    return `${device.stock.stock_count} ${device.stock.stock_unit_type}`;
+    return `${device.stock_amount} ${device.stock_unit_type}`;
   }
 
   get hasPhoto(): (device: DeviceView | null) => boolean {
@@ -204,13 +189,13 @@ export class Devicedetail implements OnInit {
       width: '520px',
       data: {
         parentDeviceGuid: device.guid,
-        existingChildGuids: this.childRelations.map(r => r.child_device_guid),
+        existingChildGuids: (device.child_device_relations ?? []).map(r => r.child_device_guid),
       }
     });
 
     ref.afterClosed().subscribe(result => {
       if (result === undefined) return;
-      this.refreshRelations$.next();
+      this.refreshTrigger$.next();
     });
   }
 
@@ -223,7 +208,20 @@ export class Devicedetail implements OnInit {
         )
       )
     ).subscribe(() => {
-      this.refreshRelations$.next();
+      this.refreshTrigger$.next();
+    });
+  }
+
+  removeParentRelation(relation: DeviceRelationView): void {
+    this.dialog.open(DeleteConfirmDialogComponent).afterClosed().pipe(
+      filter((confirmed): confirmed is true => !!confirmed),
+      switchMap(() =>
+        this.inventoryApiClient.deleteDeviceRelation(relation.guid).pipe(
+          catchError(() => EMPTY)
+        )
+      )
+    ).subscribe(() => {
+      this.refreshTrigger$.next();
     });
   }
 

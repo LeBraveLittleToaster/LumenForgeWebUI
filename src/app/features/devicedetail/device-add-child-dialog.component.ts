@@ -51,9 +51,15 @@ const PAGE_SIZE = 10;
       } @else {
         <mat-selection-list [multiple]="false" (selectionChange)="onSelectionChange($event)">
           @for (device of devices; track device.guid) {
-            <mat-list-option [value]="device.guid" [selected]="selectedDeviceGuid === device.guid">
+            <mat-list-option
+              [value]="device.guid"
+              [selected]="selectedDeviceGuid === device.guid"
+              [disabled]="getAvailableAmount(device) <= 0">
               <span matListItemTitle>{{ device.name || device.serial_number }}</span>
               <span matListItemLine class="device-desc">{{ device.serial_number }}</span>
+              <span matListItemLine class="device-desc">
+                Available: {{ getAvailableAmount(device) }} | Bound: {{ getBoundAmount(device) }} | Stock: {{ getTotalStockAmount(device) }}
+              </span>
             </mat-list-option>
           }
         </mat-selection-list>
@@ -156,6 +162,18 @@ export class DeviceAddChildDialogComponent implements OnInit {
   save(): void {
     if (!this.selectedDeviceGuid || this.quantityCtrl.invalid) return;
 
+    const selectedDevice = this.devices.find(d => d.guid === this.selectedDeviceGuid);
+    if (!selectedDevice) {
+      return;
+    }
+
+    const availableAmount = this.getAvailableAmount(selectedDevice);
+    if (this.quantityCtrl.value > availableAmount) {
+      this.error = `Only ${availableAmount} item(s) available for this device.`;
+      this.cdr.detectChanges();
+      return;
+    }
+
     this.saving = true;
     this.error = null;
     this.cdr.detectChanges();
@@ -225,5 +243,18 @@ export class DeviceAddChildDialogComponent implements OnInit {
         ? nextDevices.length < total
         : hasExtraItem;
     });
+  }
+
+  getBoundAmount(device: DeviceView): number {
+    const relations = device.parent_device_relations ?? [];
+    return relations.reduce((sum, relation) => sum + (relation.contained_amount ?? 0), 0);
+  }
+
+  getTotalStockAmount(device: DeviceView): number {
+    return device.stock_amount ?? 0;
+  }
+
+  getAvailableAmount(device: DeviceView): number {
+    return Math.max(0, this.getTotalStockAmount(device) - this.getBoundAmount(device));
   }
 }
