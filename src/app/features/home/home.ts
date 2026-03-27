@@ -20,6 +20,6 @@ export class Home {
   }
 
   createRentalRequest(): void {
-    this.router.navigateByUrl('/rental');
+    this.router.navigateByUrl('/rental/create');
   }
 }
