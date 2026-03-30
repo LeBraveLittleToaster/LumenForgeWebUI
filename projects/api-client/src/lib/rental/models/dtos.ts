@@ -17,6 +17,7 @@ export interface CreateRentalDto {
   customer_name?: string | null;
   customer_email?: string | null;
   purpose?: string | null;
+  group_guid?: Guid | null;
   requested_start: string;
   requested_end: string;
   notes?: string | null;

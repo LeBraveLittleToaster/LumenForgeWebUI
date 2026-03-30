@@ -26,7 +26,7 @@ export { type CatalogueListQueryDto, type CatalogueItemQueryDto } from './catalo
 export { AuthApiClient } from './auth/auth-api.client';
 export { AuthService, type UserProfile } from './auth/auth-service';
 export { authInterceptor } from './auth/auth.interceptor';
-export { authGuard, adminGuard, permissionGuard } from './auth/auth.guard';
+export { authGuard, adminGuard, permissionGuard, rentalScopeGuard } from './auth/auth.guard';
 // Auth models
 export {
   type Guid as AuthGuid,
@@ -43,7 +43,7 @@ export {
   type AssignUserToGroupDto,
   type AssignGroupRolesDto,
 } from './auth/models/dtos';
-export { type UserView, type GroupView, type RoleViewDto, type ListView } from './auth/models/views';
+export { type UserView, type GroupView, type RoleViewDto, type ListView, type ScopeLevel, type RentalScopes } from './auth/models/views';
 export { type ListQueryDto as AuthListQueryDto } from './auth/models/query';
 
 /**

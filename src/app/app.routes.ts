@@ -3,7 +3,7 @@ import { Admin } from './features/admin/admin';
 import { User } from './features/user/user';
 import { Home } from './features/home/home';
 import { Login } from './features/login/login';
-import { adminGuard, authGuard, permissionGuard, Permissions } from '@lumenforge/api-client';
+import { adminGuard, authGuard, permissionGuard, Permissions, rentalScopeGuard } from '@lumenforge/api-client';
 import { Dashboard } from './features/dashboard/dashboard';
 import { Category } from './features/category/category';
 import { Vendor } from './features/vendor/vendor';
@@ -107,131 +107,127 @@ export const routes: Routes = [
     },
     {
         path: 'rental',
-        canActivate: [authGuard, permissionGuard(
-            Permissions.RentalRead,
-            Permissions.RentalUpdate,
-            Permissions.RentalDelete,
-        )],
+        canActivate: [authGuard, rentalScopeGuard('read')],
         component: Rental,
     },
     {
         path: 'rental/create',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalCreate)],
+        canActivate: [authGuard, rentalScopeGuard('create')],
         component: RentalRequest,
     },
     {
         path: 'rental/:processGuid',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalRead)],
+        canActivate: [authGuard, rentalScopeGuard('read')],
         component: RentalDetail,
     },
     {
         path: 'rental/:processGuid/actions/approve-request',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionApproveRequest,
     },
     {
         path: 'rental/:processGuid/actions/reject-request',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionRejectRequest,
     },
     {
         path: 'rental/:processGuid/actions/assign-items',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionAssignItems,
     },
     {
         path: 'rental/:processGuid/actions/remove-items',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionRemoveItems,
     },
     {
         path: 'rental/:processGuid/actions/approve-items',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionApproveItems,
     },
     {
         path: 'rental/:processGuid/actions/reject-items',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionRejectItems,
     },
     {
         path: 'rental/:processGuid/actions/generate-checklist',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionGenerateChecklist,
     },
     {
         path: 'rental/:processGuid/actions/scan-checklist',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionScanChecklist,
     },
     {
         path: 'rental/:processGuid/actions/sign-checklist',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionSignChecklist,
     },
     {
         path: 'rental/:processGuid/actions/record-pickup',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionRecordPickup,
     },
     {
         path: 'rental/:processGuid/actions/record-return',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionRecordReturn,
     },
     {
         path: 'rental/:processGuid/actions/request-extension',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionRequestExtension,
     },
     {
         path: 'rental/:processGuid/actions/approve-extension',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionApproveExtension,
     },
     {
         path: 'rental/:processGuid/actions/reject-extension',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionRejectExtension,
     },
     {
         path: 'rental/:processGuid/actions/record-damages',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionRecordDamages,
     },
     {
         path: 'rental/:processGuid/actions/create-maintenance-jobs',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionCreateMaintenanceJobs,
     },
     {
         path: 'rental/:processGuid/actions/generate-invoice',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionGenerateInvoice,
     },
     {
         path: 'rental/:processGuid/actions/record-payment',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionRecordPayment,
     },
     {
         path: 'rental/:processGuid/actions/generate-report',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionGenerateReport,
     },
     {
         path: 'rental/:processGuid/actions/complete',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionComplete,
     },
     {
         path: 'rental/:processGuid/actions/cancel',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionCancel,
     },
     {
         path: 'rental/:processGuid/actions/scrap',
-        canActivate: [authGuard, permissionGuard(Permissions.RentalUpdate)],
+        canActivate: [authGuard, rentalScopeGuard('update')],
         component: RentalActionScrap,
     },
     {

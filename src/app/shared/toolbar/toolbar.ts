@@ -8,7 +8,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { AuthService, Permissions } from '@lumenforge/api-client';
+import { AuthService, Permissions, RentalScopes } from '@lumenforge/api-client';
 import { signal } from '@angular/core';
 import { ThemeService } from '../../core/services/theme.service';
 
@@ -17,6 +17,7 @@ interface NavItem {
   route: string;
   requiredPermission?: Permissions;
   requiredAnyPermissions?: Permissions[];
+  requiredRentalScope?: keyof RentalScopes;
 }
 
 @Component({
@@ -66,7 +67,7 @@ export class Toolbar implements OnInit, OnDestroy {
         Permissions.MaintenanceDelete,
       ]
     },
-    { label: 'Rental', route: '/rental' },
+    { label: 'Rental', route: '/rental', requiredRentalScope: 'read' },
     { label: 'Billing', route: '/billing' },
     { label: 'Reports', route: '/reports' }
   ];
@@ -106,6 +107,10 @@ export class Toolbar implements OnInit, OnDestroy {
   }
 
   canAccess(item: NavItem): boolean {
+    if (item.requiredRentalScope) {
+      return this.auth.hasRentalScope(item.requiredRentalScope);
+    }
+
     if (item.requiredPermission !== undefined) {
       return this.auth.hasPermission(item.requiredPermission);
     }
@@ -129,6 +134,10 @@ export class Toolbar implements OnInit, OnDestroy {
     if (item.requiredAnyPermissions?.length) {
       const names = item.requiredAnyPermissions.map(p => this.formatPermissionName(p)).join(', ');
       return `Requires one of: ${names}`;
+    }
+
+    if (item.requiredRentalScope) {
+      return `Requires rental ${item.requiredRentalScope} scope.`;
     }
 
     return 'Missing required permission.';

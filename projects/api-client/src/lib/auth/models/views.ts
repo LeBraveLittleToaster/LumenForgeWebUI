@@ -1,5 +1,14 @@
 import { GroupUser } from "./dtos";
 
+export type ScopeLevel = 'None' | 'Own' | 'Group' | 'OwnAndGroup' | 'All';
+
+export interface RentalScopes {
+  read: ScopeLevel;
+  create: ScopeLevel;
+  update: ScopeLevel;
+  delete: ScopeLevel;
+}
+
 /**
  * Subset of the User class for API response
  * Source: UserViewDtos.cs
@@ -13,6 +22,8 @@ export interface UserView {
   firstName: string;
   lastName: string;
   groups: GroupView[];
+  effective_permissions?: Array<string | number>;
+  rental_scopes?: RentalScopes;
 }
 
 /**

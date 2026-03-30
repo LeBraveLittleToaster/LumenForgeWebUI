@@ -42,6 +42,8 @@ export enum Permissions {
   RentalRead = 61,
   RentalUpdate = 62,
   RentalDelete = 63,
+  RentalUserOwn = 64,
+  RentalGroup = 65,
 
   RentalStatusCreate = 70,
   RentalStatusRead = 71,

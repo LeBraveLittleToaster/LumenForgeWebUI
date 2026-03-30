@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { PageEvent } from '@angular/material/paginator';
 import { RouterLink } from '@angular/router';
-import { RentalApiClient } from '@lumenforge/api-client';
+import { AuthService, RentalApiClient } from '@lumenforge/api-client';
 import { DataTableComponent, ColumnDef } from '../../shared/data-table/data-table';
 import { RentalDataItem, RentalDataSource } from './rental.data-source';
 import { formatDateOnly, getCurrentStage, getCustomerDisplay, getProcessGuid, getRentalPurpose, getRentalTitle } from '../rental-detail/rental-process.utils';
@@ -29,6 +29,7 @@ import { formatDateOnly, getCurrentStage, getCustomerDisplay, getProcessGuid, ge
   styleUrl: './rental.scss',
 })
 export class Rental implements OnInit {
+  readonly auth = inject(AuthService);
   readonly rowRouterLink = (row: RentalDataItem): any[] => ['/rental', getProcessGuid(row.rental)];
 
   readonly columns: ColumnDef<RentalDataItem>[] = [
@@ -68,6 +69,10 @@ export class Rental implements OnInit {
 
   onPage(event: PageEvent): void {
     this.loadRentals(event.pageIndex, event.pageSize);
+  }
+
+  canCreateRental(): boolean {
+    return this.auth.hasRentalScope('create');
   }
 
   private loadRentals(pageIndex: number, pageSize: number): void {

@@ -170,6 +170,7 @@ export interface AnswerView {
 export interface RentalView {
   uuid: Guid;
   customer_kc_id: string;
+  group_guid?: Guid | null;
   customer_name?: string | null;
   customer_email?: string | null;
   purpose?: string | null;
@@ -200,6 +201,7 @@ export interface RentalProcessSummaryView {
   guid: Guid;
   current_stage: RentalStage;
   created_by_kc_id: string;
+  group_guid?: Guid | null;
   customer_name?: string | null;
   customer_email?: string | null;
   requested_start?: string | null;

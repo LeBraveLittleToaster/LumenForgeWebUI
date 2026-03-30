@@ -5,10 +5,12 @@
       <p class="page-subtitle">Browse all rental requests and drill into status transitions.</p>
     </div>
     <div class="page-header-actions">
-      <button mat-flat-button routerLink="/rental/create">
-        <mat-icon>add</mat-icon>
-        New Rental Request
-      </button>
+      @if (canCreateRental()) {
+        <button mat-flat-button routerLink="/rental/create">
+          <mat-icon>add</mat-icon>
+          New Rental Request
+        </button>
+      }
     </div>
   </div>
 

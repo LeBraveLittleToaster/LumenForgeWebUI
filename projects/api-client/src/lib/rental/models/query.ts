@@ -5,6 +5,7 @@ export interface RentalQueryDto {
   limit?: number;
   offset?: number;
   search?: string | null;
+  groupGuid?: string | null;
   stages?: RentalStage[];
   sortBy?: RentalSortField;
   ascending?: boolean;
